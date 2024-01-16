@@ -59,6 +59,7 @@ from .modes import (
     LegoMode,
     PicoMode,
     SnekMode,
+    NeopiaMode,
 )
 from .interface.themes import NIGHT_STYLE, DAY_STYLE, CONTRAST_STYLE
 from . import settings
@@ -263,6 +264,7 @@ def setup_modes(editor, view):
         "pygamezero": PyGameZeroMode(editor, view),
         "lego": LegoMode(editor, view),
         "pico": PicoMode(editor, view),
+        "neopia": NeopiaMode(editor, view),
     }
 
 
@@ -297,6 +299,16 @@ class SharedMemoryMutex(object):
         self._shared_memory.unlock()
 
     def acquire(self):
+        #
+        # The attach-detach dance is a shim from
+        # https://stackoverflow.com/questions/42549904/qsharedmemory-is-not-getting-deleted-on-application-crash
+        # If the existing shared memory is not held by any active application
+        # (eg because an appimage has hard-crashed) then it will be released
+        # If the memory is held by an active application it will have no effect
+        #
+        self._shared_memory.attach()
+        self._shared_memory.detach()
+
         if self._shared_memory.attach():
             pid = struct.unpack("q", self._shared_memory.data()[:8])
             raise MutexError("MUTEX: Mu is already running with pid %d" % pid)
@@ -354,9 +366,12 @@ def run():
     logging.info("Platform: {}".format(platform.platform()))
     logging.info("Python path: {}".format(sys.path))
     logging.info("Language code: {}".format(i18n.language_code))
-
     setup_exception_handler()
     check_only_running_once()
+
+    # Remove the VIRTUAL_ENV env var: when set, prevents pgzero mode from working
+    # if Mu is installed from source/PyPI into a virtual environment.
+    os.environ.pop("VIRTUAL_ENV", None)
 
     #
     # Load settings from known locations and register them for
