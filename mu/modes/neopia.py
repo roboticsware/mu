@@ -26,8 +26,8 @@ from mu.interface.panes import CHARTS
 from ..virtual_environment import venv
 from qtconsole.manager import QtKernelManager
 from qtconsole.client import QtKernelClient
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
-from PyQt5.QtSerialPort import QSerialPortInfo
+from PyQt6.QtCore import QObject, QThread, pyqtSignal
+from PyQt6.QtSerialPort import QSerialPortInfo
 from mu.logic import Device
 
 
