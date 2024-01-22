@@ -265,15 +265,20 @@ class PyGameZeroMode(BaseMode):
             # Make agrs
             cwd = os.path.dirname(tab.path)
             envars = self.editor.envars
-            command_args = ["--collect-all pgzero", "--onefile"]
+            cmd_args = ["--collect-all", "pgzero", "--onefile", "--clean"]
             img_dir = os.path.join(cwd, "images")
             if os.path.isdir(img_dir) and len(os.listdir(img_dir)) != 0:
-                command_args += ["--add-data images/*:images"]
-            font_dir = os.path.join(cwd, "font")
+                cmd_args += ["--add-data", "images/*:images"]
+            font_dir = os.path.join(cwd, "fonts")
             if os.path.isdir(font_dir) and len(os.listdir(font_dir)) != 0:
-                command_args += ["--add-data images/*:images"]
-            args = ["-m", "pyinstaller"] + command_args
-
+                cmd_args += ["--add-data", "fonts/*:fonts"]
+            sound_dir = os.path.join(cwd, "sounds")
+            if os.path.isdir(sound_dir) and len(os.listdir(sound_dir)) != 0:
+                cmd_args += ["--add-data", "sounds/*:sounds"]
+            music_dir = os.path.join(cwd, "music")
+            if os.path.isdir(music_dir) and len(os.listdir(music_dir)) != 0:
+                cmd_args += ["--add-data", "music/*:music"]
+            args = ["-m", "PyInstaller"]
             self.runner = self.view.add_python3_runner(
                 interpreter=venv.interpreter,
                 script_name=tab.path,
@@ -281,10 +286,17 @@ class PyGameZeroMode(BaseMode):
                 interactive=False,
                 envars=envars,
                 python_args=args,
+                command_args=cmd_args
             )
             self.runner.process.waitForStarted()
+            self.runner.process.finished.connect(self.finished)
 
-            # # Remove pgzrun from the source
-            source_code = re.sub(r"import pgzrun\n", "", source_code, flags = re.DOTALL)
-            source_code = re.sub(r"\npgzrun\.go\(\)", "", source_code, flags = re.DOTALL)
-            tab.SendScintilla(tab.SCI_SETTEXT, source_code.encode("utf-8"))
+    def finished(self):
+        """
+        Remove pgzrun from the source when the packaging process is finished
+        """
+        tab = self.view.current_tab
+        source_code = tab.text()
+        source_code = re.sub(r"import pgzrun\n", "", source_code, flags = re.DOTALL)
+        source_code = re.sub(r"\npgzrun\.go\(\)", "", source_code, flags = re.DOTALL)
+        tab.SendScintilla(tab.SCI_SETTEXT, source_code.encode("utf-8"))
