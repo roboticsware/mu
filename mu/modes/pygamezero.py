@@ -219,7 +219,7 @@ class PyGameZeroMode(BaseMode):
             package_slot = self.view.button_bar.slots["package"]
             package_slot.setIcon(load_icon("package"))
             package_slot.setText(_("package"))
-            package_slot.setToolTip(_("Package your Pygame Zero game."))
+            package_slot.setToolTip(_("Package the game to one-file for distribution."))
             self.set_buttons(modes=True)
         else:
             self.run_package()
