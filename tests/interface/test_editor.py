@@ -3,6 +3,7 @@
 Tests for the user interface elements of Mu.
 """
 from unittest import mock
+import mu.i18n
 import mu.interface.editor
 import keyword
 import re
@@ -680,7 +681,7 @@ def test_EditorPane_highlight_selected_matches_cursor_remains():
 
 def test_EditorPane_selection_change_listener():
     """
-    Enusure that is there is a change to the selected text then controll is
+    Enusure that is there is a change to the selected text then control is
     passed to highlight_selected_matches.
     """
     ep = mu.interface.editor.EditorPane(None, "baz")
