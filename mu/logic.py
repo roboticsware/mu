@@ -84,6 +84,24 @@ DEFAULT_IMAGES = [
     "bottom.png",
     "background.png",
 ]
+# Images to copy over for use in PyGameZero example apps.
+EXAMPLE_ENTRY_B_IMAGES = [
+    "dog.png",
+    "cat.png",
+    "pink_leaf.png",
+    "cleaner.png",
+    "floor.png",
+    "eraser.png",
+    "pencil.png",
+    "boy_1.png",
+    "boy_2.png",
+    "boy_3.png",
+    "desert.png",
+    "treasure_box.png",
+    "field.png",
+    "mole.png",
+    "toy_hammer.png"
+]
 # Default sound effects to copy over for use in PyGameZero demo apps.
 DEFAULT_SOUNDS = [
     "eep.wav",
@@ -92,6 +110,27 @@ DEFAULT_SOUNDS = [
     "meow3.wav",
     "meow4.wav",
     "splat.wav",
+]
+# Sound effects to copy over for use in PyGameZero example apps.
+EXAMPLE_ENTRY_B_SOUNDS = [
+    "cheer.ogg",
+    "warning.ogg",
+    "toi.ogg"
+]
+# Sound effects to copy over for use in PyGameZero example apps.
+EXAMPLE_ENTRY_B_FONTS = [
+    "nanum_square.ttf"
+]
+# Sources to copy over for use in PyGameZero Entry basic example apps.
+EXAMPLE_ENTRY_BASIC = [
+    "1_dog-cat.py",
+    "2_make_flower.py",
+    "3_robot_cleaner.py",
+    "4_drawing_board.py",
+    "5_count_boy.py",
+    "6_treasure_box.py",
+    "7_mole_game.py",
+    "pgzhelper.py"
 ]
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
     _("Hello, World!"),
@@ -845,6 +884,8 @@ class Editor(QObject):
         fonts_path = os.path.join(wd, "fonts")
         sounds_path = os.path.join(wd, "sounds")
         music_path = os.path.join(wd, "music")
+        examples_path = os.path.join(wd, "examples")
+        entry_basic_path = os.path.join(wd, "examples/entry_basic/")
         if not os.path.exists(images_path):
             logger.debug("Creating directory: {}".format(images_path))
             os.makedirs(images_path)
@@ -852,9 +893,17 @@ class Editor(QObject):
                 shutil.copy(
                     path(img, "pygamezero/"), os.path.join(images_path, img)
                 )
+            for img in EXAMPLE_ENTRY_B_IMAGES:
+                shutil.copy(
+                    path(img, "pygamezero/"), os.path.join(images_path, img)
+                )
         if not os.path.exists(fonts_path):
             logger.debug("Creating directory: {}".format(fonts_path))
             os.makedirs(fonts_path)
+            for sfx in EXAMPLE_ENTRY_B_FONTS:
+                shutil.copy(
+                    path(sfx, "pygamezero/"), os.path.join(fonts_path, sfx)
+                )
         if not os.path.exists(sounds_path):
             logger.debug("Creating directory: {}".format(sounds_path))
             os.makedirs(sounds_path)
@@ -862,9 +911,44 @@ class Editor(QObject):
                 shutil.copy(
                     path(sfx, "pygamezero/"), os.path.join(sounds_path, sfx)
                 )
+            for sfx in EXAMPLE_ENTRY_B_SOUNDS:
+                shutil.copy(
+                    path(sfx, "pygamezero/"), os.path.join(sounds_path, sfx)
+                )
         if not os.path.exists(music_path):
             logger.debug("Creating directory: {}".format(music_path))
             os.makedirs(music_path)
+        if not os.path.exists(examples_path):
+            logger.debug("Creating directory: {}".format(examples_path))
+            os.makedirs(examples_path)
+            if not os.path.exists(entry_basic_path):
+                logger.debug("Creating directory: {}".format(entry_basic_path))
+                os.makedirs(entry_basic_path)
+                for sfx in EXAMPLE_ENTRY_BASIC:
+                    shutil.copy(
+                        path(sfx, "pygamezero/"), os.path.join(entry_basic_path, sfx)
+                    )
+                if not os.path.exists(entry_basic_path + 'images'):
+                    logger.debug("Creating directory: {}".format('images'))
+                    os.makedirs(entry_basic_path + 'images')
+                    for sfx in EXAMPLE_ENTRY_B_IMAGES:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(entry_basic_path + 'images', sfx)
+                        )
+                if not os.path.exists(entry_basic_path + 'sounds'):
+                    logger.debug("Creating directory: {}".format('sounds'))
+                    os.makedirs(entry_basic_path + 'sounds')
+                    for sfx in EXAMPLE_ENTRY_B_SOUNDS:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(entry_basic_path + 'sounds', sfx)
+                        )
+                if not os.path.exists(entry_basic_path + 'fonts'):
+                    logger.debug("Creating directory: {}".format('fonts'))
+                    os.makedirs(entry_basic_path + 'fonts')
+                    for sfx in EXAMPLE_ENTRY_B_FONTS:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(entry_basic_path + 'fonts', sfx)
+                        )
         # Ensure Web based assets are copied over.
         template_path = os.path.join(wd, "templates")
         static_path = os.path.join(wd, "static")
@@ -1850,6 +1934,12 @@ class Editor(QObject):
         """
         self._view.toggle_comments()
 
+    def delete_complete_line(self):
+        """
+        Handle a shortcut for deleting a complete line on the current cursor.
+        """
+        self._view.toggle_comments()
+
     def tidy_code(self):
         """
         Prettify code with Black.
@@ -1889,6 +1979,8 @@ class Editor(QObject):
                 "these problems."
             )
             self._view.show_message(message, information)
+            # Re-raise to stop next procedure
+            raise ex
 
     def has_python_extension(self, filename):
         """

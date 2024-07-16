@@ -132,9 +132,9 @@ class NeopiaMode(BaseMode):
     Represents the functionality required by the Neopia mode.
     """
 
-    name = _("Neopia")
+    name = _("Neobot Python")
     short_name = "neopia"
-    description = _("Create code on Neobot devices.")
+    description = _("Write Python code on Neobot devices. Currently NeoSoco only.")
     icon = "neopia"
     runner = None
     has_debugger = True
@@ -194,7 +194,13 @@ class NeopiaMode(BaseMode):
         Return a list of API specifications to be used by auto-suggest and call
         tips.
         """
-        return SHARED_APIS + PYTHON3_APIS + PI_APIS + NEOPIA_APIS
+        user_locale = self.get_user_locale()
+        try:
+            neopia_apis = list(NEOPIA_APIS[user_locale])
+        except KeyError: # In case a translation is not exist
+            neopia_apis = list(NEOPIA_APIS['en_US'])
+
+        return SHARED_APIS + PYTHON3_APIS + neopia_apis
 
     def run_toggle(self, event):
         """
