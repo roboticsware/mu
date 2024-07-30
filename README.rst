@@ -1,26 +1,44 @@
-Mu - A Simple Python Code Editor 
+Custom Mu - Custom version of A Simple Python Code Editor `Mu <https://madewith.mu/>`_ 
 ================================
 
-.. image:: https://mu.readthedocs.io/en/latest/_images/logo.png
+[How to make dev env.]
 
-Mu is a simple code editor for beginner programmers based on extensive feedback
-from teachers and learners. Having said that, Mu is for anyone who wants to use
-a simple "no frills" editor.
+1. install miniconda
 
-Mu is a modal editor with modes for many different ways to use Python to create
-cool and interesting things.
+``https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html`` 
 
-Mu is written in Python and works on Windows, macOS, Linux and Raspberry Pi.
-The project's public facing website is
-`https://codewith.mu/ <https://codewith.mu/>`_. We celebrate the work done by
-users of mu at `https://madewith.mu/ <https://madewith.mu/>`_.
+2. Create virtual environment 
 
-We have `extensive developer documentation <https://mu.readthedocs.io/>`_
-including a guide for
-`setting up a development environment <https://mu.readthedocs.io/en/latest/setup.html>`_, 
-`contributor guidelines <https://mu.readthedocs.io/en/latest/contributing.html>`_ and
-`some suggested first steps <https://mu.readthedocs.io/en/latest/first-steps.html>`_.
+``conda create -n mu python=3.8``
 
-We want our community to be a friendly place. Therefore, we expect contributors
-and collaborators to follow our
-`Code of Conduct <https://mu.readthedocs.io/en/latest/code_of_conduct.html>`_.
+3. Activate the created virtual env. 
+
+``conda activate mu`` 
+
+4. Clone source codes 
+
+``git clone https://github.com/roboticsware/mu``
+
+5. Enter the directory of source codes 
+
+``cd mu``  
+
+6. Install dev dependencies 
+
+``pip install -e ".[dev]"``
+
+7. Run Mu 
+
+``python run.py``
+
+8. Build Mu
+
+``make win64 or macos``
+
+
+You can also reivew more information about extensive developer documentation `here <https://mu.readthedocs.io/>`_.
+
+
+
+
+
