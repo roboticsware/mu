@@ -23,7 +23,6 @@ from mu.interface.panes import CHARTS
 from PyQt5.QtCore import QThread
 import os
 from mu.resources import load_icon
-import time
 
 
 logger = logging.getLogger(__name__)
@@ -285,6 +284,7 @@ class ESPMode(MicroPythonMode):
         )
         self.fs.set_message.connect(self.editor.show_status_message)
         self.fs.set_warning.connect(self.view.show_message)
+        self.fs.set_pbar_update.connect(self.editor.show_progressbar_update)
         self.file_manager_thread.start()
 
     def remove_fs(self):

@@ -39,6 +39,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QProgressDialog,
+    QProgressBar,
 )
 from PyQt5.QtGui import QKeySequence, QStandardItemModel, QCursor
 from mu import __version__
@@ -627,8 +628,10 @@ class Window(QMainWindow):
         self.fs_pane.microbit_fs.list_files.connect(file_manager.ls)
         self.fs_pane.local_fs.get.connect(file_manager.get)
         self.fs_pane.local_fs.put.connect(file_manager.put)
+        self.fs_pane.local_fs.pbar_update.connect(self.fs_pane.microbit_fs.on_put_update)
         self.fs_pane.local_fs.list_files.connect(file_manager.ls)
         file_manager.on_put_file.connect(self.fs_pane.microbit_fs.on_put)
+        file_manager.on_put_update_file.connect(self.fs_pane.microbit_fs.on_put_update)
         file_manager.on_delete_file.connect(self.fs_pane.microbit_fs.on_delete)
         file_manager.on_get_file.connect(self.fs_pane.local_fs.on_get)
         file_manager.on_list_fail.connect(self.fs_pane.on_ls_fail)
@@ -1463,6 +1466,10 @@ class StatusBar(QStatusBar):
         self.mode = mode
         self.msg_duration = 5
 
+        # Progress bar
+        self.progress_bar = QProgressBar()
+        self.addPermanentWidget(self.progress_bar)
+
         # Mode selector.
         self.mode_label = QLabel()
         self.mode_label.setToolTip(_("Mu's current mode of behaviour."))
@@ -1527,3 +1534,9 @@ class StatusBar(QStatusBar):
             msg = _("Detected new {} device.").format(device.long_mode_name)
 
         self.set_message(msg, self.msg_duration * 1000)
+
+    def set_pbar_value(self, amount):
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setValue(amount)
+        if amount >= 100 or amount < 0:
+            self.progress_bar.setVisible(False)

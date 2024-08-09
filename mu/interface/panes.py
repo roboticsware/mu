@@ -682,6 +682,7 @@ class MuFileList(QListWidget):
     disable = pyqtSignal()
     list_files = pyqtSignal()
     set_message = pyqtSignal(str)
+    pbar_update = pyqtSignal(int)
 
     def show_confirm_overwrite_dialog(self):
         """
@@ -737,6 +738,10 @@ class MicroPythonDeviceFileList(MuFileList):
         msg = _("'{}' successfully copied to device.").format(microbit_file)
         self.set_message.emit(msg)
         self.list_files.emit()
+        self.pbar_update.emit(-1)  # To remove the pbar UI
+
+    def on_put_update(self, amount):
+        self.pbar_update.emit(amount)
 
     def contextMenuEvent(self, event):
         menu_current_item = self.currentItem()
@@ -807,6 +812,7 @@ class LocalFileList(MuFileList):
         ).format(microbit_file)
         self.set_message.emit(msg)
         self.list_files.emit()
+        self.pbar_update.emit(-1)  # To remove the pbar UI
 
     def contextMenuEvent(self, event):
         menu_current_item = self.currentItem()
@@ -858,6 +864,7 @@ class FileSystemPane(QFrame):
     set_warning = pyqtSignal(str)
     list_files = pyqtSignal()
     open_file = pyqtSignal(str)
+    set_pbar_update = pyqtSignal(int)
 
     def __init__(self, home):
         super().__init__()
@@ -888,6 +895,7 @@ class FileSystemPane(QFrame):
         layout.addWidget(local_fs, 1, 1)
         self.microbit_fs.disable.connect(self.disable)
         self.microbit_fs.set_message.connect(self.show_message)
+        self.microbit_fs.pbar_update.connect(self.show_progressbar_update)
         self.local_fs.disable.connect(self.disable)
         self.local_fs.set_message.connect(self.show_message)
 
@@ -920,6 +928,12 @@ class FileSystemPane(QFrame):
         Emits the set_warning signal.
         """
         self.set_warning.emit(message)
+
+    def show_progressbar_update(self, amount):
+        """
+        Emits the set_pbar_update signal.
+        """
+        self.set_pbar_update.emit(amount)
 
     def on_ls(self, microbit_files):
         """

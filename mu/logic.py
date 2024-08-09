@@ -1837,6 +1837,12 @@ class Editor(QObject):
         """
         self._view.status_bar.set_message(message, duration * 1000)
 
+    def show_progressbar_update(self, amount):
+        """
+        Displays the referenced amount on the progress bar.
+        """
+        self._view.status_bar.set_pbar_value(amount)
+
     def debug_toggle_breakpoint(self, margin, line, modifiers):
         """
         How to handle the toggling of a breakpoint.
