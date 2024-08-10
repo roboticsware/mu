@@ -1123,6 +1123,7 @@ class Editor(QObject):
         if "locale" in old_session:
             self.user_locale = old_session["locale"].strip()
             if self.user_locale:
+                logging.info("locale in old session: {}".format(self.user_locale))
                 i18n.set_language(self.user_locale)
 
         old_window = old_session.get("window", {})
