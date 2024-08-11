@@ -219,7 +219,7 @@ def put(self, filename, target=None, serial=None):
 
     Returns True for success or raises an IOError if there's a problem.
     """
-    if not os.path.isfile(filename):
+    if os.path.isdir(filename) or not os.path.isfile(filename):
         raise IOError("No such file.")
     with open(filename, "rb") as local:
         content = local.read()

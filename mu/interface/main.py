@@ -629,6 +629,7 @@ class Window(QMainWindow):
         self.fs_pane.local_fs.get.connect(file_manager.get)
         self.fs_pane.local_fs.put.connect(file_manager.put)
         self.fs_pane.local_fs.pbar_update.connect(self.fs_pane.microbit_fs.on_put_update)
+        self.fs_pane.local_fs.itemDoubleClicked.connect(self.fs_pane.local_fs.on_item_double_clicked)
         self.fs_pane.local_fs.list_files.connect(file_manager.ls)
         file_manager.on_put_file.connect(self.fs_pane.microbit_fs.on_put)
         file_manager.on_put_update_file.connect(self.fs_pane.microbit_fs.on_put_update)

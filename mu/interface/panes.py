@@ -681,8 +681,14 @@ class MuFileList(QListWidget):
 
     disable = pyqtSignal()
     list_files = pyqtSignal()
+    list_sub_files = pyqtSignal(list, str)
     set_message = pyqtSignal(str)
     pbar_update = pyqtSignal(int)
+    cur_home_dir = ''
+
+    @classmethod
+    def set_cur_home_dir(cls, val):
+        cls.cur_home_dir = val
 
     def show_confirm_overwrite_dialog(self):
         """
@@ -724,7 +730,7 @@ class MicroPythonDeviceFileList(MuFileList):
             ):
                 self.disable.emit()
                 local_filename = os.path.join(
-                    self.home, source.currentItem().text()
+                    self.cur_home_dir, source.currentItem().text()
                 )
                 msg = _("Copying '{}' to device.").format(local_filename)
                 logger.info(msg)
@@ -852,6 +858,20 @@ class LocalFileList(MuFileList):
             path = os.path.join(self.home, local_filename)
             self.put.emit(path, "main.py")
 
+    def on_item_double_clicked(self, item):
+        # Get the path
+        local_name = item.text()
+        path = os.path.join(self.home, local_name)
+        # Check the name is directory or file
+        if os.path.isfile(path):
+            logger.info("Open {} internally".format(local_name))
+            # Send the signal bubbling up the tree
+            self.open_file.emit(path)
+        elif os.path.isdir(path):
+            self.home = path
+            MuFileList.set_cur_home_dir(path)  # Change parent's sharedlass variable
+            self.list_sub_files.emit([], path + '/')  # Go to sub directory
+
 
 class FileSystemPane(QFrame):
     """
@@ -898,6 +918,7 @@ class FileSystemPane(QFrame):
         self.microbit_fs.pbar_update.connect(self.show_progressbar_update)
         self.local_fs.disable.connect(self.disable)
         self.local_fs.set_message.connect(self.show_message)
+        self.local_fs.list_sub_files.connect(self.on_ls)
 
     def disable(self):
         """
@@ -935,7 +956,7 @@ class FileSystemPane(QFrame):
         """
         self.set_pbar_update.emit(amount)
 
-    def on_ls(self, microbit_files):
+    def on_ls(self, microbit_files, cwd=None):
         """
         Displays a list of the files on the micro:bit.
 
@@ -943,15 +964,18 @@ class FileSystemPane(QFrame):
         between Mu and the micro:bit, this enables the controls again for
         further interactions to take place.
         """
-        self.microbit_fs.clear()
+        if not cwd: 
+            cwd = self.home
+        if len(microbit_files):
+            self.microbit_fs.clear()
+            for f in microbit_files:
+                self.microbit_fs.addItem(f)
         self.local_fs.clear()
-        for f in microbit_files:
-            self.microbit_fs.addItem(f)
         local_files = [
             f
-            for f in os.listdir(self.home)
-            if os.path.isfile(os.path.join(self.home, f))
+            for f in os.listdir(cwd)
         ]
+        local_files.insert(0, '..')  # Go to upper directory
         local_files.sort()
         for f in local_files:
             self.local_fs.addItem(f)

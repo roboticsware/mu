@@ -436,7 +436,7 @@ msgstr "Qurilmadagi fayllar roʻyxatini olishda muammo yuz berdi. Iltimos, texni
 
 #: mu/interface/panes.py:966
 msgid "There was a problem copying the file '{}' onto the device. Please check Mu's logs for more information."
-msgstr "“{}” faylini qurilmaga nusxalashda muammo yuz berdi. Qaytadan o'rinib ko'ring. Va qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
+msgstr "“{}” faylini qurilmaga nusxalashda muammo yuz berdi. Folderni nusxalash urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/panes.py:978
 msgid "There was a problem deleting '{}' from the device. Please check Mu's logs for more information."
