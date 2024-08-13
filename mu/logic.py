@@ -914,7 +914,7 @@ class Editor(QObject):
         shutil.copy(
             path("pgzhelper.py", "pygamezero/"), os.path.join(wd, "pgzhelper.py")
         )
-        # Place pgzhelper Lib to root directory
+        # Place picozero Lib to root directory
         shutil.copy(
             path("picozero.py", "pico/"), os.path.join(wd, "picozero.py")
         )
