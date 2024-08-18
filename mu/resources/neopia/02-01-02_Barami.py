@@ -3,6 +3,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 def on_press(key):
     if Keyboard.key_to_str(key) == '0':
         n.motor_stop('right')
@@ -15,4 +16,5 @@ def on_press(key):
     elif key == Keyboard.ESC:
         return False
     
+# Klaviaturning tugmachasini bosganda "on_press" funksiyasi chaqriladi
 Keyboard.read(on_press)    

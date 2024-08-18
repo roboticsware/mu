@@ -3,6 +3,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 while True:
     n.buzzer_by_port('in1')
     wait(200)

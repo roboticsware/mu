@@ -3,6 +3,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 while True:
     if n.get_value('in3') < 30:
         n.motor_stop('right')

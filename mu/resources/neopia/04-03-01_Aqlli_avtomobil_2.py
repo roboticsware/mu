@@ -1,6 +1,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 while True:
     if n.get_value('in2') <= 10:
         n.motor_stop('both')

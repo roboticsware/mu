@@ -1,6 +1,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 def on_press(key):
   if key == Keyboard.UP:
     n.motor_rotate('both', 'forward', '10')
@@ -14,5 +15,6 @@ def on_press(key):
     n.motor_stop('both')
   elif key == Keyboard.ESC:
     return False
-  
+
+# Klaviaturning tugmachasini bosganda "on_press" funksiyasi chaqriladi
 Keyboard.read(on_press)

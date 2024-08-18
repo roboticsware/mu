@@ -1,6 +1,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 # Masofa sensor orqali to‘siqni tekshirish uchun funksiya yaratish
 def servo_motor():
         n.motor_stop('both')

@@ -3,6 +3,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 while True:
     if n.get_value('in2') <= 7:
         n.motor_move('backward')

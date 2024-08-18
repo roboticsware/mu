@@ -1,6 +1,7 @@
 from neopia import *
 
 n =  Neosoco()
+
 while True:
     if n.get_value('in1') < 80 and n.get_value('in2') < 80:
         n.servo_stop('out1')
