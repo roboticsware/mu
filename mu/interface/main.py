@@ -499,6 +499,22 @@ class Window(QMainWindow):
         self.tabs.setCurrentIndex(index)
         tab.setFocus()
 
+    def move_tab(self, tab, is_forward):
+        """
+        Move focused tab to forward / backward.
+        """
+        tab_cnt = len(self.tabs)
+        if tab_cnt:
+            index = self.tabs.indexOf(tab)
+            if is_forward:
+                index += 1
+                if index == tab_cnt: index = 0
+            else:
+                index -= 1
+                if index < 0: index = tab_cnt - 1
+            self.tabs.setCurrentIndex(index)
+            tab.setFocus()
+
     @property
     def tab_count(self):
         """
@@ -1366,10 +1382,26 @@ class Window(QMainWindow):
 
     def close_tab(self):
         """
-        Delete complete line on the cursor in the currently active tab.
+        Close the currently active tab.
         """
         if self.current_tab:
             self.tabs.removeTab(self.widgets.index(self.current_tab))
+
+    def connect_move_forward_tab(self, handler, shortcut):
+        """
+        Create a keyboard shortcut and associate it with a handler for moving 
+        a current active tab forward.
+        """
+        self.move_forward_tab_shortcut = QShortcut(QKeySequence(shortcut), self)
+        self.move_forward_tab_shortcut.activated.connect(handler)
+    
+    def connect_move_backward_tab(self, handler, shortcut):
+        """
+        Create a keyboard shortcut and associate it with a handler for moving 
+        a current active tab backward.
+        """
+        self.move_backward_tab_shortcut = QShortcut(QKeySequence(shortcut), self)
+        self.move_backward_tab_shortcut.activated.connect(handler)
 
     def show_device_selector(self):
         """

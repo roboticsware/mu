@@ -2011,6 +2011,18 @@ class Editor(QObject):
         """
         self._view.close_tab()
 
+    def move_forward_tab(self):
+        """
+        Handle a shortcut for moving the current tab forward.
+        """
+        self._view.move_tab(self._view.current_tab, True)
+
+    def move_backward_tab(self):
+        """
+        Handle a shortcut for moving the current tab backward.
+        """
+        self._view.move_tab(self._view.current_tab, False)
+
     def tidy_code(self):
         """
         Prettify code with Black.
