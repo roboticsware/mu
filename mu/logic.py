@@ -123,7 +123,6 @@ EXAMPLE_ENTRY_B_FONTS = [
 ]
 # Sources to copy over for use in PyGameZero Entry basic example apps.
 EXAMPLE_ENTRY_BASIC = [
-    "pgzhelper.py",
     "1_dog-cat.py",
     "2_make_flower.py",
     "3_robot_cleaner.py",
@@ -142,7 +141,6 @@ EXAMPLE_PGZ_IMAGES = [
     "background.png",
 ]
 EXAMPLE_PGZ = [
-    "pgzhelper.py",
     "flappybird.py",
     "flappybird_neosoco.py",
 ]
@@ -910,10 +908,6 @@ class Editor(QObject):
         if not os.path.exists(wd):
             logger.debug("Creating directory: {}".format(wd))
             os.makedirs(wd)
-        # Place pgzhelper Lib to root directory
-        shutil.copy(
-            path("pgzhelper.py", "pygamezero/"), os.path.join(wd, "pgzhelper.py")
-        )
         # Place picozero Lib to root directory
         shutil.copy(
             path("picozero.py", "pico/"), os.path.join(wd, "picozero.py")
