@@ -56,9 +56,9 @@ mode_packages = [
     # a workaround we need to manually specify it here
     ("ipython_genutils", ("ipython_genutils>=0.2.0",)),
     # For Neopia mode
-    ("neopia", ("neopia>=0.3.2",)),
+    ("neopia", ("neopia>=0.3.6",)),
     # For pgzero's extenstion
-    ("pgzhelper_rw", ("pgzhelper_rw>=1.0.8",)),
+    ("pgzhelper", ("pgzhelper_rw>=1.0.8",)),
 ]
 
 
