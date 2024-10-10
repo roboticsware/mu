@@ -1502,6 +1502,7 @@ class StatusBar(QStatusBar):
         # Progress bar
         self.progress_bar = QProgressBar()
         self.addPermanentWidget(self.progress_bar)
+        self.progress_bar.setVisible(False)
 
         # Mode selector.
         self.mode_label = QLabel()
