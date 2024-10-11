@@ -91,7 +91,7 @@ class ModeSelector(QDialog):
         for name, item in modes.items():
             if not item.is_debugger:
                 litem = ModeItem(
-                    item.name, item.description, item.icon, self.mode_list
+                    item.name, _(item.description), item.icon, self.mode_list
                 )
                 if item.icon == current_mode:
                     self.mode_list.setCurrentItem(litem)
