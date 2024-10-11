@@ -1122,6 +1122,7 @@ class Editor(QObject):
             if self.user_locale:
                 logging.info("locale in old session: {}".format(self.user_locale))
                 i18n.set_language(self.user_locale)
+        self.modes[self.mode].code_template = _("# Write your code here :-)")
 
         old_window = old_session.get("window", {})
         self._view.size_window(**old_window)
@@ -1773,6 +1774,7 @@ class Editor(QObject):
                 tab.breakpoint_handles = set()
                 tab.reset_annotations()
         self.modes[mode].ensure_state()
+        self.modes[self.mode].code_template = _("# Write your code here :-)")
         self.show_status_message(
             _("Changed to {} mode.").format(self.modes[mode].name)
         )
