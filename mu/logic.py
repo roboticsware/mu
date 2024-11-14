@@ -163,6 +163,8 @@ EXAMPLE_PGZ_IMAGES = [
     "wall.png",
     "bulletred2.png",
     "bulletblue2.png",
+    "explosion3.png",
+    "explosion4.png",
 ]
 EXAMPLE_PGZ_SOUNDS = [
     "block.wav",
