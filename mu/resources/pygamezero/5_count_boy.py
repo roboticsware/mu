@@ -12,6 +12,7 @@ pressed = False
 def draw():
     screen.fill('white')
     boy.draw()
+    game.time.sleep(0.5)
     screen.draw.text('Times: ' + str(times), (20, 20), color='black')
 
 def update():
