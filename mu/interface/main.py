@@ -327,6 +327,7 @@ class Window(QMainWindow):
     data_received = pyqtSignal(bytes)
     open_file = pyqtSignal(str)
     load_theme = pyqtSignal(str)
+    selected_text = pyqtSignal(str)
     previous_folder = None
     debug_widths = None
 
@@ -482,6 +483,11 @@ class Window(QMainWindow):
             self.open_file.emit(file)
 
         new_tab.context_menu.connect(self.on_context_menu)
+
+        @new_tab.selected_text.connect
+        def on_selected_text(text):
+            # Bubble the signal up
+            self.selected_text.emit(text)
 
         self.tabs.setCurrentIndex(new_tab_index)
         self.connect_zoom(new_tab)

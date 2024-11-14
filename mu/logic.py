@@ -898,6 +898,10 @@ class Editor(QObject):
             # Open the file
             self.direct_load(file)
 
+        @view.selected_text.connect
+        def on_selected_text(text):
+            self.find = text
+
     def setup(self, modes):
         """
         Define the available modes and ensure there's a default working
