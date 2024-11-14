@@ -140,10 +140,39 @@ EXAMPLE_PGZ_IMAGES = [
     "top.png",
     "bottom.png",
     "background.png",
+    "background1.png",
+    "background2.png",
+    "ball.png",
+    "bar.png",
+    "block.png",
+    "enemy_bullet.png",
+    "enemy1_1.png",
+    "enemy1_2.png",
+    "explosion1.png",
+    "explosion2.png",
+    "grass.png",
+    "player_bullet.png",
+    "player.png",
+    "tank_blue.png",
+    "tank_dark.png",
+    "tank_green.png",
+    "tank_red.png",
+    "tank_sand.png",
+    "wall.png",
+]
+EXAMPLE_PGZ_SOUNDS = [
+    "sfx_exp_medium12.wav",
+    "sfx_sounds_interaction25.wav",
+]
+EXAMPLE_PGZ_MUSIC = [
+    "main_theme.mp3",
 ]
 EXAMPLE_PGZ = [
     "flappybird.py",
     "flappybird_neosoco.py",
+    "battle_city.py",
+    "breakout.py",
+    "tweenbee.py",
 ]
 EXAMPLE_NEOPIA = [
     "01-01_KobiBot.py",
@@ -1007,6 +1036,20 @@ class Editor(QObject):
                         shutil.copy(
                             path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'images', sfx)
                         )  
+                if not os.path.exists(example_pgz_path + 'sounds'):
+                    logger.debug("Creating directory: {}".format('sounds'))
+                    os.makedirs(example_pgz_path + 'sounds')
+                    for sfx in EXAMPLE_PGZ_SOUNDS:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'sounds', sfx)
+                        )
+                if not os.path.exists(example_pgz_path + 'music'):
+                    logger.debug("Creating directory: {}".format('music'))
+                    os.makedirs(example_pgz_path + 'music')
+                    for sfx in EXAMPLE_PGZ_MUSIC:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'music', sfx)
+                        )
             # Neopia examples
             if not os.path.exists(example_neopia_path):
                 logger.debug("Creating directory: {}".format(example_neopia_path))
