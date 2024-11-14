@@ -98,6 +98,7 @@ EXAMPLE_ENTRY_B_IMAGES = [
     "boy_3.png",
     "desert.png",
     "treasure_box.png",
+    "treasure_box_o.png",
     "field.png",
     "mole.png",
     "toy_hammer.png"
