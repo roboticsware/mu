@@ -26,7 +26,7 @@ vy = -5
 
 
 def draw():
-    screen.blit('background', (0, 0))
+    screen.blit('space', (0, 0))
     ball.draw()
     bar.draw()
     for block in blocks:
@@ -56,7 +56,7 @@ def update():
         
     # When the ball hits the bar
     if ball.circle_colliderect(bar) == True:
-        ball.y -= 10  # 10픽셀 수직으로 먼저 튀어오르기
+        ball.y -= 10  # Move back by 10 pixels before changing a direction
         vy = -vy  # Make y of velocity opposite direction
         sounds.bar.play()
         

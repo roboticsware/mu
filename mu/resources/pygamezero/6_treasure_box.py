@@ -1,3 +1,4 @@
+import pygame
 from pgzhelper import *
 
 WIDTH = 960

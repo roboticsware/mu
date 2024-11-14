@@ -146,6 +146,7 @@ EXAMPLE_PGZ_IMAGES = [
     "ball.png",
     "bar.png",
     "block.png",
+    "space.jpg",
     "enemy_bullet.png",
     "enemy1_1.png",
     "enemy1_2.png",
@@ -160,8 +161,15 @@ EXAMPLE_PGZ_IMAGES = [
     "tank_red.png",
     "tank_sand.png",
     "wall.png",
+    "bulletred2.png",
+    "bulletblue2.png",
 ]
 EXAMPLE_PGZ_SOUNDS = [
+    "block.wav",
+    "wall.wav",
+    "bar.wav",
+    "die.wav",
+    "win.wav",
     "sfx_exp_medium12.wav",
     "sfx_sounds_interaction25.wav",
 ]
@@ -174,7 +182,7 @@ EXAMPLE_PGZ = [
     "flappybird_neosoco.py",
     "battle_city.py",
     "breakout.py",
-    "tweenbee.py",
+    "twinbee.py",
 ]
 EXAMPLE_NEOPIA = [
     "01-01_KobiBot.py",

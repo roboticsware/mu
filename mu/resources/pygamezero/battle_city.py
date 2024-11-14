@@ -107,7 +107,6 @@ def collide_bullets(bullets):
         wall_index = bullet.collidelist(walls)
         if wall_index != -1:
             del walls[wall_index]
-            enemies.remove(enemies[hit])
             bullets.remove(bullet)
         
         # Out of screen
