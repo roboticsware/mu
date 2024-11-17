@@ -682,8 +682,16 @@ class MuFileList(QListWidget):
     """
 
     disable = pyqtSignal()
+    enable = pyqtSignal()
     list_files = pyqtSignal()
+    list_sub_files = pyqtSignal(list, str)
     set_message = pyqtSignal(str)
+    pbar_update = pyqtSignal(int)
+    cur_home_dir = ''
+
+    @classmethod
+    def set_cur_home_dir(cls, val):
+        cls.cur_home_dir = val
 
     def show_confirm_overwrite_dialog(self):
         """
@@ -725,7 +733,7 @@ class MicroPythonDeviceFileList(MuFileList):
             ):
                 self.disable.emit()
                 local_filename = os.path.join(
-                    self.home, source.currentItem().text()
+                    self.cur_home_dir, source.currentItem().text()
                 )
                 msg = _("Copying '{}' to device.").format(local_filename)
                 logger.info(msg)
@@ -739,6 +747,11 @@ class MicroPythonDeviceFileList(MuFileList):
         msg = _("'{}' successfully copied to device.").format(microbit_file)
         self.set_message.emit(msg)
         self.list_files.emit()
+        self.pbar_update.emit(-1)  # To remove the pbar UI
+        self.enable.emit()
+
+    def on_put_update(self, amount):
+        self.pbar_update.emit(amount)
 
     def contextMenuEvent(self, event):
         menu_current_item = self.currentItem()
@@ -809,6 +822,8 @@ class LocalFileList(MuFileList):
         ).format(microbit_file)
         self.set_message.emit(msg)
         self.list_files.emit()
+        self.pbar_update.emit(-1)  # To remove the pbar UI
+        self.enable.emit()
 
     def contextMenuEvent(self, event):
         menu_current_item = self.currentItem()
@@ -848,6 +863,20 @@ class LocalFileList(MuFileList):
             path = os.path.join(self.home, local_filename)
             self.put.emit(path, "main.py")
 
+    def on_item_double_clicked(self, item):
+        # Get the path
+        local_name = item.text()
+        path = os.path.join(self.home, local_name)
+        # Check the name is directory or file
+        if os.path.isfile(path):
+            logger.info("Open {} internally".format(local_name))
+            # Send the signal bubbling up the tree
+            self.open_file.emit(path)
+        elif os.path.isdir(path):
+            self.home = path
+            MuFileList.set_cur_home_dir(path)  # Change parent's sharedlass variable
+            self.list_sub_files.emit([], path + '/')  # Go to sub directory
+
 
 class FileSystemPane(QFrame):
     """
@@ -860,6 +889,7 @@ class FileSystemPane(QFrame):
     set_warning = pyqtSignal(str)
     list_files = pyqtSignal()
     open_file = pyqtSignal(str)
+    set_pbar_update = pyqtSignal(int)
 
     def __init__(self, home):
         super().__init__()
@@ -881,7 +911,7 @@ class FileSystemPane(QFrame):
         local_label.setText(_("Files on your computer:"))
         self.microbit_label = microbit_label
         self.local_label = local_label
-        self.microbit_fs = microbit_fs
+        self.microbit_fs = microbit_fs 
         self.local_fs = local_fs
         self.set_font_size()
         layout.addWidget(microbit_label, 0, 0)
@@ -889,9 +919,13 @@ class FileSystemPane(QFrame):
         layout.addWidget(microbit_fs, 1, 0)
         layout.addWidget(local_fs, 1, 1)
         self.microbit_fs.disable.connect(self.disable)
+        self.microbit_fs.enable.connect(self.enable)
         self.microbit_fs.set_message.connect(self.show_message)
+        self.microbit_fs.pbar_update.connect(self.show_progressbar_update)
         self.local_fs.disable.connect(self.disable)
+        self.local_fs.enable.connect(self.enable)
         self.local_fs.set_message.connect(self.show_message)
+        self.local_fs.list_sub_files.connect(self.on_ls)
 
     def disable(self):
         """
@@ -908,8 +942,8 @@ class FileSystemPane(QFrame):
         """
         self.microbit_fs.setDisabled(False)
         self.local_fs.setDisabled(False)
-        self.microbit_fs.setAcceptDrops(True)
-        self.local_fs.setAcceptDrops(True)
+        self.microbit_fs.setAcceptDrops(True)  # Temporaraily
+        self.local_fs.setAcceptDrops(False)
 
     def show_message(self, message):
         """
@@ -923,7 +957,13 @@ class FileSystemPane(QFrame):
         """
         self.set_warning.emit(message)
 
-    def on_ls(self, microbit_files):
+    def show_progressbar_update(self, amount):
+        """
+        Emits the set_pbar_update signal.
+        """
+        self.set_pbar_update.emit(amount)
+
+    def on_ls(self, microbit_files, cwd=None):
         """
         Displays a list of the files on the micro:bit.
 
@@ -931,15 +971,22 @@ class FileSystemPane(QFrame):
         between Mu and the micro:bit, this enables the controls again for
         further interactions to take place.
         """
-        self.microbit_fs.clear()
+        if cwd:
+            self.home = cwd  # Update home directory
+        else: 
+            cwd = self.home
+        if len(microbit_files):
+            self.microbit_fs.clear()
+            for f in microbit_files:
+                self.microbit_fs.addItem(f)
         self.local_fs.clear()
-        for f in microbit_files:
-            self.microbit_fs.addItem(f)
         local_files = [
             f
-            for f in os.listdir(self.home)
-            if os.path.isfile(os.path.join(self.home, f))
+            for f in os.listdir(cwd)
         ]
+        # We're not in a root directory
+        if os.path.dirname(cwd) != cwd:
+            local_files.insert(0, '..')  # Add a item to go upper directory
         local_files.sort()
         for f in local_files:
             self.local_fs.addItem(f)
@@ -971,6 +1018,7 @@ class FileSystemPane(QFrame):
                 "more information."
             ).format(filename)
         )
+        self.enable()
 
     def on_delete_fail(self, filename):
         """
@@ -995,6 +1043,7 @@ class FileSystemPane(QFrame):
                 "more information."
             ).format(filename)
         )
+        self.enable()
 
     def set_theme(self, theme):
         pass

@@ -119,7 +119,7 @@ def get_serial():
     return Serial(port, SERIAL_BAUD_RATE, timeout=1, parity="N")
 
 
-def execute(commands, serial=None):
+def execute(commands, serial=None, show_progress=False, callback=None):
     """
     Sends the command to the connected micro:bit via serial and returns the
     result. If no serial connection is provided, attempts to autodetect the
@@ -139,17 +139,22 @@ def execute(commands, serial=None):
     raw_on(serial)
     time.sleep(0.1)
     # Write the actual command and send CTRL-D to evaluate.
-    for command in commands:
+    total_size = len(commands)
+    for cnt, command in enumerate(commands):
         command_bytes = command.encode("utf-8")
+        # Up to 32 bytes can be stored separately in both transmit and receive modes of the UART
         for i in range(0, len(command_bytes), 32):
             serial.write(command_bytes[i : min(i + 32, len(command_bytes))])
             time.sleep(0.01)
-        serial.write(b"\x04")
+        serial.write(b"\x04")  # Soft Reset with CTRL-D
         response = serial.read_until(b"\x04>")  # Read until prompt.
-        out, err = response[2:-2].split(b"\x04", 1)  # Split stdout, stderr
-        result += out
-        if err:
-            return b"", err
+        if len(response) > 3:  # Check if  the split is possible
+            out, err = response[2:-2].split(b"\x04", 1)  # Split stdout, stderr
+            result += out
+            if err:
+                return b"", err
+        if show_progress:
+            callback.emit(round(cnt / total_size * 100))
     time.sleep(0.1)
     raw_off(serial)
     if close_serial:
@@ -204,7 +209,7 @@ def rm(filename, serial=None):
     return True
 
 
-def put(filename, target=None, serial=None):
+def put(self, filename, target=None, serial=None):
     """
     Puts a referenced file on the LOCAL file system onto the
     file system on the BBC micro:bit.
@@ -214,7 +219,7 @@ def put(filename, target=None, serial=None):
 
     Returns True for success or raises an IOError if there's a problem.
     """
-    if not os.path.isfile(filename):
+    if os.path.isdir(filename) or not os.path.isfile(filename):
         raise IOError("No such file.")
     with open(filename, "rb") as local:
         content = local.read()
@@ -230,13 +235,13 @@ def put(filename, target=None, serial=None):
             commands.append("f(" + repr(line) + ")")
         content = content[64:]
     commands.append("fd.close()")
-    out, err = execute(commands, serial)
+    out, err = execute(commands, serial, True, self.on_put_update_file)
     if err:
         raise IOError(clean_error(err))
     return True
 
 
-def get(filename, target=None, serial=None):
+def get(self, filename, target=None, serial=None):
     """
     Gets a referenced file on the device's file system and copies it to the
     target (or current working directory if unspecified).
@@ -270,12 +275,9 @@ def get(filename, target=None, serial=None):
         "while result:\n result = r(32)\n if result:\n  u.write(result)\n",
         "f.close()",
     ]
-    out, err = execute(commands, serial)
+    out, err = execute(commands, serial, True, self.on_put_update_file)
     if err:
         raise IOError(clean_error(err))
-    # Recombine the bytes while removing "b'" from start and "'" from end.
-    with open(target, "wb") as f:
-        f.write(out)
     return True
 
 

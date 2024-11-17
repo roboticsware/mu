@@ -58,7 +58,7 @@ install_requires = [
     "flake8 >= 3.8.3",
     # Clamp click max version to workaround incompatibility with black<22.1.0
     "click<=8.0.4",
-    "black>=19.10b0,<22.1.0;python_version>'3.5'",
+    "black>=19.10b0,<22.1.0",
     "platformdirs>=2.0.0,<3.0.0",
     "semver>=2.8.0",
     # virtualenv vendors pip, we need at least pip v19.3 to install some
@@ -75,6 +75,9 @@ install_requires = [
     # Needed to resolve an issue with paths in the user virtual environment
     #
     "pywin32; sys_platform=='win32'",
+    # pkg_resources has been removed in Python 3.12, until we move to importlib
+    # we need it via setuptools: https://github.com/mu-editor/mu/issues/2485
+    "setuptools",
 ]
 
 
@@ -128,7 +131,7 @@ setup(
         "mu.modes.api",
         "mu.wheels",
     ],
-    python_requires=">=3.7,<3.12",
+    python_requires=">=3.7,<3.13",
     install_requires=install_requires,
     extras_require=extras_require,
     package_data={"mu.wheels": ["*.whl", "*.zip"]},
@@ -152,6 +155,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Education",
         "Topic :: Games/Entertainment",
         "Topic :: Software Development",

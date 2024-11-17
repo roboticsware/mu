@@ -11,8 +11,17 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-latest, macos-11, macos-latest, windows-2019, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        # macos-13 is the latest release on x86, and macos-14 is arm64
+        os: [ubuntu-20.04, ubuntu-latest, macos-11, macos-13, macos-14, windows-2019, windows-latest]
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
+        exclude:
+          # These Python versions are not available in macOS arm64
+          - os: macos-14
+            python-version: '3.7'
+          - os: macos-14
+            python-version: '3.8'
+          - os: macos-14
+            python-version: '3.9'
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: Test Py ${{ matrix.python-version }} - ${{ matrix.os }}
@@ -103,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker-tag: ['buster-2021-05-28', 'buster-legacy-2022-04-07']
+        docker-tag: ['buster-2021-05-28', 'buster-legacy-2023-05-03', 'bullseye-2023-05-03']
       fail-fast: false
     services:
       rpios:
@@ -115,7 +124,7 @@ jobs:
       - name: Wait 2m30s for the docker image to start up QEMU and Raspberry Pi OS
         run: sleep 150
       - name: Clone project & setup it as the bash entry directory
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: rpios
           username: pi
@@ -130,7 +139,7 @@ jobs:
             echo "cd ~/mu" > ~/.bashrc_new && cat ~/.bashrc >> ~/.bashrc_new
             rm ~/.bashrc && mv ~/.bashrc_new ~/.bashrc
       - name: Install Mu extra apt dependencies
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: rpios
           username: pi
@@ -140,22 +149,24 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y python3-virtualenv
       - name: Create venv and install Python dependencies
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: rpios
           username: pi
           password: raspberry
           port:  ${{ job.services.rpios.ports[5022] }}
           command_timeout: 20m
+          # Some compiled packages take a while to be built in piwheels, so to
+          # avoid intermittent pip install failures we use `--prefer-binary`
           script: |
             python3 -m virtualenv ~/mu/.venv -v --python=python3 --system-site-packages
             echo "source ~/mu/.venv/bin/activate" > ~/.bashrc_new && cat ~/.bashrc >> ~/.bashrc_new
             rm ~/.bashrc && mv ~/.bashrc_new ~/.bashrc
             source .venv/bin/activate
             python -m pip list
-            python -m pip install ."[dev]"
+            python -m pip install ."[dev]" --prefer-binary
       - name: Environment info
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: rpios
           username: pi
@@ -168,7 +179,7 @@ jobs:
             python3 -m pip --version
             python3 -m pip list
       - name: Run tests
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: rpios
           username: pi

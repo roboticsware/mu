@@ -2,6 +2,9 @@
 """
 Takes a JSON representation of an API and emits elements to be inserted into a
 Python list such that they conform to Scintilla's API description DSL.
+
+HOWTO:
+python mkapi.py <json file>
 """
 import sys
 import json
@@ -19,5 +22,5 @@ if __name__ == "__main__":
         name = i["name"]
         args = ", ".join(i["args"]) if i["args"] else ""
         description = i["description"].replace("\u2013", "--")
-        content = repr("{}({}) \n{}".format(name, args, description))
+        content = repr("{}({}) \n\n{}".format(name, args, description))
         print("    _({}),".format(content))

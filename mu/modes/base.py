@@ -379,6 +379,17 @@ class BaseMode(QObject):
         """
         pass
 
+    def merge_apis(self, fallback_apis, locale_apis):
+        for locale_api in locale_apis:
+            func_name =  locale_api.split('(')[0]
+            for idx, data in enumerate(fallback_apis):
+                if func_name in data:
+                    fallback_apis[idx] = locale_api
+                    break
+            if data[0] == len(fallback_apis) - 1: # new api
+                fallback_apis.append(locale_api)
+        return fallback_apis
+
 
 class MicroPythonMode(BaseMode):
     """
@@ -647,6 +658,8 @@ class FileManager(QObject):
     on_get_file = pyqtSignal(str)
     # Emitted when the file with referenced filename is put onto the device.
     on_put_file = pyqtSignal(str)
+    # Emitted while the file with referenced filename is put onto the device.
+    on_put_update_file = pyqtSignal(int)
     # Emitted when the file with referenced filename is deleted from the
     # device.
     on_delete_file = pyqtSignal(str)
@@ -703,11 +716,12 @@ class FileManager(QObject):
         failure signal.
         """
         try:
-            microfs.get(device_filename, local_filename, serial=self.serial)
+            microfs.get(self, device_filename, local_filename, serial=self.serial)
             self.on_get_file.emit(device_filename)
         except Exception as ex:
             logger.error(ex)
             self.on_get_fail.emit(device_filename)
+            self.on_put_update_file.emit(-1)  # To remove the pbar UI
 
     def put(self, local_filename, target=None):
         """
@@ -716,11 +730,12 @@ class FileManager(QObject):
         a failure signal.
         """
         try:
-            microfs.put(local_filename, target=target, serial=self.serial)
+            microfs.put(self, local_filename, target=target, serial=self.serial)
             self.on_put_file.emit(os.path.basename(local_filename))
         except Exception as ex:
             logger.error(ex)
             self.on_put_fail.emit(local_filename)
+            self.on_put_update_file.emit(-1)  # To remove the pbar UI
 
     def delete(self, device_filename):
         """

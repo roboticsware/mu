@@ -98,6 +98,7 @@ EXAMPLE_ENTRY_B_IMAGES = [
     "boy_3.png",
     "desert.png",
     "treasure_box.png",
+    "treasure_box_o.png",
     "field.png",
     "mole.png",
     "toy_hammer.png"
@@ -130,8 +131,82 @@ EXAMPLE_ENTRY_BASIC = [
     "5_count_boy.py",
     "6_treasure_box.py",
     "7_mole_game.py",
-    "pgzhelper.py"
 ]
+EXAMPLE_PGZ_IMAGES = [
+    "bird0.png",
+    "bird1.png",
+    "bird2.png",
+    "birddead.png",
+    "top.png",
+    "bottom.png",
+    "background.png",
+    "background1.png",
+    "background2.png",
+    "ball.png",
+    "bar.png",
+    "block.png",
+    "space.jpg",
+    "enemy_bullet.png",
+    "enemy1_1.png",
+    "enemy1_2.png",
+    "explosion1.png",
+    "explosion2.png",
+    "grass.png",
+    "player_bullet.png",
+    "player.png",
+    "tank_blue.png",
+    "tank_dark.png",
+    "tank_green.png",
+    "tank_red.png",
+    "tank_sand.png",
+    "wall.png",
+    "bulletred2.png",
+    "bulletblue2.png",
+    "explosion3.png",
+    "explosion4.png",
+]
+EXAMPLE_PGZ_SOUNDS = [
+    "block.wav",
+    "wall.wav",
+    "bar.wav",
+    "die.wav",
+    "win.wav",
+    "sfx_exp_medium12.wav",
+    "sfx_sounds_interaction25.wav",
+]
+EXAMPLE_PGZ_MUSIC = [
+    "main_theme.mp3",
+]
+EXAMPLE_PGZ = [
+    "flappybird.py",
+    "flappybird_neosoco.py",
+    "battle_city.py",
+    "breakout.py",
+    "twinbee.py",
+]
+EXAMPLE_NEOPIA = [
+    "01-01_KobiBot.py",
+    "01-02_FutbolBot.py",
+    "01-06_Sehrli_ansanmbl.py",
+    "02-01-01_Barami.py",
+    "02-01-02_Barami.py",
+    "02-02_Neo_Bigl.py",
+    "02-03_Neo_kliner.py",
+    "02-04-01_Aqlli_avtomobil.py",
+    "02-04-02_Aqlli_avtomobil.py",
+    "02-05-01_Chiziq_trekeri.py",
+    "02-05-02_Chiziq_trekeri.py",
+    "03-01_AI_Radiokarnay.py",
+    "03-02_AI_Kamera.py",
+    "03-03_AI_Obyekt_topish.py",
+    "04-01_Fonar.py",
+    "04-03-01_Aqlli_avtomobil_2.py",
+    "04-03-02_Aqlli_avtomobil_2.py",
+    "04-04_Samosval_avtomobili.py",
+    "04-05_Robot_qol.py",
+    "04-06_Konveyer.py"
+]
+
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
     _("Hello, World!"),
     _(
@@ -863,6 +938,10 @@ class Editor(QObject):
             # Open the file
             self.direct_load(file)
 
+        @view.selected_text.connect
+        def on_selected_text(text):
+            self.find = text
+
     def setup(self, modes):
         """
         Define the available modes and ensure there's a default working
@@ -876,16 +955,18 @@ class Editor(QObject):
         if not os.path.exists(wd):
             logger.debug("Creating directory: {}".format(wd))
             os.makedirs(wd)
-        # Ensure PyGameZero assets are copied over.
+        # Place picozero Lib to root directory
         shutil.copy(
-            path("pgzhelper.py", "pygamezero/"), os.path.join(wd, "pgzhelper.py")
+            path("picozero.py", "pico/"), os.path.join(wd, "picozero.py")
         )
         images_path = os.path.join(wd, "images")
         fonts_path = os.path.join(wd, "fonts")
         sounds_path = os.path.join(wd, "sounds")
         music_path = os.path.join(wd, "music")
         examples_path = os.path.join(wd, "examples")
-        entry_basic_path = os.path.join(wd, "examples/entry_basic/")
+        example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
+        example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
+        example_neopia_path = os.path.join(wd, "examples/neopia/")         
         if not os.path.exists(images_path):
             logger.debug("Creating directory: {}".format(images_path))
             os.makedirs(images_path)
@@ -921,34 +1002,72 @@ class Editor(QObject):
         if not os.path.exists(examples_path):
             logger.debug("Creating directory: {}".format(examples_path))
             os.makedirs(examples_path)
-            if not os.path.exists(entry_basic_path):
-                logger.debug("Creating directory: {}".format(entry_basic_path))
-                os.makedirs(entry_basic_path)
+            # Entry basic examples
+            if not os.path.exists(example_entry_b_path):
+                logger.debug("Creating directory: {}".format(example_entry_b_path))
+                os.makedirs(example_entry_b_path)
                 for sfx in EXAMPLE_ENTRY_BASIC:
                     shutil.copy(
-                        path(sfx, "pygamezero/"), os.path.join(entry_basic_path, sfx)
+                        path(sfx, "pygamezero/"), os.path.join(example_entry_b_path, sfx)
                     )
-                if not os.path.exists(entry_basic_path + 'images'):
+                if not os.path.exists(example_entry_b_path + 'images'):
                     logger.debug("Creating directory: {}".format('images'))
-                    os.makedirs(entry_basic_path + 'images')
+                    os.makedirs(example_entry_b_path + 'images')
                     for sfx in EXAMPLE_ENTRY_B_IMAGES:
                         shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(entry_basic_path + 'images', sfx)
+                            path(sfx, "pygamezero/"), os.path.join(example_entry_b_path + 'images', sfx)
                         )
-                if not os.path.exists(entry_basic_path + 'sounds'):
+                if not os.path.exists(example_entry_b_path + 'sounds'):
                     logger.debug("Creating directory: {}".format('sounds'))
-                    os.makedirs(entry_basic_path + 'sounds')
+                    os.makedirs(example_entry_b_path + 'sounds')
                     for sfx in EXAMPLE_ENTRY_B_SOUNDS:
                         shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(entry_basic_path + 'sounds', sfx)
+                            path(sfx, "pygamezero/"), os.path.join(example_entry_b_path + 'sounds', sfx)
                         )
-                if not os.path.exists(entry_basic_path + 'fonts'):
+                if not os.path.exists(example_entry_b_path + 'fonts'):
                     logger.debug("Creating directory: {}".format('fonts'))
-                    os.makedirs(entry_basic_path + 'fonts')
+                    os.makedirs(example_entry_b_path + 'fonts')
                     for sfx in EXAMPLE_ENTRY_B_FONTS:
                         shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(entry_basic_path + 'fonts', sfx)
+                            path(sfx, "pygamezero/"), os.path.join(example_entry_b_path + 'fonts', sfx)
                         )
+            # Pygame zero examples
+            if not os.path.exists(example_pgz_path):
+                logger.debug("Creating directory: {}".format(example_pgz_path))
+                os.makedirs(example_pgz_path)
+                for sfx in EXAMPLE_PGZ:
+                    shutil.copy(
+                        path(sfx, "pygamezero/"), os.path.join(example_pgz_path, sfx)
+                    )
+                if not os.path.exists(example_pgz_path + 'images'):
+                    logger.debug("Creating directory: {}".format('images'))
+                    os.makedirs(example_pgz_path + 'images')
+                    for sfx in EXAMPLE_PGZ_IMAGES:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'images', sfx)
+                        )  
+                if not os.path.exists(example_pgz_path + 'sounds'):
+                    logger.debug("Creating directory: {}".format('sounds'))
+                    os.makedirs(example_pgz_path + 'sounds')
+                    for sfx in EXAMPLE_PGZ_SOUNDS:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'sounds', sfx)
+                        )
+                if not os.path.exists(example_pgz_path + 'music'):
+                    logger.debug("Creating directory: {}".format('music'))
+                    os.makedirs(example_pgz_path + 'music')
+                    for sfx in EXAMPLE_PGZ_MUSIC:
+                        shutil.copy(
+                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'music', sfx)
+                        )
+            # Neopia examples
+            if not os.path.exists(example_neopia_path):
+                logger.debug("Creating directory: {}".format(example_neopia_path))
+                os.makedirs(example_neopia_path)
+                for sfx in EXAMPLE_NEOPIA:
+                    shutil.copy(
+                        path(sfx, "neopia/"), os.path.join(example_neopia_path, sfx)
+                    )
         # Ensure Web based assets are copied over.
         template_path = os.path.join(wd, "templates")
         static_path = os.path.join(wd, "static")
@@ -1059,7 +1178,9 @@ class Editor(QObject):
         if "locale" in old_session:
             self.user_locale = old_session["locale"].strip()
             if self.user_locale:
+                logging.info("locale in old session: {}".format(self.user_locale))
                 i18n.set_language(self.user_locale)
+        self.modes[self.mode].code_template = _("# Write your code here :-)")
 
         old_window = old_session.get("window", {})
         self._view.size_window(**old_window)
@@ -1711,6 +1832,7 @@ class Editor(QObject):
                 tab.breakpoint_handles = set()
                 tab.reset_annotations()
         self.modes[mode].ensure_state()
+        self.modes[self.mode].code_template = _("# Write your code here :-)")
         self.show_status_message(
             _("Changed to {} mode.").format(self.modes[mode].name)
         )
@@ -1772,6 +1894,12 @@ class Editor(QObject):
         Displays the referenced message for duration seconds.
         """
         self._view.status_bar.set_message(message, duration * 1000)
+
+    def show_progressbar_update(self, amount):
+        """
+        Displays the referenced amount on the progress bar.
+        """
+        self._view.status_bar.set_pbar_value(amount)
 
     def debug_toggle_breakpoint(self, margin, line, modifiers):
         """
@@ -1934,11 +2062,23 @@ class Editor(QObject):
         """
         self._view.toggle_comments()
 
-    def delete_complete_line(self):
+    def close_tab(self):
         """
-        Handle a shortcut for deleting a complete line on the current cursor.
+        Handle a shortcut for closing the current tab.
         """
-        self._view.toggle_comments()
+        self._view.close_tab()
+
+    def move_forward_tab(self):
+        """
+        Handle a shortcut for moving the current tab forward.
+        """
+        self._view.move_tab(self._view.current_tab, True)
+
+    def move_backward_tab(self):
+        """
+        Handle a shortcut for moving the current tab backward.
+        """
+        self._view.move_tab(self._view.current_tab, False)
 
     def tidy_code(self):
         """

@@ -471,6 +471,9 @@ def run():
     find_again_handlers = (editor.find_again, editor.find_again_backward)
     editor_window.connect_find_again(find_again_handlers, "F3")
     editor_window.connect_toggle_comments(editor.toggle_comments, "Ctrl+K")
+    editor_window.connect_close_tab(editor.close_tab, "Ctrl+W")
+    editor_window.connect_move_forward_tab(editor.move_forward_tab, "Ctrl+.")
+    editor_window.connect_move_backward_tab(editor.move_backward_tab, "Ctrl+,")
     editor.connect_to_status_bar(editor_window.status_bar)
 
     # Restore the previous session along with files passed by the os

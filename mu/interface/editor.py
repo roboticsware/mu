@@ -89,6 +89,8 @@ class EditorPane(QsciScintilla):
     open_file = pyqtSignal(str)
     # Signal fired when a context menu is requested.
     context_menu = pyqtSignal()
+    # Signal fired when a text selection is changed.
+    selected_text = pyqtSignal(str)
 
     def __init__(self, path, text, newline=NEWLINE):
         super().__init__()
@@ -511,6 +513,7 @@ class EditorPane(QsciScintilla):
         # valid identifier-type word.
         #
         selected_text = self.selectedText()
+        self.selected_text.emit(selected_text)
         if not RE_VALID_WORD.match(selected_text):
             return
 

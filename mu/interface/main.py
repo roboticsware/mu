@@ -36,6 +36,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QProgressDialog,
+    QProgressBar,
 )
 from PyQt6.QtGui import (
     QKeySequence,
@@ -224,9 +225,8 @@ class FileTabs(QTabWidget):
         window = self.nativeParentWidget()
         modified = self.widget(tab_id).isModified()
         if modified:
-            msg = (
-                "There is un-saved work, closing the tab will cause you "
-                "to lose it."
+            msg = _(
+                "There is un-saved work, closing the tab will cause you to lose it."
             )
             if window.show_confirmation(msg) == QMessageBox.Cancel:
                 return
@@ -330,6 +330,7 @@ class Window(QMainWindow):
     data_received = pyqtSignal(bytes)
     open_file = pyqtSignal(str)
     load_theme = pyqtSignal(str)
+    selected_text = pyqtSignal(str)
     previous_folder = None
     debug_widths = None
 
@@ -486,6 +487,11 @@ class Window(QMainWindow):
 
         new_tab.context_menu.connect(self.on_context_menu)
 
+        @new_tab.selected_text.connect
+        def on_selected_text(text):
+            # Bubble the signal up
+            self.selected_text.emit(text)
+
         self.tabs.setCurrentIndex(new_tab_index)
         self.connect_zoom(new_tab)
         self.set_theme(self.theme)
@@ -501,6 +507,22 @@ class Window(QMainWindow):
         index = self.tabs.indexOf(tab)
         self.tabs.setCurrentIndex(index)
         tab.setFocus()
+
+    def move_tab(self, tab, is_forward):
+        """
+        Move focused tab to forward / backward.
+        """
+        tab_cnt = len(self.tabs)
+        if tab_cnt:
+            index = self.tabs.indexOf(tab)
+            if is_forward:
+                index += 1
+                if index == tab_cnt: index = 0
+            else:
+                index -= 1
+                if index < 0: index = tab_cnt - 1
+            self.tabs.setCurrentIndex(index)
+            tab.setFocus()
 
     @property
     def tab_count(self):
@@ -631,8 +653,11 @@ class Window(QMainWindow):
         self.fs_pane.microbit_fs.list_files.connect(file_manager.ls)
         self.fs_pane.local_fs.get.connect(file_manager.get)
         self.fs_pane.local_fs.put.connect(file_manager.put)
+        self.fs_pane.local_fs.pbar_update.connect(self.fs_pane.microbit_fs.on_put_update)
+        self.fs_pane.local_fs.itemDoubleClicked.connect(self.fs_pane.local_fs.on_item_double_clicked)
         self.fs_pane.local_fs.list_files.connect(file_manager.ls)
         file_manager.on_put_file.connect(self.fs_pane.microbit_fs.on_put)
+        file_manager.on_put_update_file.connect(self.fs_pane.microbit_fs.on_put_update)
         file_manager.on_delete_file.connect(self.fs_pane.microbit_fs.on_delete)
         file_manager.on_get_file.connect(self.fs_pane.local_fs.on_get)
         file_manager.on_list_fail.connect(self.fs_pane.on_ls_fail)
@@ -1356,6 +1381,37 @@ class Window(QMainWindow):
         if self.current_tab:
             self.current_tab.toggle_comments()
 
+    def connect_close_tab(self, handler, shortcut):
+        """
+        Create a keyboard shortcut and associate it with a handler for closing 
+        a current active tab.
+        """
+        self.close_tab_shortcut = QShortcut(QKeySequence(shortcut), self)
+        self.close_tab_shortcut.activated.connect(handler)
+
+    def close_tab(self):
+        """
+        Close the currently active tab.
+        """
+        if self.current_tab:
+            self.tabs.removeTab(self.widgets.index(self.current_tab))
+
+    def connect_move_forward_tab(self, handler, shortcut):
+        """
+        Create a keyboard shortcut and associate it with a handler for moving 
+        a current active tab forward.
+        """
+        self.move_forward_tab_shortcut = QShortcut(QKeySequence(shortcut), self)
+        self.move_forward_tab_shortcut.activated.connect(handler)
+    
+    def connect_move_backward_tab(self, handler, shortcut):
+        """
+        Create a keyboard shortcut and associate it with a handler for moving 
+        a current active tab backward.
+        """
+        self.move_backward_tab_shortcut = QShortcut(QKeySequence(shortcut), self)
+        self.move_backward_tab_shortcut.activated.connect(handler)
+
     def show_device_selector(self):
         """
         Reveals the device selector in the status bar
@@ -1452,6 +1508,11 @@ class StatusBar(QStatusBar):
         self.mode = mode
         self.msg_duration = 5
 
+        # Progress bar
+        self.progress_bar = QProgressBar()
+        self.addPermanentWidget(self.progress_bar)
+        self.progress_bar.setVisible(False)
+
         # Mode selector.
         self.mode_label = QLabel()
         self.mode_label.setToolTip(_("Mu's current mode of behaviour."))
@@ -1516,3 +1577,9 @@ class StatusBar(QStatusBar):
             msg = _("Detected new {} device.").format(device.long_mode_name)
 
         self.set_message(msg, self.msg_duration * 1000)
+
+    def set_pbar_value(self, amount):
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setValue(amount)
+        if amount >= 100 or amount < 0:
+            self.progress_bar.setVisible(False)

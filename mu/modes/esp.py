@@ -22,6 +22,7 @@ from mu.modes.api import ESP_APIS, SHARED_APIS
 from mu.interface.panes import CHARTS
 from PyQt6.QtCore import QThread
 import os
+from mu.resources import load_icon
 
 
 logger = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ class ESPMode(MicroPythonMode):
     description = _("Write MicroPython on ESP8266/ESP32 boards.")
     icon = "esp"
     fs = None
+    running = False
 
     # The below list defines the supported devices, however, many
     # devices are using the exact same FTDI USB-interface, with vendor
@@ -127,12 +129,9 @@ class ESPMode(MicroPythonMode):
             if self.repl:
                 # Remove REPL
                 super().toggle_repl(event)
-                self.set_buttons(files=True)
             elif not (self.repl):
                 # Add REPL
                 super().toggle_repl(event)
-                if self.repl:
-                    self.set_buttons(files=False)
         else:
             message = _("REPL and file system cannot work at the same time.")
             information = _(
@@ -151,7 +150,7 @@ class ESPMode(MicroPythonMode):
             super().toggle_plotter(event)
             if self.plotter:
                 self.set_buttons(files=False)
-            elif not (self.repl or self.plotter):
+            elif not self.running:
                 self.set_buttons(files=True)
         else:
             message = _(
@@ -181,30 +180,45 @@ class ESPMode(MicroPythonMode):
             return
         """
         logger.info("Running script.")
-        # Grab the Python script.
-        tab = self.view.current_tab
-        if tab is None:
-            # There is no active text editor.
-            message = _("Cannot run anything without any active editor tabs.")
-            information = _(
-                "Running transfers the content of the current tab"
-                " onto the device. It seems like you don't have "
-                " any tabs open."
-            )
-            self.view.show_message(message, information)
-            return
-        python_script = tab.text().split("\n")
-        if not self.repl:
-            self.toggle_repl(None)
-        if self.repl and self.connection:
-            self.connection.send_commands(python_script)
+        run_slot = self.view.button_bar.slots["run"]
+        if not self.running:
+            # Grab the Python script.
+            tab = self.view.current_tab
+            if tab is None:
+                # There is no active text editor.
+                message = _("Cannot run anything without any active editor tabs.")
+                information = _(
+                    "Running transfers the content of the current tab"
+                    " onto the device. It seems like you don't have "
+                    " any tabs open."
+                )
+                self.view.show_message(message, information)
+                return
+            run_slot.setIcon(load_icon("stop"))
+            run_slot.setText(_("Stop"))
+            self.set_buttons(files=False)
+            self.set_buttons(repl=False)
+            python_script = tab.text().split("\n")
+            if not self.repl:
+                self.toggle_repl(None) # On
+            if self.repl and self.connection:
+                self.connection.send_commands(python_script)
+            self.running =  True
+        else:
+            run_slot.setIcon(load_icon("run"))
+            run_slot.setText(_("Run"))
+            self.set_buttons(files=True)
+            self.set_buttons(repl=True)
+            self.toggle_repl(None) # Off
+            self.toggle_repl(None) # On - Reset
+            self.running = False
 
     def toggle_files(self, event):
         """
         Check for the existence of the REPL or plotter before toggling the file
         system navigator for the MicroPython device on or off.
         """
-        if self.repl:
+        if self.plotter:
             message = _(
                 "File system cannot work at the same time as the "
                 "REPL or plotter."
@@ -216,6 +230,8 @@ class ESPMode(MicroPythonMode):
             )
             self.view.show_message(message, information)
         else:
+            if self.repl:
+                self.toggle_repl(None) # Off
             if self.fs is None:
                 self.add_fs()
                 if self.fs:
@@ -268,6 +284,7 @@ class ESPMode(MicroPythonMode):
         )
         self.fs.set_message.connect(self.editor.show_status_message)
         self.fs.set_warning.connect(self.view.show_message)
+        self.fs.set_pbar_update.connect(self.editor.show_progressbar_update)
         self.file_manager_thread.start()
 
     def remove_fs(self):
