@@ -716,6 +716,7 @@ class MicroPythonDeviceFileList(MuFileList):
     def __init__(self, home):
         super().__init__()
         self.home = home
+        self.cur_home_dir = home
         self.setDragDropMode(QListWidget.DragDrop)
 
     def dropEvent(self, event):
