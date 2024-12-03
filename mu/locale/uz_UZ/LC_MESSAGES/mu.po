@@ -446,6 +446,10 @@ msgstr "“{}” faylini qurilmaga o'chirishda muammo yuz berdi. Qo'shimcha ma'l
 msgid "There was a problem getting '{}' from the device. Please check Mu's logs for more information."
 msgstr "“{}” faylini qurilmaga olishda muammo yuz berdi. Qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
 
+#: mu/interface/panes.py:1034
+msgid "The file open in device file system, Currently not supported"
+msgstr "Qurilmada fayl ochilmoqda, hozirda qo'llab-quvvatlash qilinmaydi"
+
 #: mu/interface/widgets.py:70 mu/interface/widgets.py:141
 #: mu/interface/widgets.py:154
 msgid "No device connected."
