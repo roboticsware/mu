@@ -177,7 +177,7 @@ def clean_error(err):
     return "There was an error."
 
 
-def ls(serial=None):
+def ls(path, serial=None):
     """
     List the files on the micro:bit.
 
@@ -187,11 +187,19 @@ def ls(serial=None):
     Returns a list of the files on the connected device or raises an IOError if
     there's a problem.
     """
-    out, err = execute(["import os", "print(os.listdir())"], serial)
+    out, err = execute(["import os", "print(os.listdir('" + path + "'))"], serial)
     if err:
         raise IOError(clean_error(err))
     return ast.literal_eval(out.decode("utf-8"))
 
+def is_dir(path, serial=None):
+    """
+    Check if the path is a directory.
+    """
+    out, err = execute(["import os", "print(os.stat('" + path + "'))"], serial)
+    if err:
+        raise IOError(clean_error(err))
+    return ast.literal_eval(out.decode("utf-8"))[0] & 0x4000 != 0
 
 def rm(filename, serial=None):
     """

@@ -653,7 +653,9 @@ class FileManager(QObject):
     """
 
     # Emitted when the tuple of files on the device is known.
-    on_list_files = pyqtSignal(tuple)
+    on_list_files = pyqtSignal(tuple, str, str)
+    # Emitted when the path is a directory.
+    on_is_dir_file = pyqtSignal(str)
     # Emitted when the file with referenced filename is got from the device.
     on_get_file = pyqtSignal(str)
     # Emitted when the file with referenced filename is put onto the device.
@@ -665,6 +667,8 @@ class FileManager(QObject):
     on_delete_file = pyqtSignal(str)
     # Emitted when Mu is unable to list the files on the device.
     on_list_fail = pyqtSignal()
+    # Emitted when the file open in device file system is tried.
+    on_is_dir_fail = pyqtSignal()
     # Emitted when the referenced file fails to be got from the device.
     on_get_fail = pyqtSignal(str)
     # Emitted when the referenced file fails to be put onto the device.
@@ -697,17 +701,28 @@ class FileManager(QObject):
             logger.exception(ex)
             self.on_list_fail.emit()
 
-    def ls(self):
+    def ls(self, path='./'):
         """
         List the files on the micro:bit. Emit the resulting tuple of filenames
         or emit a failure signal.
         """
         try:
-            result = tuple(microfs.ls(self.serial))
-            self.on_list_files.emit(result)
+            result = tuple(microfs.ls(path, self.serial))
+            self.on_list_files.emit(result, None, path)
         except Exception as ex:
             logger.exception(ex)
             self.on_list_fail.emit()
+
+    def is_dir(self, path):
+        try:
+            result = microfs.is_dir(path, self.serial)
+            if not result:
+                logger.info("The file open in device file system, Currently not supported.")
+                self.on_is_dir_fail.emit()
+            else:
+                self.on_is_dir_file.emit(path)
+        except Exception as ex:
+            logger.exception(ex)
 
     def get(self, device_filename, local_filename):
         """
