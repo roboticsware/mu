@@ -1762,6 +1762,9 @@ class Servo(PWMOutputDevice):
         """
         self.value = None
 
+    def move_to_degree(self, degree, max_degree = 180):
+        self.value = (1 / max_degree) * degree
+
 ###############################################################################
 # INPUT DEVICES
 ###############################################################################
