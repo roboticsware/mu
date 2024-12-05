@@ -714,6 +714,9 @@ class FileManager(QObject):
             self.on_list_fail.emit()
 
     def is_dir(self, path):
+        """
+        Check the path is directory or not in the device.
+        """
         try:
             result = microfs.is_dir(path, self.serial)
             if not result:
