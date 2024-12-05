@@ -687,9 +687,8 @@ class MuFileList(QListWidget):
     pbar_update = pyqtSignal(int)
     cur_home_dir = ''
 
-    @classmethod
-    def set_cur_home_dir(cls, val):
-        cls.cur_home_dir = val
+    def set_cur_home_dir(self, path):
+        self.cur_home_dir = path
 
     def show_confirm_overwrite_dialog(self):
         """
@@ -734,7 +733,7 @@ class MicroPythonDeviceFileList(MuFileList):
             ):
                 self.disable.emit()
                 local_filename = os.path.join(
-                    self.cur_home_dir, source.currentItem().text()
+                    source.cur_home_dir, source.currentItem().text()
                 )
                 msg = _("Copying '{}' to device.").format(local_filename)
                 logger.info(msg)
@@ -747,7 +746,7 @@ class MicroPythonDeviceFileList(MuFileList):
         """
         msg = _("'{}' successfully copied to device.").format(microbit_file)
         self.set_message.emit(msg)
-        self.list_files.emit()
+        self.list_files.emit(self.cur_home_dir)
         self.pbar_update.emit(-1)  # To remove the pbar UI
         self.enable.emit()
 
@@ -776,19 +775,18 @@ class MicroPythonDeviceFileList(MuFileList):
         """
         msg = _("'{}' successfully deleted from device.").format(microbit_file)
         self.set_message.emit(msg)
-        self.list_files.emit()
+        self.list_files.emit(self.cur_home_dir)
 
     def on_item_double_clicked(self, item):
         # Get the path
         local_name = item.text()
-        path = os.path.join(self.home, local_name)
+        path = os.path.join(self.cur_home_dir, local_name)
         # Check the name is directory or file
         self.is_dir.emit(path)
 
     def on_is_dir(self, path):
-        self.home = path
-        MuFileList.set_cur_home_dir(path)  # Change parent's sharedlass variable
-        self.list_files.emit(path + '/')  # Go to sub directory
+        self.set_cur_home_dir(path + '/')  # Change parent's sharedlass variable
+        self.list_files.emit(self.cur_home_dir)  # Go to sub directory
 
 class LocalFileList(MuFileList):
     """
@@ -802,6 +800,7 @@ class LocalFileList(MuFileList):
     def __init__(self, home):
         super().__init__()
         self.home = home
+        self.cur_home_dir = home
         self.setDragDropMode(QListWidget.DragDrop)
 
     def dropEvent(self, event):
@@ -833,7 +832,7 @@ class LocalFileList(MuFileList):
             "Successfully copied '{}' " "from the device to your computer."
         ).format(microbit_file)
         self.set_message.emit(msg)
-        self.list_files.emit()
+        self.list_files.emit(self.cur_home_dir)
         self.pbar_update.emit(-1)  # To remove the pbar UI
         self.enable.emit()
 
@@ -878,16 +877,15 @@ class LocalFileList(MuFileList):
     def on_item_double_clicked(self, item):
         # Get the path
         local_name = item.text()
-        path = os.path.join(self.home, local_name)
+        path = os.path.join(self.cur_home_dir, local_name)
         # Check the name is directory or file
         if os.path.isfile(path):
             logger.info("Open {} internally".format(local_name))
             # Send the signal bubbling up the tree
             self.open_file.emit(path)
         elif os.path.isdir(path):
-            self.home = path
-            MuFileList.set_cur_home_dir(path)  # Change parent's sharedlass variable
-            self.list_sub_files.emit([], path + '/')  # Go to sub directory
+            self.set_cur_home_dir(path + '/')  # Change parent's sharedlass variable
+            self.list_sub_files.emit([], self.cur_home_dir)  # Go to sub directory
 
 
 class FileSystemPane(QFrame):
@@ -905,9 +903,9 @@ class FileSystemPane(QFrame):
 
     def __init__(self, home):
         super().__init__()
-        self.home = home
+        self.home = home  # the home will be a default mu_code directory
         self.font = Font().load()
-        microbit_fs = MicroPythonDeviceFileList('')
+        microbit_fs = MicroPythonDeviceFileList('./')
         local_fs = LocalFileList(home)
 
         @local_fs.open_file.connect
