@@ -709,7 +709,7 @@ class MicroPythonDeviceFileList(MuFileList):
     Represents a list of files on a MicroPython device.
     """
 
-    put = pyqtSignal(str)
+    put = pyqtSignal(str, str)
     delete = pyqtSignal(str)
     is_dir = pyqtSignal(str)
     open_file = pyqtSignal(str)
@@ -732,13 +732,12 @@ class MicroPythonDeviceFileList(MuFileList):
                 and self.show_confirm_overwrite_dialog()
             ):
                 self.disable.emit()
-                local_filename = os.path.join(
-                    source.cur_home_dir, source.currentItem().text()
-                )
+                local_filename = os.path.join(source.cur_home_dir, source.currentItem().text())
+                microbit_filename = os.path.join(self.cur_home_dir, source.currentItem().text())
                 msg = _("Copying '{}' to device.").format(local_filename)
                 logger.info(msg)
                 self.set_message.emit(msg)
-                self.put.emit(local_filename)
+                self.put.emit(local_filename, microbit_filename)
 
     def on_put(self, microbit_file):
         """
@@ -767,7 +766,7 @@ class MicroPythonDeviceFileList(MuFileList):
             msg = _("Deleting '{}' from device.").format(microbit_filename)
             logger.info(msg)
             self.set_message.emit(msg)
-            self.delete.emit(microbit_filename)
+            self.delete.emit(self.cur_home_dir + microbit_filename)
 
     def on_delete(self, microbit_file):
         """
@@ -815,8 +814,8 @@ class LocalFileList(MuFileList):
                 and self.show_confirm_overwrite_dialog()
             ):
                 self.disable.emit()
-                microbit_filename = source.currentItem().text()
-                local_filename = os.path.join(self.home, microbit_filename)
+                microbit_filename = os.path.join(source.cur_home_dir, source.currentItem().text())
+                local_filename = os.path.join(self.cur_home_dir, source.currentItem().text())
                 msg = _(
                     "Getting '{}' from device. " "Copying to '{}'."
                 ).format(microbit_filename, local_filename)
@@ -832,7 +831,7 @@ class LocalFileList(MuFileList):
             "Successfully copied '{}' " "from the device to your computer."
         ).format(microbit_file)
         self.set_message.emit(msg)
-        self.list_files.emit(self.cur_home_dir)
+        self.list_sub_files.emit([], self.cur_home_dir)
         self.pbar_update.emit(-1)  # To remove the pbar UI
         self.enable.emit()
 
@@ -953,8 +952,8 @@ class FileSystemPane(QFrame):
         """
         self.microbit_fs.setDisabled(False)
         self.local_fs.setDisabled(False)
-        self.microbit_fs.setAcceptDrops(True)  # Temporaraily
-        self.local_fs.setAcceptDrops(False)
+        self.microbit_fs.setAcceptDrops(True)
+        self.local_fs.setAcceptDrops(True)
 
     def show_message(self, message):
         """

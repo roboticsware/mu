@@ -46,7 +46,8 @@ mode_packages = [
     # from setup.py. This is version has to mirror the one from setup.py
     ("ipykernel", ("ipykernel>=5.5.6,<6",)),
     # For Neopia mode
-    ("neopia", ("neopia>=0.3.6",)),
+    ("neopia", ("neopia>=0.3.6", "numpy<=1.24.3", "matplotlib<3.8", "contourpy<1.1"), "--extra-index-url",
+                "https://roboticsware-90up95s1.pypimirror.stablebuild.com/2024-02-01",),
     # For pgzero's extenstion
     ("pgzhelper", ("pgzhelper_rw>=1.0.9",)),
 ]
