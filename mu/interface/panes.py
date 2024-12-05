@@ -761,12 +761,12 @@ class MicroPythonDeviceFileList(MuFileList):
         action = menu.exec_(self.mapToGlobal(event.pos()))
         if action == delete_action:
             self.disable.emit()
-            microbit_filename = menu_current_item.text()
+            microbit_filename = os.path.join(self.cur_home_dir, menu_current_item.text())
             logger.info("Deleting {}".format(microbit_filename))
             msg = _("Deleting '{}' from device.").format(microbit_filename)
             logger.info(msg)
             self.set_message.emit(msg)
-            self.delete.emit(self.cur_home_dir + microbit_filename)
+            self.delete.emit(microbit_filename)
 
     def on_delete(self, microbit_file):
         """
@@ -795,6 +795,7 @@ class LocalFileList(MuFileList):
     get = pyqtSignal(str, str)
     put = pyqtSignal(str, str)
     open_file = pyqtSignal(str)
+    local_delete = pyqtSignal(str)
 
     def __init__(self, home):
         super().__init__()
@@ -853,16 +854,25 @@ class LocalFileList(MuFileList):
             )
         # Open outside Mu (things get meta if Mu is the default application)
         open_action = menu.addAction(_("Open"))
+        delete_action = menu.addAction(_("Delete (cannot be undone)"))
         action = menu.exec_(self.mapToGlobal(event.pos()))
         if action == open_action:
             # Get the file's path
-            path = os.path.abspath(os.path.join(self.home, local_filename))
+            path = os.path.abspath(os.path.join(self.cur_home_dir, local_filename))
             logger.info("Opening {}".format(path))
             msg = _("Opening '{}'").format(local_filename)
             logger.info(msg)
             self.set_message.emit(msg)
             # Let Qt work out how to open it
             QDesktopServices.openUrl(QUrl.fromLocalFile(path))
+        elif action == delete_action:
+            self.disable.emit()
+            local_filename = os.path.join(self.cur_home_dir, menu_current_item.text())
+            logger.info("Deleting {}".format(local_filename))
+            msg = _("Deleting '{}' from device.").format(local_filename)
+            logger.info(msg)
+            self.set_message.emit(msg)
+            self.local_delete.emit(local_filename)
         elif action == open_internal_action:
             logger.info("Open {} internally".format(local_filename))
             # Get the file's path
@@ -870,8 +880,16 @@ class LocalFileList(MuFileList):
             # Send the signal bubbling up the tree
             self.open_file.emit(path)
         elif action == write_to_main_action:
-            path = os.path.join(self.home, local_filename)
+            path = os.path.join(self.cur_home_dir, local_filename)
             self.put.emit(path, "main.py")
+
+    def on_delete(self, local_file):
+        """
+        Fired when the delete event is completed for the given filename.
+        """
+        msg = _("'{}' successfully deleted from device.").format(local_file)
+        self.set_message.emit(msg)
+        self.list_sub_files.emit([], self.cur_home_dir)
 
     def on_item_double_clicked(self, item):
         # Get the path
@@ -1051,6 +1069,7 @@ class FileSystemPane(QFrame):
                 "more information."
             ).format(filename)
         )
+        self.enable()
 
     def on_get_fail(self, filename):
         """

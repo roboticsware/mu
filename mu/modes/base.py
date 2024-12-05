@@ -766,3 +766,15 @@ class FileManager(QObject):
         except Exception as ex:
             logger.error(ex)
             self.on_delete_fail.emit(device_filename)
+
+    def local_delete(self, local_filename):
+        """
+        Delete the referenced file on the local's filesystem. Emit the name
+        of the file when complete, or emit a failure signal.
+        """
+        try:
+            os.remove(local_filename)
+            self.on_delete_file.emit(local_filename)
+        except Exception as ex:
+            logger.error(ex)
+            self.on_delete_fail.emit(local_filename)
