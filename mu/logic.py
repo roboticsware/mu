@@ -1184,6 +1184,31 @@ class Editor(QObject):
                 logging.info("locale in old session: {}".format(self.user_locale))
                 i18n.set_language(self.user_locale)
         self.modes[self.mode].code_template = _("# Write your code here :-)")
+        for mode in self.modes:
+            if mode == 'python':
+                self.modes[mode].description = _("Create code using standard Python 3.")
+            elif mode == 'snek':
+                self.modes[mode].description = _("Write code for boards running Snek.")
+            elif mode == 'circuitpython':
+                self.modes[mode].description = _("Write code for boards running CircuitPython.")
+            elif mode == 'microbit':
+                self.modes[mode].description = _("Write MicroPython for the BBC micro:bit.")
+            elif mode == 'esp':
+                self.modes[mode].description = _("Write MicroPython on ESP8266/ESP32 boards.")
+            elif mode == 'web':
+                self.modes[mode].description = _('Build simple websites with the "Flask" web framework.')
+            elif mode == 'pyboard':
+                self.modes[mode].description = _("Use MicroPython on the Pyboard line of boards.")
+            elif mode == 'debugger':
+                self.modes[mode].description = _("Debug your Python 3 code.")
+            elif mode == 'pygamezero':
+                self.modes[mode].description = _("Make games with Pygame Zero.")
+            elif mode == 'lego':
+                self.modes[mode].description = _("Write MicroPython directly on Lego Spike devices.")
+            elif mode == 'pico':
+                self.modes[mode].description = _("Write MicroPython directly on a Raspberry Pi Pico.")
+            elif mode == 'neopia':
+                self.modes[mode].description = _("Write Python code on Neobot devices. Currently NeoSoco only.")
 
         old_window = old_session.get("window", {})
         self._view.size_window(**old_window)
