@@ -911,6 +911,7 @@ class Editor(QObject):
         self.fs = None
         self.theme = "day"
         self.mode = "python"
+        self.prev_mode = ''
         self.python_extensions = [".py", ".pyw"]
         self.modes = {}
         self.envars = {}  # See restore session and show_admin
