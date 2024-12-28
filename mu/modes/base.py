@@ -383,10 +383,10 @@ class BaseMode(QObject):
         for locale_api in locale_apis:
             func_name =  locale_api.split('(')[0]
             for idx, data in enumerate(fallback_apis):
-                if func_name in data:
+                if func_name in data:  # Replace the previous
                     fallback_apis[idx] = locale_api
                     break
-            if data[0] == len(fallback_apis) - 1: # new api
+            if idx == len(fallback_apis) - 1:  # Add new api
                 fallback_apis.append(locale_api)
         return fallback_apis
 
