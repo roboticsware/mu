@@ -44,33 +44,37 @@ How to make dev env. and build
 
     ``https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html``
 
-2. Create virtual environment
+2. Temporarily set Conda to 32-bit forcibly
 
-    ``conda create -n mu python=3.8``
+    ``Set CONDA_FORCE_32BIT=1``
 
-3. Activate the created virtual env.
+3. Create virtual environment
+
+    ``conda create -n mu python=3.7``
+
+4. Activate the created virtual env.
 
     ``conda activate mu``
 
-4. Clone source codes
+5. Clone source codes
 
     ``git clone https://github.com/roboticsware/mu``
 
-5. Enter the directory of source codes
+6. Enter the directory of source codes
 
     ``cd mu``
 
-6. Install dev dependencies
+7. Install dev dependencies
 
     ``pip install -e ".[dev]"``
 
-7. Run Mu
+8. Run Mu
 
     ``python run.py``
 
-8. Build Mu
+9. Build Mu
 
-    ``make win64 or macos``
+    ``make win32``
 
 
 You can also reivew more information about extensive developer documentation `here <https://mu.readthedocs.io/>`_.

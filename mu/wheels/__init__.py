@@ -58,7 +58,7 @@ mode_packages = [
     # For Neopia mode
     ("neopia", ("neopia==0.3.2",)),
     # For pgzero's extenstion
-    ("pgzhelper", ("pgzhelper_rw>=1.0.9",)),
+    ("pgzhelper", ("pgzhelper_rw>=1.0.10",)),
 ]
 
 
