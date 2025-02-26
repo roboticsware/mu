@@ -6,14 +6,16 @@ HEIGHT = 600
 
 bullets = []
 bullet_delay_cnt = 0
-BULLET_DELAY = 50
+BULLET_DELAY = 50  # Delay of My tank's bullet re-loading
 enemy_bullets = []
 explosions = []
 winner = ''
 
+# Creation of My tank
 tank = Actor("tank_blue", (400, 575))
 tank.angle = 90
 
+# Creation of Enemy tank
 ENEMY_MOVE_DELAY = 20
 MAX_ENEMIES = 3
 enemies = []
@@ -25,9 +27,9 @@ for i in range(MAX_ENEMIES):
     enemy.move_cnt = 0
     enemies.append(enemy)
 
+# 50x50 pixel sized walls
 walls = []
 WALL_SIZE = 50
-# 50x50 pixel sized walls
 for x in range(int(WIDTH / WALL_SIZE)):  
     # Substract 2 to blank both first and last row
     for y in range(int(HEIGHT / WALL_SIZE - 2)):  
@@ -165,7 +167,7 @@ def update():
     # This part is for my tank
     if winner == '':
         move_player(tank)
-        if bullet_delay_cnt == 0:  # Re-launch possible after the delay ends
+        if bullet_delay_cnt == 0:  # Re-loading possible after the delay ends
             if keyboard.space:
                 sounds.sfx_exp_medium12.play()
                 fire_bullets(tank, bullets)

@@ -180,9 +180,13 @@ EXAMPLE_PGZ_MUSIC = [
 EXAMPLE_PGZ = [
     "flappybird.py",
     "flappybird_neosoco.py",
-    "battle_city.py",
     "breakout.py",
     "twinbee.py",
+    "pong.py",
+    "pong_oop.py",
+    "battle_city.py",
+    "actors.py",
+    "battle_city_oop.py",
 ]
 EXAMPLE_NEOPIA = [
     "01-01_KobiBot.py",
@@ -205,6 +209,12 @@ EXAMPLE_NEOPIA = [
     "04-04_Samosval_avtomobili.py",
     "04-05_Robot_qol.py",
     "04-06_Konveyer.py"
+]
+
+DEFAULT_PICO_LIB = [
+    "picozero.py",
+    "piconethelper.py",
+    "max7219.py",
 ]
 
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
@@ -956,14 +966,11 @@ class Editor(QObject):
         if not os.path.exists(wd):
             logger.debug("Creating directory: {}".format(wd))
             os.makedirs(wd)
-        # Place picozero Lib to root directory
-        shutil.copy(
-            path("picozero.py", "pico/"), os.path.join(wd, "picozero.py")
-        )
         images_path = os.path.join(wd, "images")
         fonts_path = os.path.join(wd, "fonts")
         sounds_path = os.path.join(wd, "sounds")
         music_path = os.path.join(wd, "music")
+        pico_lib_path = os.path.join(wd, "pico_lib")
         examples_path = os.path.join(wd, "examples")
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
@@ -1000,6 +1007,13 @@ class Editor(QObject):
         if not os.path.exists(music_path):
             logger.debug("Creating directory: {}".format(music_path))
             os.makedirs(music_path)
+        if not os.path.exists(pico_lib_path):
+            logger.debug("Creating directory: {}".format(pico_lib_path))
+            os.makedirs(pico_lib_path)
+            for sfx in DEFAULT_PICO_LIB:
+                shutil.copy(
+                    path(sfx, "pico/"), os.path.join(pico_lib_path, sfx)
+                )
         if not os.path.exists(examples_path):
             logger.debug("Creating directory: {}".format(examples_path))
             os.makedirs(examples_path)
