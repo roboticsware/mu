@@ -94,8 +94,8 @@ def bar_move_collide(bar):
         else:  # bar2
             ball.x -= 10
         vx = -vx  * SPEED_UP  # Reverse the x direction of the velocity
-        ''' 공이 윗측 진입하면서 반사판 윗측에 부딪힐 때 또는
-            공이 아래측 진입하면서 반사판 아래측에 부딪힐 때는 진입방향 그대로 반사 '''
+        ''' When the ball hits the top of the bar, or hits the bottom of the bar,
+                it is reflected in the same direction as the ball hit. '''
         if (vy > 0 and ball.centery < bar.centery) or \
             (vy < 0 and ball.centery > bar.centery):
             vy = -vy * SPEED_UP

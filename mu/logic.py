@@ -217,6 +217,11 @@ DEFAULT_PICO_LIB = [
     "max7219.py",
 ]
 
+EXAMPLE_PICO_BASIC = [
+    "bt_car.py",
+    "wifi_car.py",
+]
+
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
     _("Hello, World!"),
     _(
@@ -974,7 +979,8 @@ class Editor(QObject):
         examples_path = os.path.join(wd, "examples")
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
-        example_neopia_path = os.path.join(wd, "examples/neopia/")         
+        example_neopia_path = os.path.join(wd, "examples/neopia/")
+        example_pico_path = os.path.join(wd, "examples/pico/")  
         if not os.path.exists(images_path):
             logger.debug("Creating directory: {}".format(images_path))
             os.makedirs(images_path)
@@ -1082,6 +1088,14 @@ class Editor(QObject):
                 for sfx in EXAMPLE_NEOPIA:
                     shutil.copy(
                         path(sfx, "neopia/"), os.path.join(example_neopia_path, sfx)
+                    )
+            # Pico examples
+            if not os.path.exists(example_pico_path):
+                logger.debug("Creating directory: {}".format(example_pico_path))
+                os.makedirs(example_pico_path)
+                for sfx in EXAMPLE_PICO_BASIC:
+                    shutil.copy(
+                        path(sfx, "pico_basic/"), os.path.join(example_pico_path, sfx)
                     )
         # Ensure Web based assets are copied over.
         template_path = os.path.join(wd, "templates")
