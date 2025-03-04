@@ -178,6 +178,7 @@ EXAMPLE_PGZ_MUSIC = [
     "main_theme.mp3",
 ]
 EXAMPLE_PGZ = [
+    "nethelper.py",
     "flappybird.py",
     "flappybird_neosoco.py",
     "breakout.py",
@@ -971,6 +972,10 @@ class Editor(QObject):
         if not os.path.exists(wd):
             logger.debug("Creating directory: {}".format(wd))
             os.makedirs(wd)
+        # Place nethelper Lib to root directory
+        shutil.copy(
+            path("nethelper.py", "pygamezero/"), os.path.join(wd, "nethelper.py")
+        )
         images_path = os.path.join(wd, "images")
         fonts_path = os.path.join(wd, "fonts")
         sounds_path = os.path.join(wd, "sounds")
@@ -980,7 +985,7 @@ class Editor(QObject):
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
         example_neopia_path = os.path.join(wd, "examples/neopia/")
-        example_pico_path = os.path.join(wd, "examples/pico/")  
+        example_pico_path = os.path.join(wd, "examples/pico_basic/")  
         if not os.path.exists(images_path):
             logger.debug("Creating directory: {}".format(images_path))
             os.makedirs(images_path)
@@ -1095,7 +1100,7 @@ class Editor(QObject):
                 os.makedirs(example_pico_path)
                 for sfx in EXAMPLE_PICO_BASIC:
                     shutil.copy(
-                        path(sfx, "pico_basic/"), os.path.join(example_pico_path, sfx)
+                        path(sfx, "pico/"), os.path.join(example_pico_path, sfx)
                     )
         # Ensure Web based assets are copied over.
         template_path = os.path.join(wd, "templates")

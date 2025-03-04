@@ -1,6 +1,6 @@
 from picozero import Robot
 import bluetooth
-from piconethelper import BLESimplePeripheral  # Import BLESimplePeripheral from netzero
+from piconethelper import BLESimplePeripheral
 
 ble = bluetooth.BLE()
 p = BLESimplePeripheral(ble)  # Initialize Bluetooth

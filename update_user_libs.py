@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update the copy of user libs(pgzhelper, picozero ...)
+"""Update the copy of user libs(nethelper, picozero ...)
 
 User libs is not yet packaged on PyPI; this script exists to mirror it into the
 local repository to make it easily installable.
@@ -13,15 +13,15 @@ from urllib.request import build_opener
 import sys
 
 DEST = ''
-PGZHELPER_DEST = 'mu/resources/pygamezero/pgzhelper.py'
+NETHELPER_DEST = 'mu/resources/pygamezero/nethelper.py'
 PICOZERO_DEST = 'mu/resources/pico/picozero.py'
-PGZHELPER_REPO_URL = 'https://api.github.com/repos/roboticsware/pgzhelper/'
+NETHELPER_REPO_URL = 'https://api.github.com/repos/roboticsware/nethelper/'
 PICOZERO_REPO_URL = 'https://api.github.com/repos/roboticsware/picozero/'
 HEADER = '''"""
 
 This module is directly copied from
 
-    https://github.com/roboticsware/pgzhelper
+    https://github.com/roboticsware/nethelper
 
 at revision {sha}
 and used under CC0.
@@ -47,8 +47,8 @@ def get_tree(file):
     """Download the repository tree, returning a decoded JSON structure."""
     print('Downloading repository tree...')
     
-    if file == 'pgzhelper.py':
-        REPO_URL = PGZHELPER_REPO_URL
+    if file == 'nethelper.py':
+        REPO_URL = NETHELPER_REPO_URL
     elif file == 'picozero.py':
         REPO_URL = PICOZERO_REPO_URL
 
@@ -84,8 +84,8 @@ def update_local():
     """
     global DEST
     FILE = sys.argv[1]
-    if FILE == 'pgzhelper.py':
-        DEST = PGZHELPER_DEST
+    if FILE == 'nethelper.py':
+        DEST = NETHELPER_DEST
     elif FILE == 'picozero.py':
         DEST = PICOZERO_DEST
     

@@ -1,6 +1,5 @@
 from picozero import Robot
 from piconethelper import WifiSimplePeripheral
-from machine import Pin, ADC
 
 
 # Motor Pins
