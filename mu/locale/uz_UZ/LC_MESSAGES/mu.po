@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: mu-editor\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-11-25 00:20+0500\n"
-"PO-Revision-Date: 2024-08-10 15:04\n"
+"PO-Revision-Date: 2024-12-05 11:33\n"
 "Last-Translator: \n"
 "Language: uz\n"
 "Language-Team: Uzbek\n"
@@ -435,7 +435,7 @@ msgid "There was a problem getting the list of files on the device. Please check
 msgstr "Qurilmadagi fayllar roʻyxatini olishda muammo yuz berdi. Iltimos, texnik ma'lumot uchun Mu jurnalini tekshiring. Shu bilan bir qatorda, qurilmangizni uzib/ulang va/yoki Mu-ni qayta ishga tushiring."
 
 #: mu/interface/panes.py:966
-msgid "There was a problem copying the file '{}' onto the device. Please check Mu's logs for more information."
+msgid "There was a problem copying the file '{}' onto the device. Please check Please check if you try to copy a directory or not and also Mu's logs for more information."
 msgstr "“{}” faylini qurilmaga nusxalashda muammo yuz berdi. Folderni nusxalash urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/panes.py:978
@@ -443,8 +443,8 @@ msgid "There was a problem deleting '{}' from the device. Please check Mu's logs
 msgstr "“{}” faylini qurilmaga o'chirishda muammo yuz berdi. Qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/panes.py:990
-msgid "There was a problem getting '{}' from the device. Please check Mu's logs for more information."
-msgstr "“{}” faylini qurilmaga olishda muammo yuz berdi. Qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
+msgid "There was a problem getting '{}' from the device. Please check Please check if you try to copy a directory or not and also Mu's logs for more information."
+msgstr "“{}” faylini qurilmaga olishda muammo yuz berdi. Folderni nusxalash urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/widgets.py:70 mu/interface/widgets.py:141
 #: mu/interface/widgets.py:154
@@ -1526,7 +1526,10 @@ msgstr "O'yinni tarqatish uchun bitta exe fayliga aylantiradi."
 msgid "Stop packaging your Pygame Zero game."
 msgstr "Bitta fayliga aylantirayotganini to'xtaydi."
 
-#: #: mu/main.py:225
+#: mu/main.py:225
 msgid "There is un-saved work, closing the tab will cause you to lose it."
 msgstr "Saqlanmagan ish bor, tabdan chiqish uni yo'qotishingizga olib keladi."
 
+#: mu/panes.py:1027
+msgid "The file open in device file system, Currently not supported."
+msgstr "Qurilmada fayl ochilmoqda, hozirda qo'llab-quvvatlash qilinmaydi."

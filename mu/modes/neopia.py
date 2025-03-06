@@ -283,6 +283,7 @@ class NeopiaMode(BaseMode):
         """
         logger.info("Starting debug mode.")
         self.editor.change_mode("debugger")
+        self.editor.prev_mode = self.short_name
         self.editor.mode = "debugger"
         self.editor.modes["debugger"].start()
 

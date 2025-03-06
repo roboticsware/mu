@@ -178,11 +178,16 @@ EXAMPLE_PGZ_MUSIC = [
     "main_theme.mp3",
 ]
 EXAMPLE_PGZ = [
+    "nethelper.py",
     "flappybird.py",
     "flappybird_neosoco.py",
-    "battle_city.py",
     "breakout.py",
     "twinbee.py",
+    "pong.py",
+    "pong_oop.py",
+    "battle_city.py",
+    "actors.py",
+    "battle_city_oop.py",
 ]
 EXAMPLE_NEOPIA = [
     "01-01_KobiBot.py",
@@ -205,6 +210,17 @@ EXAMPLE_NEOPIA = [
     "04-04_Samosval_avtomobili.py",
     "04-05_Robot_qol.py",
     "04-06_Konveyer.py"
+]
+
+DEFAULT_PICO_LIB = [
+    "picozero.py",
+    "piconethelper.py",
+    "max7219.py",
+]
+
+EXAMPLE_PICO_BASIC = [
+    "bt_car.py",
+    "wifi_car.py",
 ]
 
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
@@ -911,6 +927,7 @@ class Editor(QObject):
         self.fs = None
         self.theme = "day"
         self.mode = "python"
+        self.prev_mode = ''
         self.python_extensions = [".py", ".pyw"]
         self.modes = {}
         self.envars = {}  # See restore session and show_admin
@@ -955,18 +972,20 @@ class Editor(QObject):
         if not os.path.exists(wd):
             logger.debug("Creating directory: {}".format(wd))
             os.makedirs(wd)
-        # Place picozero Lib to root directory
+        # Place nethelper Lib to root directory
         shutil.copy(
-            path("picozero.py", "pico/"), os.path.join(wd, "picozero.py")
+            path("nethelper.py", "pygamezero/"), os.path.join(wd, "nethelper.py")
         )
         images_path = os.path.join(wd, "images")
         fonts_path = os.path.join(wd, "fonts")
         sounds_path = os.path.join(wd, "sounds")
         music_path = os.path.join(wd, "music")
+        pico_lib_path = os.path.join(wd, "pico_lib")
         examples_path = os.path.join(wd, "examples")
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
-        example_neopia_path = os.path.join(wd, "examples/neopia/")         
+        example_neopia_path = os.path.join(wd, "examples/neopia/")
+        example_pico_path = os.path.join(wd, "examples/pico_basic/")  
         if not os.path.exists(images_path):
             logger.debug("Creating directory: {}".format(images_path))
             os.makedirs(images_path)
@@ -999,6 +1018,13 @@ class Editor(QObject):
         if not os.path.exists(music_path):
             logger.debug("Creating directory: {}".format(music_path))
             os.makedirs(music_path)
+        if not os.path.exists(pico_lib_path):
+            logger.debug("Creating directory: {}".format(pico_lib_path))
+            os.makedirs(pico_lib_path)
+            for sfx in DEFAULT_PICO_LIB:
+                shutil.copy(
+                    path(sfx, "pico/"), os.path.join(pico_lib_path, sfx)
+                )
         if not os.path.exists(examples_path):
             logger.debug("Creating directory: {}".format(examples_path))
             os.makedirs(examples_path)
@@ -1067,6 +1093,14 @@ class Editor(QObject):
                 for sfx in EXAMPLE_NEOPIA:
                     shutil.copy(
                         path(sfx, "neopia/"), os.path.join(example_neopia_path, sfx)
+                    )
+            # Pico examples
+            if not os.path.exists(example_pico_path):
+                logger.debug("Creating directory: {}".format(example_pico_path))
+                os.makedirs(example_pico_path)
+                for sfx in EXAMPLE_PICO_BASIC:
+                    shutil.copy(
+                        path(sfx, "pico/"), os.path.join(example_pico_path, sfx)
                     )
         # Ensure Web based assets are copied over.
         template_path = os.path.join(wd, "templates")
@@ -1181,6 +1215,31 @@ class Editor(QObject):
                 logging.info("locale in old session: {}".format(self.user_locale))
                 i18n.set_language(self.user_locale)
         self.modes[self.mode].code_template = _("# Write your code here :-)")
+        for mode in self.modes:
+            if mode == 'python':
+                self.modes[mode].description = _("Create code using standard Python 3.")
+            elif mode == 'snek':
+                self.modes[mode].description = _("Write code for boards running Snek.")
+            elif mode == 'circuitpython':
+                self.modes[mode].description = _("Write code for boards running CircuitPython.")
+            elif mode == 'microbit':
+                self.modes[mode].description = _("Write MicroPython for the BBC micro:bit.")
+            elif mode == 'esp':
+                self.modes[mode].description = _("Write MicroPython on ESP8266/ESP32 boards.")
+            elif mode == 'web':
+                self.modes[mode].description = _('Build simple websites with the "Flask" web framework.')
+            elif mode == 'pyboard':
+                self.modes[mode].description = _("Use MicroPython on the Pyboard line of boards.")
+            elif mode == 'debugger':
+                self.modes[mode].description = _("Debug your Python 3 code.")
+            elif mode == 'pygamezero':
+                self.modes[mode].description = _("Make games with Pygame Zero.")
+            elif mode == 'lego':
+                self.modes[mode].description = _("Write MicroPython directly on Lego Spike devices.")
+            elif mode == 'pico':
+                self.modes[mode].description = _("Write MicroPython directly on a Raspberry Pi Pico.")
+            elif mode == 'neopia':
+                self.modes[mode].description = _("Write Python code on Neobot devices. Currently NeoSoco only.")
 
         old_window = old_session.get("window", {})
         self._view.size_window(**old_window)
