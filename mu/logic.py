@@ -215,7 +215,13 @@ EXAMPLE_NEOPIA = [
 DEFAULT_PICO_LIB = [
     "picozero.py",
     "piconethelper.py",
-    "max7219.py",
+    "stepper_motor.py",
+    "ds1302.py",
+    "DIYables_MicroPython_LED_Matrix.py",
+    "ir_rx.py",
+    "nec.py",
+    "keypad.py",
+    "neopixel.py",
 ]
 
 EXAMPLE_PICO_BASIC = [
