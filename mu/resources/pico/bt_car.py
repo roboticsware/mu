@@ -27,5 +27,6 @@ def on_rx(v):
         robot_rover.stop()
         print("Stopping")
 
-p.on_write(on_rx)
-p._advertise()  # Start Bluetooth advertising
+while True:
+    if p.is_connected():
+        p.on_write(on_rx)

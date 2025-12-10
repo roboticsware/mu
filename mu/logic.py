@@ -217,11 +217,12 @@ DEFAULT_PICO_LIB = [
     "piconethelper.py",
     "stepper_motor.py",
     "ds1302.py",
-    "DIYables_MicroPython_LED_Matrix.py",
-    "ir_rx.py",
+    "LED_Matrix.py",
     "nec.py",
     "keypad.py",
     "neopixel.py",
+    "tcs3472.py",
+    "mfrc522.py",
 ]
 
 EXAMPLE_PICO_BASIC = [
