@@ -185,6 +185,8 @@ EXAMPLE_PGZ = [
     "twinbee.py",
     "pong.py",
     "pong_oop.py",
+    "pong_net.py",
+    "pong"
     "battle_city.py",
     "actors.py",
     "battle_city_oop.py",
