@@ -185,6 +185,8 @@ EXAMPLE_PGZ = [
     "twinbee.py",
     "pong.py",
     "pong_oop.py",
+    "pong_net.py",
+    "pong"
     "battle_city.py",
     "actors.py",
     "battle_city_oop.py",
@@ -215,7 +217,14 @@ EXAMPLE_NEOPIA = [
 DEFAULT_PICO_LIB = [
     "picozero.py",
     "piconethelper.py",
-    "max7219.py",
+    "stepper_motor.py",
+    "ds1302.py",
+    "LED_Matrix.py",
+    "nec.py",
+    "keypad.py",
+    "neopixel.py",
+    "tcs3472.py",
+    "mfrc522.py",
 ]
 
 EXAMPLE_PICO_BASIC = [

@@ -144,7 +144,7 @@ class Bar(Rect):
         screen.draw.filled_rect(self, 'white')
 
 
-# Create main actors objects
+# Create main actor objects
 score = Score(FINAL_SCORE)
 ball = Ball((WIDTH/2, HEIGHT/2), VELOCITY, score)
 bar1 = Bar(GAP_FROM_SCR, HEIGHT/2 - BAR_H/2, ball)
