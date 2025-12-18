@@ -421,8 +421,10 @@ def _build_windows_msi(bitness=64):
     if pup_pbs_url:
         os.environ["PUP_PBS_URL"] = pup_pbs_url
     cmd_sequence = (
-        [sys.executable, "-m", "virtualenv", "venv-pup"],
-        ["./venv-pup/Scripts/pip.exe", "install", "pup"],
+        [sys.executable, "-m", "venv", "venv-pup"],
+        # Fix app version missing in packaging
+        ["./venv-pup/Scripts/pip.exe", "install", "git+https://github.com/roboticsware/pup.git@pip-platform"],
+        ["./venv-pup/Scripts/pip.exe", "install", "."],
         [
             "./venv-pup/Scripts/pup.exe",
             "package",

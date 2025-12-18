@@ -877,11 +877,7 @@ class VirtualEnvironment(object):
                 safe_short_path(sys.executable),
                 "-I",
                 "-m",
-                "virtualenv",
-                "-p",
-                safe_short_path(sys.executable),
-                "-q",
-                "" if self._is_windows else "--symlinks",
+                "venv",
                 self.path,
             ),
         )
