@@ -108,7 +108,7 @@ macos: check
 	@echo "\nFetching wheels."
 	python -m mu.wheels --package
 	@echo "\nPackaging Mu into a macOS native application."
-	python -m virtualenv venv-pup
+	python -m venv venv-pup
 	# Don't activate venv-pup because:
 	# 1. Not really needed.
 	# 2. Previously active venv would be "gone" on venv-pup deactivation.
@@ -124,7 +124,7 @@ linux: check
 	@echo "\nFetching wheels."
 	python -m mu.wheels --package
 	@echo "\nPackaging Mu into a Linux AppImage."
-	python -m virtualenv venv-pup
+	python -m venv venv-pup
 	# Don't activate venv-pup because:
 	# 1. Not really needed.
 	# 2. Previously active venv would be "gone" on venv-pup deactivation.
