@@ -985,6 +985,7 @@ class Editor(QObject):
         shutil.copy(
             path("nethelper.py", "pygamezero/"), os.path.join(wd, "nethelper.py")
         )
+        # In mu_code
         images_path = os.path.join(wd, "images")
         fonts_path = os.path.join(wd, "fonts")
         sounds_path = os.path.join(wd, "sounds")
@@ -994,7 +995,8 @@ class Editor(QObject):
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
         example_neopia_path = os.path.join(wd, "examples/neopia/")
-        example_pico_path = os.path.join(wd, "examples/pico_basic/")  
+        example_pico_path = os.path.join(wd, "examples/pico_basic/")
+        # Images
         if not os.path.exists(images_path):
             logger.debug("Creating directory: {}".format(images_path))
             os.makedirs(images_path)
@@ -1006,6 +1008,7 @@ class Editor(QObject):
                 shutil.copy(
                     path(img, "pygamezero/"), os.path.join(images_path, img)
                 )
+        # Fonts
         if not os.path.exists(fonts_path):
             logger.debug("Creating directory: {}".format(fonts_path))
             os.makedirs(fonts_path)
@@ -1013,6 +1016,7 @@ class Editor(QObject):
                 shutil.copy(
                     path(sfx, "pygamezero/"), os.path.join(fonts_path, sfx)
                 )
+        # Sounds
         if not os.path.exists(sounds_path):
             logger.debug("Creating directory: {}".format(sounds_path))
             os.makedirs(sounds_path)
@@ -1024,9 +1028,11 @@ class Editor(QObject):
                 shutil.copy(
                     path(sfx, "pygamezero/"), os.path.join(sounds_path, sfx)
                 )
+        # Music
         if not os.path.exists(music_path):
             logger.debug("Creating directory: {}".format(music_path))
             os.makedirs(music_path)
+        # Pico_lib
         if not os.path.exists(pico_lib_path):
             logger.debug("Creating directory: {}".format(pico_lib_path))
             os.makedirs(pico_lib_path)
@@ -1034,6 +1040,7 @@ class Editor(QObject):
                 shutil.copy(
                     path(sfx, "pico/"), os.path.join(pico_lib_path, sfx)
                 )
+        # Examples
         if not os.path.exists(examples_path):
             logger.debug("Creating directory: {}".format(examples_path))
             os.makedirs(examples_path)

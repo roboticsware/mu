@@ -920,6 +920,19 @@ class VirtualEnvironment(object):
             raise VirtualEnvironmentCreateError(
                 "Unable to install kernel\n%s" % compact(output)
             )
+        
+    def get_internal_uv_path(self):
+        """
+        Return the path to the internal uv binary for the current platform.
+        """
+        base_path = os.path.dirname(__file__) 
+        if sys.platform == "win32":
+            uv_bin = os.path.join(base_path, "resources", "bin", "win64", "uv.exe")
+        elif sys.platform == "darwin":
+            uv_bin = os.path.join(base_path, "resources", "bin", "darwin", "uv")
+        elif sys.platform.startswith("linux"):
+            uv_bin = os.path.join(base_path, "resources", "bin", "linux", "uv") 
+        return uv_bin
 
     def install_from_zipped_wheels(self, zipped_wheels_filepath):
         """Take a zip containing wheels, unzip it and install the wheels into
@@ -933,21 +946,32 @@ class VirtualEnvironment(object):
             #
             with zipfile.ZipFile(zipped_wheels_filepath) as zip:
                 zip.extractall(unpacked_wheels_dirpath)
-
-            self.reset_pip()
-            #
-            # The wheels are installed one at a time as they reduces the possibility
-            # of the process installing them breaching its timeout
-            #
-            for wheel in glob.glob(
+            # Install all the wheels in one go using uv for speed
+            all_wheels = glob.glob(
                 os.path.join(unpacked_wheels_dirpath, "*.whl")
-            ):
-                logger.info(
-                    "About to install from wheel: {}".format(
-                        os.path.basename(wheel)
-                    )
-                )
-                self.pip.install(wheel, deps=False, index=False)
+            )
+            if not all_wheels:
+                logger.warning("No wheels found to install.")
+                return
+            logger.info(f"Installing {len(all_wheels)} wheels at once using uv.")
+            try:
+                uv_path = self.get_internal_uv_path()
+                args = [
+                    uv_path, 
+                    "pip", "install",
+                    "--python", self.interpreter,
+                    "--no-index",
+                    "--find-links", unpacked_wheels_dirpath,
+                ] + all_wheels 
+                env = dict(os.environ)
+                env["VIRTUAL_ENV"] = os.path.dirname(os.path.dirname(self.interpreter))
+                ok, output = self.run_subprocess(*args, env=env)
+                if ok:
+                    logger.info("All wheel files were successfully installed.")
+                else:
+                    logger.error(f"Failed to install wheels: {output}")
+            except Exception as e:
+                logger.error(f"Failed to install wheels: {e}")
 
     def install_baseline_packages(self):
         """

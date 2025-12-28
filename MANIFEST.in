@@ -3,6 +3,7 @@ include README.rst
 include CHANGES.rst
 include LICENSE
 include conf/*
+recursive-include mu/resources/bin *
 include mu/resources/css/*
 include mu/resources/images/*
 include mu/resources/fonts/*
