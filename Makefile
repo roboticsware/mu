@@ -115,7 +115,39 @@ macos: check
 	# Installing pup from a fork with the --pip-platform flag proof of concept
 	# and using it to install wheels for the `macosx_10_15_x86_64` platform
 	./venv-pup/bin/pip install git+https://github.com/roboticsware/pup.git@pip-platform
-	./venv-pup/bin/pup package --launch-module=mu --nice-name="Mu Editor" --icon-path=./package/icons/mac_icon.icns --license-path=./LICENSE --pip-platform=macosx_10_15_x86_64 .
+	./venv-pup/bin/pup package \
+		--launch-module=mu \
+		--nice-name="Mu Editor Custom" \
+		--icon-path=./package/icons/mac_icon.icns \
+		--license-path=./LICENSE \
+		--pip-platform=macosx_10_15_x86_64 .
+	@sh -c ' \
+        echo "\nPost-processing: Modifying Info.plist and Signing..."; \
+        APP_PATH=$$(ls -d ./build/pup/*.app 2>/dev/null | head -n 1); \
+        STAGING_DIR="./build/dmg_staging"; \
+		PLIST_PATH="$$APP_PATH/Contents/Info.plist"; \
+		VERSION=$$(plutil -extract CFBundleShortVersionString raw "$$PLIST_PATH"); \
+        echo "Detected Version: $$VERSION"; \
+		echo "Inserting camera and mic permissions..."; \
+        plutil -insert NSCameraUsageDescription -string "Camera permission is required for video detection." "$$APP_PATH/Contents/Info.plist"; \
+        plutil -insert NSMicrophoneUsageDescription -string "Microphone permission is required for voice recognition." "$$APP_PATH/Contents/Info.plist"; \
+        echo "Removing extended attributes from: $$APP_PATH"; \
+        xattr -cr "$$APP_PATH"; \
+        echo "Signing the bundle..."; \
+        codesign --force --deep --sign - "$$APP_PATH"; \
+		echo "Preparing DMG staging area..."; \
+		rm -rf "$$STAGING_DIR"; \
+        mkdir -p "$$STAGING_DIR"; \
+        echo "Copying app and creating Applications shortcut..."; \
+        cp -R "$$APP_PATH" "$$STAGING_DIR/"; \
+        ln -s /Applications "$$STAGING_DIR/Applications"; \
+        FINAL_NAME="Mu_Editor_Custom_$$VERSION.dmg"; \
+        echo "Creating DMG: $$FINAL_NAME"; \
+        rm -f ./dist/*.dmg; \
+        hdiutil create -volname "Mu Editor Custom" -srcfolder "$$STAGING_DIR" -ov -format UDZO "./dist/$$FINAL_NAME"; \
+        rm -rf "$$STAGING_DIR"; \
+        echo "Post-processing complete."; \
+    '
 	rm -r venv-pup
 	ls -la ./build/pup/
 	ls -la ./dist/
