@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import time
 import zipfile
+import stat
 
 try:
     import win32api
@@ -931,7 +932,15 @@ class VirtualEnvironment(object):
         elif sys.platform == "darwin":
             uv_bin = os.path.join(base_path, "resources", "bin", "darwin", "uv")
         elif sys.platform.startswith("linux"):
-            uv_bin = os.path.join(base_path, "resources", "bin", "linux", "uv") 
+            uv_bin = os.path.join(base_path, "resources", "bin", "linux", "uv")
+        else:
+            raise VirtualEnvironmentError(f"Unsupported platform: {sys.platform}")
+        # Ensure the uv binary has execution permissions on non-Windows platforms
+        if self._is_windows is False:
+            current_mode = os.stat(uv_bin).st_mode
+            logger.info(f"Setting execution permission for uv: {uv_bin}")
+            os.chmod(uv_bin, current_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)  # Set 0755 Permissions
+        
         return uv_bin
 
     def install_from_zipped_wheels(self, zipped_wheels_filepath):
