@@ -260,6 +260,7 @@ def translate_begin(lang=""):
         "-o",
         mu_po_filename,
         "--locale={locale}".format(locale=lang),
+        "--no-wrap",
     ]
     result = subprocess.run(cmd).returncode
 
@@ -305,6 +306,7 @@ def _translate_extract():
     cmd = [
         "pybabel",
         "extract",
+        "--no-wrap",
         "-o",
         _MESSAGES_POT_FILENAME,
         *_translate_filenames(),
