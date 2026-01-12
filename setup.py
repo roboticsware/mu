@@ -25,29 +25,28 @@ install_requires = [
     # The core 'install_requires' should only be things
     # which are needed for the main editor to function.
     #
-    "PyQt5==5.15.10"
-    + '; sys_platform != "linux" '
-    + 'or ("arm" not in platform_machine and "aarch" not in platform_machine)',
-    "QScintilla==2.14.1"
-    + '; sys_platform != "linux" '
-    + 'or ("arm" not in platform_machine and "aarch" not in platform_machine)',
-    "PyQtChart==5.15.6"
-    + '; sys_platform != "linux" '
-    + 'or ("arm" not in platform_machine and "aarch" not in platform_machine)',
-    # FIXME: Needed for qtconsole, this is the latest wheel in armv7l for
-    # Python 3.7 (Buster), otherwise it tries to build from source and fails.
-    "pyzmq<=26.0.3",
-    # We are using an internal method of jupyter_client, that changed in v7
-    # QtKernelManager._launch_kernel() returning a KernelProvisionerBase
-    # https://github.com/jupyter/jupyter_client/commit/516d9df270b2e4603ee0ecd986554cb5fe1c2940
-    "jupyter-client<7",
-    # ipykernel v5.5.6 resolves issue ipython/ipykernel#759.
-    # ipykernel version has to be mirrored in mu/wheels/__init__.py
-    "ipykernel>=5.5.6",
-    "qtconsole~=5.4",
-    # In Python 3.12 the deprecated 'imp' module was removed from the stdlib.
-    # ipykernel only moved to importlib in v6.10, so this is a "forward-port"
-    "zombie_imp>=0.0.2;python_version>='3.12'",
+    "PyQt6==6.5.3"
+    + ';"arm" not in platform_machine and "aarch" not in platform_machine',
+    "PyQt6-Qt6==6.5.3"
+    + ';"arm" not in platform_machine and "aarch" not in platform_machine',
+    "PyQt6-QScintilla==2.14.0"
+    + ';"arm" not in platform_machine and "aarch" not in platform_machine',
+    "PyQt6-Charts==6.5.0"
+    + ';"arm" not in platform_machine and "aarch" not in platform_machine',
+    # FIXME: jupyter-client added for Py3.5 compatibility, to be dropped after
+    # Mu v1.1 release. So, qtconsole < 5 and jupyter-client < 6.2 (issue #1444)
+    "jupyter-client>=4.1,<6.2",
+    # FIXME: ipykernel max added for macOS 10.13 compatibility, min taken from
+    # qtconsole 4.7.7. Full line can be removed after Mu v1.1 release.
+    # Dependency mirrored for user venv in mu/wheels/__init__.py
+    "ipykernel>=4.1,<6",
+    # FIXME: ipykernel<6 depends on ipython_genutils, but it isn't explicitly
+    # declared as a dependency. It also depends on traitlets, which
+    # incidentally brought ipython_genutils, but in v5.1 it was dropped, so as
+    # a workaround we need to manually specify it here.
+    "ipython_genutils>=0.2.0",
+    "qtconsole==4.7.7",
+    #
     # adafruit-board-toolkit is used to find serial ports and help identify
     # CircuitPython boards in the CircuitPython mode.
     "adafruit-board-toolkit~=1.1",
