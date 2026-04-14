@@ -99,7 +99,7 @@ class CommandBufferHandler(QObject):
         tries = 0
         connection_attempts = 50  # Translates to 10 seconds.
         pause_between_attempts = 0.2
-        while not connected:
+        while not connected and not self.stopped:
             try:
                 self.debugger.socket = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM
@@ -224,10 +224,14 @@ class Debugger(QObject):
         self.listener_thread.wait()
         if self.proc is not None:
             self.output("quit")
-        self.socket.shutdown(socket.SHUT_WR)
+        if hasattr(self, "socket") and self.socket:
+            try:
+                self.socket.shutdown(socket.SHUT_WR)
+            except (OSError, AttributeError):
+                pass
         if self.proc is not None:
             # Wait for the runner process to die.
-            self.proc.wait()
+            self.proc.waitForFinished()
 
     def output(self, event, **data):
         """

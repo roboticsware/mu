@@ -38,6 +38,7 @@ class PyGameZeroMode(BaseMode):
     description = _("Make games with Pygame Zero.")
     icon = "pygamezero"
     runner = None
+    has_debugger = True
     builtins = [
         "clock",
         "music",
@@ -102,6 +103,13 @@ class PyGameZeroMode(BaseMode):
                 "description": _("Package the game to one-file for distribution."),
                 "handler": self.toggle_package,
                 "shortcut": "F6",
+            },
+            {
+                "name": "debug",
+                "display_name": _("Debug"),
+                "description": _("Debug your Pygame Zero game."),
+                "handler": self.debug,
+                "shortcut": "F7",
             },
         ]
 
@@ -242,6 +250,17 @@ class PyGameZeroMode(BaseMode):
                 package_slot.setText(_("Stop"))
                 package_slot.setToolTip(_("Stop packaging your Pygame Zero game."))
                 self.set_buttons(modes=False)
+
+    def debug(self, event):
+        """
+        Debug the script using the debug mode.
+        """
+        logger.info("Starting debug mode.")
+        self.editor.envars["MU_PGZERO"] = "1"
+        self.editor.change_mode("debugger")
+        self.editor.prev_mode = self.short_name
+        self.editor.mode = "debugger"
+        self.editor.modes["debugger"].start()
 
     def run_package(self):
         """

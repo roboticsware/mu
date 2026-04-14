@@ -145,10 +145,13 @@ class DebugMode(BaseMode):
         if self.runner:
             self.runner.stop_process()
             self.runner = None
+            if self.debugger:
+                self.debugger.stop()
             self.debugger = None
             self.view.remove_python_runner()
             self.view.remove_debug_inspector()
         self.set_buttons(modes=True)
+        self.editor.envars.pop("MU_PGZERO", None)
         self.editor.change_mode(self.editor.prev_mode)
         self.editor.mode = self.editor.prev_mode
         self.view.set_read_only(False)

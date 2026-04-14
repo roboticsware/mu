@@ -24,6 +24,7 @@ import bdb
 import linecache
 import logging
 import traceback
+import gettext
 from enum import Enum
 from queue import Queue
 from threading import Thread
@@ -210,13 +211,13 @@ class Debugger(bdb.Bdb):
                     except (ClientClose, Restart):
                         raise
                     except Exception as ex:
-                        msg = 'Unhandled error with command "{}": {}'.format(
+                        msg = _('Unhandled error with command "{}": {}').format(
                             command, ex
                         )
                         self.output("error", message=msg)
                 else:
                     self.output(
-                        "error", message="Unknown command: {}".format(command)
+                        "error", message=_("Unknown command: {}").format(command)
                     )
             except (OSError, AttributeError, ClientClose):
                 # Connection problem; try listening for new connection.
@@ -334,7 +335,7 @@ class Debugger(bdb.Bdb):
         else:
             self.output(
                 "error",
-                message="{}:{} is not executable".format(filename, line),
+                message=_("{}:{} is not executable").format(filename, line),
             )
 
     def do_enable(self, bpnum):
@@ -344,7 +345,7 @@ class Debugger(bdb.Bdb):
         bpnum = int(bpnum)
         if not (0 <= bpnum < len(bdb.Breakpoint.bpbynumber)):
             self.output(
-                "error", message="No breakpoint numbered {}".format(bpnum)
+                "error", message=_("No breakpoint numbered {}").format(bpnum)
             )
         else:
             bp = bdb.Breakpoint.bpbynumber[bpnum]
@@ -358,7 +359,7 @@ class Debugger(bdb.Bdb):
         bpnum = int(bpnum)
         if not (0 <= bpnum < len(bdb.Breakpoint.bpbynumber)):
             self.output(
-                "error", message="No breakpoint numbered {}".format(bpnum)
+                "error", message=_("No breakpoint numbered {}").format(bpnum)
             )
         else:
             bp = bdb.Breakpoint.bpbynumber[bpnum]
@@ -376,7 +377,7 @@ class Debugger(bdb.Bdb):
             count = 0
         if not (0 <= bpnum < len(bdb.Breakpoint.bpbynumber)):
             self.output(
-                "error", message="No breakpoint numbered {}".format(bpnum)
+                "error", message=_("No breakpoint numbered {}").format(bpnum)
             )
         else:
             bp = bdb.Breakpoint.bpbynumber[bpnum]
@@ -392,7 +393,7 @@ class Debugger(bdb.Bdb):
         """
         bpnum = int(bpnum)
         if not (0 <= bpnum < len(bdb.Breakpoint.bpbynumber)):
-            self.output("error", message="No breakpoint numbered %s" % bpnum)
+            self.output("error", message=_("No breakpoint numbered %s") % bpnum)
         else:
             err = self.clear_bpbynumber(bpnum)
             if err:
@@ -483,13 +484,24 @@ class Debugger(bdb.Bdb):
         self._run_state = DebugState.STARTING
         self.mainpyfile = self.canonic(filename)
         self._user_requested_quit = True  # End the process once completed.
-        e = (
-            '__debug_script__ = open(r"{filename}", "rb");'
-            "__debug_code__ = compile(__debug_script__.read(),"
-            ' r"{filename}", "exec");'
-            "exec(__debug_code__);"
-            "__debug_script__.close();".format(filename=filename)
-        )
+        if os.environ.get("MU_PGZERO"):
+            e = (
+                'import pgzrun;'
+                '__debug_script__ = open(r"{filename}", "rb");'
+                "__debug_code__ = compile(__debug_script__.read(),"
+                ' r"{filename}", "exec");'
+                "exec(__debug_code__);"
+                "__debug_script__.close();"
+                "pgzrun.go();".format(filename=filename)
+            )
+        else:
+            e = (
+                '__debug_script__ = open(r"{filename}", "rb");'
+                "__debug_code__ = compile(__debug_script__.read(),"
+                ' r"{filename}", "exec");'
+                "exec(__debug_code__);"
+                "__debug_script__.close();".format(filename=filename)
+            )
         self.run(e)
 
 
@@ -498,6 +510,13 @@ def run(hostname, port, filename, args):
     Run a Python script identified by "filename" with the specified arguments
     in a debugger session that's listening at hostname/port.
     """
+    # Initialize i18n for the debug runner process.
+    # This avoids a dependency on PyQt6 (required by mu.i18n).
+    localedir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "locale")
+    )
+    gettext.translation("mu", localedir=localedir, fallback=True).install()
+
     logger.debug("runner.run %s:%s %s %r", hostname, port, filename, args)
     # Create the correct context for the target Python script.
     sys.argv[0] = filename
@@ -515,8 +534,10 @@ def run(hostname, port, filename, args):
     debugger.reset()
 
     print(
-        "Running in debug mode. Use the Stop, Continue, and Step toolbar"
-        " buttons to debug the script",
+        _(
+            "Running in debug mode. Use the Stop, Continue, and Step toolbar"
+            " buttons to debug the script"
+        ),
         file=sys.stderr,
     )
 
