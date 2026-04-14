@@ -919,6 +919,7 @@ class FileSystemPane(QFrame):
     list_files = pyqtSignal()
     open_file = pyqtSignal(str)
     set_pbar_update = pyqtSignal(int)
+    fatal_error = pyqtSignal()
 
     def __init__(self, home):
         super().__init__()
@@ -1038,6 +1039,8 @@ class FileSystemPane(QFrame):
                 "restarting Mu."
             )
         )
+        logger.info("Listing files failed. Emitting fatal_error signal.")
+        self.fatal_error.emit()
 
     def on_is_dir_fail(self):
         """

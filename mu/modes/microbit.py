@@ -572,7 +572,27 @@ class MicrobitMode(MicroPythonMode):
             else:
                 self.remove_fs()
                 logger.info("Toggle filesystem off.")
-                self.set_buttons(flash=True, repl=True, plotter=True)
+                self.set_buttons(flash=True, repl=True, plotter=True, files=True)
+
+    def on_device_disconnected(self, device):
+        """
+        Handle a device disconnection event.
+        """
+        logger.info("MicrobitMode received device disconnection event.")
+        if self.fs and self.file_manager:
+            logger.info("File system open, closing due to device removal.")
+            self.toggle_files(None)
+        elif self.fs is None and not self.file_manager:
+            logger.info("File system already closed, resetting buttons.")
+            self.set_buttons(flash=True, repl=True, plotter=True, files=True)
+
+        # Also clean up the REPL/Plotter connection if it matches
+        if self.connection and getattr(self.connection, "port", None) == device.port:
+            logger.info("Cleaning up REPL/Plotter connection due to device removal.")
+            if self.repl:
+                self.remove_repl()
+            if self.plotter:
+                self.remove_plotter()
 
     def add_fs(self):
         """
@@ -602,6 +622,13 @@ class MicrobitMode(MicroPythonMode):
         )
         self.fs.set_message.connect(self.editor.show_status_message)
         self.fs.set_warning.connect(self.view.show_message)
+        
+        @self.fs.fatal_error.connect
+        def on_fatal_error():
+            logger.info("Received fatal_error signal from filesystem pane.")
+            if self.fs:
+                self.toggle_files(None)
+                
         self.file_manager_thread.start()
 
     def remove_fs(self):

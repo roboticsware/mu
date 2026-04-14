@@ -642,6 +642,13 @@ class MicroPythonMode(BaseMode):
         if self.connection:
             self.connection.send_interrupt()
 
+    def on_device_disconnected(self, device):
+        """
+        Invoked when a device is disconnected.
+        Can be overridden by subclasses.
+        """
+        pass
+
 
 class FileManager(QObject):
     """

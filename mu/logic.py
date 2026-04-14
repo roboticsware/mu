@@ -960,6 +960,8 @@ class Editor(QObject):
         logger.info("Log directory: {}".format(LOG_DIR))
         logger.info("Data directory: {}".format(DATA_DIR))
 
+        self.connected_devices.device_disconnected.connect(self.on_device_disconnected)
+
         @view.open_file.connect
         def on_open_file(file):
             # Open the file
@@ -1996,6 +1998,14 @@ class Editor(QObject):
                 device.short_mode_name, device.long_mode_name, heading
             )
         self.current_device = device
+
+    def on_device_disconnected(self, device):
+        """
+        Slot for receiving signals that a device has been disconnected.
+        Passes the disconnection event to the current mode.
+        """
+        if hasattr(self.modes[self.mode], "on_device_disconnected"):
+            self.modes[self.mode].on_device_disconnected(device)
 
     def show_status_message(self, message, duration=5):
         """

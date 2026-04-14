@@ -240,7 +240,29 @@ class ESPMode(MicroPythonMode):
             else:
                 self.remove_fs()
                 logger.info("Toggle filesystem off.")
-                self.set_buttons(run=True, repl=True, plotter=True)
+                self.set_buttons(run=True, repl=True, plotter=True, files=True)
+                
+    def on_device_disconnected(self, device):
+        """
+        Handle a device disconnection event.
+        """
+        logger.info("ESPMode received device disconnection event: device.port %r", device.port)
+        if self.fs and self.file_manager:
+            # fs is open, close it
+            logger.info("File system open, closing due to device removal.")
+            self.toggle_files(None)
+        elif self.fs is None and not self.file_manager:
+            # fs was already closed (e.g. by fatal_error signal), but button may still be highlighted
+            logger.info("File system already closed, resetting buttons.")
+            self.set_buttons(run=True, repl=True, plotter=True, files=True)
+
+        # Also clean up the REPL/Plotter connection if it matches
+        if self.connection and getattr(self.connection, "port", None) == device.port:
+            logger.info("Cleaning up REPL/Plotter connection due to device removal.")
+            if self.repl:
+                self.remove_repl()
+            if self.plotter:
+                self.remove_plotter()
 
     def add_fs(self):
         """
@@ -285,6 +307,13 @@ class ESPMode(MicroPythonMode):
         self.fs.set_message.connect(self.editor.show_status_message)
         self.fs.set_warning.connect(self.view.show_message)
         self.fs.set_pbar_update.connect(self.editor.show_progressbar_update)
+        
+        @self.fs.fatal_error.connect
+        def on_fatal_error():
+            logger.info("Received fatal_error signal from filesystem pane.")
+            if self.fs:
+                self.toggle_files(None)
+                
         self.file_manager_thread.start()
 
     def remove_fs(self):
