@@ -223,7 +223,10 @@ class FileTabs(QTabWidget):
         Ask the user before closing the file.
         """
         window = self.nativeParentWidget()
-        modified = self.widget(tab_id).isModified()
+        widget = self.widget(tab_id)
+        if widget is None:
+            return
+        modified = widget.isModified()
         if modified:
             msg = _(
                 "There is un-saved work, closing the tab will cause you to lose it."
@@ -231,6 +234,20 @@ class FileTabs(QTabWidget):
             if window.show_confirmation(msg) == QMessageBox.Cancel:
                 return
         super(FileTabs, self).removeTab(tab_id)
+        if widget and hasattr(widget, "device_path") and widget.device_path:
+            import shutil
+            import os
+
+            temp_dir = os.path.dirname(widget.path)
+            if os.path.exists(temp_dir):
+                try:
+                    shutil.rmtree(temp_dir)
+                except Exception as ex:
+                    logger.error(
+                        "Failed to clean up device temp dir {}: {}".format(
+                            temp_dir, ex
+                        )
+                    )
 
     def addTab(self, widget, title):
         """
@@ -329,6 +346,7 @@ class Window(QMainWindow):
     _zoom_out = pyqtSignal(str)
     data_received = pyqtSignal(bytes)
     open_file = pyqtSignal(str)
+    open_device_file = pyqtSignal(str, str)
     load_theme = pyqtSignal(str)
     selected_text = pyqtSignal(str)
     previous_folder = None
@@ -447,6 +465,16 @@ class Window(QMainWindow):
         logger.debug("Getting save path: {}".format(path))
         return path
 
+    def set_tab_text(self, tab):
+        """
+        Updates the tab label and window title.
+        """
+        tab_index = self.tabs.indexOf(tab)
+        # Update tab label & window title
+        # Tab dirty indicator is managed in FileTabs.addTab
+        self.tabs.setTabText(tab_index, tab.label)
+        self.update_title(tab.title)
+
     def get_microbit_path(self, folder):
         """
         Displays a dialog for locating the location of the BBC micro:bit in the
@@ -474,11 +502,7 @@ class Window(QMainWindow):
 
         @new_tab.modificationChanged.connect
         def on_modified():
-            modified_tab_index = self.tabs.indexOf(new_tab)
-            # Update tab label & window title
-            # Tab dirty indicator is managed in FileTabs.addTab
-            self.tabs.setTabText(modified_tab_index, new_tab.label)
-            self.update_title(new_tab.title)
+            self.set_tab_text(new_tab)
 
         @new_tab.open_file.connect
         def on_open_file(file):
@@ -663,7 +687,28 @@ class Window(QMainWindow):
         file_manager.on_put_update_file.connect(self.fs_pane.microbit_fs.on_put_update)
         file_manager.on_delete_file.connect(self.fs_pane.microbit_fs.on_delete)
         file_manager.on_is_dir_file.connect(self.fs_pane.microbit_fs.on_is_dir)
-        file_manager.on_get_file.connect(self.fs_pane.local_fs.on_get)
+        self.device_files_downloading = {}
+
+        @file_manager.on_file_check.connect
+        def on_open_device_file(device_path):
+            import os
+            from mu.config import DATA_DIR
+            device_files_dir = os.path.join(DATA_DIR, ".device_files")
+            os.makedirs(device_files_dir, exist_ok=True)
+            unique_dir = os.path.join(device_files_dir, str(id(device_path)))
+            os.makedirs(unique_dir, exist_ok=True)
+            local_path = os.path.join(unique_dir, os.path.basename(device_path))
+            
+            self.device_files_downloading[device_path] = local_path
+            file_manager.get(device_path, local_path)
+
+        def on_get_file_handler(device_path):
+            self.fs_pane.local_fs.on_get(device_path)
+            if hasattr(self, "device_files_downloading") and device_path in self.device_files_downloading:
+                local_path = self.device_files_downloading.pop(device_path)
+                self.open_device_file.emit(local_path, device_path)
+
+        file_manager.on_get_file.connect(on_get_file_handler)
         file_manager.on_delete_file.connect(self.fs_pane.local_fs.on_delete)
         file_manager.on_is_dir_fail.connect(self.fs_pane.on_is_dir_fail)
         file_manager.on_list_fail.connect(self.fs_pane.on_ls_fail)

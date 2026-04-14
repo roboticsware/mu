@@ -45,6 +45,7 @@ from . import i18n
 from .virtual_environment import venv, logger as vlogger
 from . import __version__
 from .logic import Editor, LOG_FILE, LOG_DIR, ENCODING
+from .config import DATA_DIR
 from .interface import Window
 from .resources import load_icon, load_movie, load_pixmap
 from .modes import (
@@ -368,6 +369,16 @@ def run():
     logging.info("Language code: {}".format(i18n.language_code))
     setup_exception_handler()
     check_only_running_once()
+
+    # Clean up any leftover device files from previous sessions.
+    device_files_dir = os.path.join(DATA_DIR, ".device_files")
+    if os.path.exists(device_files_dir):
+        import shutil
+
+        try:
+            shutil.rmtree(device_files_dir)
+        except Exception as ex:
+            logging.error("Failed to clean up .device_files: {}".format(ex))
 
     # Remove the VIRTUAL_ENV env var: when set, prevents pgzero mode from working
     # if Mu is installed from source/PyPI into a virtual environment.

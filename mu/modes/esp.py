@@ -292,6 +292,12 @@ class ESPMode(MicroPythonMode):
         Remove the file system navigator from the UI.
         """
         self.view.remove_filesystem()
+        
+        file_manager_thread = getattr(self, "file_manager_thread", None)
+        if file_manager_thread:
+            file_manager_thread.quit()
+            file_manager_thread.wait()
+            
         self.file_manager = None
         self.file_manager_thread = None
         self.fs = None
@@ -310,6 +316,14 @@ class ESPMode(MicroPythonMode):
         """
         super().deactivate()
         if self.fs:
+            self.remove_fs()
+
+    def stop(self):
+        """
+        Invoked whenever the application quits.
+        """
+        super().stop()
+        if getattr(self, "fs", None):
             self.remove_fs()
 
     def device_changed(self, new_device):

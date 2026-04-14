@@ -654,6 +654,8 @@ class FileManager(QObject):
 
     # Emitted when the tuple of files on the device is known.
     on_list_files = pyqtSignal(tuple, str, str)
+    # Emitted when the path is a file.
+    on_file_check = pyqtSignal(str)
     # Emitted when the path is a directory.
     on_is_dir_file = pyqtSignal(str)
     # Emitted when the file with referenced filename is got from the device.
@@ -720,8 +722,7 @@ class FileManager(QObject):
         try:
             result = microfs.is_dir(path, self.serial)
             if not result:
-                logger.info("The file open in device file system, Currently not supported.")
-                self.on_is_dir_fail.emit()
+                self.on_file_check.emit(path)
             else:
                 self.on_is_dir_file.emit(path)
         except Exception as ex:

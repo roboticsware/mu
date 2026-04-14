@@ -96,6 +96,7 @@ class EditorPane(QsciScintilla):
         super().__init__()
         self.setUtf8(True)
         self.path = path
+        self.device_path = None
         self.setText(text)
         self.newline = newline
         self.check_indicators = {  # IDs are arbitrary
@@ -325,6 +326,8 @@ class EditorPane(QsciScintilla):
         """
         if self.path:
             label = os.path.basename(self.path)
+            if self.device_path:
+                label = _("[Device] {}").format(label)
         else:
             label = _("untitled")
         return label

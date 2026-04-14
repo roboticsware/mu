@@ -953,6 +953,7 @@ class Editor(QObject):
         self.current_path = ""  # Directory of last loaded file.
         self.global_replace = False
         self.selecting_mode = False  # Flag to stop auto-detection of modes.
+        self.device_files = {}  # Map local temp path -> device path
         if not os.path.exists(DATA_DIR):
             logger.debug("Creating directory: {}".format(DATA_DIR))
             os.makedirs(DATA_DIR)
@@ -963,6 +964,11 @@ class Editor(QObject):
         def on_open_file(file):
             # Open the file
             self.direct_load(file)
+
+        @view.open_device_file.connect
+        def on_open_device_file(local_path, device_path):
+            self.device_files[local_path] = device_path
+            self.direct_load(local_path)
 
         @view.selected_text.connect
         def on_selected_text(text):
@@ -1413,9 +1419,13 @@ class Editor(QObject):
                 ):
                     self.change_mode(file_mode)
             logger.debug(text)
-            self._view.add_tab(
+            tab = self._view.add_tab(
                 name, text, self.modes[self.mode].api(), newline
             )
+            if name in self.device_files:
+                tab.device_path = self.device_files[name]
+                # Also reset the label now that it has a device path
+                self._view.set_tab_text(tab)
 
     def get_dialog_directory(self, default=None):
         """
@@ -1523,6 +1533,29 @@ class Editor(QObject):
         """
         logger.info("Saving script to: {}".format(tab.path))
         logger.debug(tab.text())
+        if hasattr(tab, "device_path") and tab.device_path:
+            try:
+                save_and_encode(tab.text(), tab.path, tab.newline)
+            except Exception as e:
+                logger.error(e)
+                self._view.show_message(_("Could not save file to local cache"), str(e))
+                return
+
+            active_mode = self.modes[self.mode]
+            if hasattr(active_mode, "file_manager") and active_mode.file_manager:
+                active_mode.file_manager.put(tab.path, target=tab.device_path)
+                tab.setModified(False)
+                self.show_status_message(_("Saving file to device..."))
+            else:
+                from PyQt6.QtWidgets import QMessageBox
+                message = _("Device disconnected")
+                info = _("Would you like to save this file to your computer instead?")
+                if self._view.show_confirmation(message, info, icon="Question") == QMessageBox.StandardButton.Ok:
+                    tab.device_path = None
+                    tab.path = None # Force Save As
+                    self.save()
+            return
+            
         try:
             save_and_encode(tab.text(), tab.path, tab.newline)
         except OSError as e:
