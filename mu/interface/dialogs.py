@@ -604,6 +604,11 @@ class AdminDialog(QDialog):
             self.esp_widget = ESPFirmwareFlasherWidget(self)
             self.esp_widget.setup(mode, device_list)
             self.tabs.addTab(self.esp_widget, _("ESP Firmware flasher"))
+        if mode.short_name == "pico":
+            from mu.interface.pico_flasher.dialog import PicoFirmwareFlasherWidget
+            self.pico_flasher_widget = PicoFirmwareFlasherWidget(self)
+            self.pico_flasher_widget.setup(mode)
+            self.tabs.addTab(self.pico_flasher_widget, _("Pico Firmware Flasher"))
         if mode.short_name == "web":
             self.python_anywhere_widget = PythonAnywhereWidget(self)
             self.python_anywhere_widget.setup(

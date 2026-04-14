@@ -1689,3 +1689,101 @@ msgstr "Debug rejimida ishlanmoqda. Kodlarni debug qilish uchun To'xtatish, Davo
 #: mu/mu_debug.py:33
 msgid "Debugger requires a Python script filename to run."
 msgstr "Debuger ishlashi uchun Python kodlari fayl nomi kerak."
+
+#: mu/interface/dialogs.py
+msgid "Pico Firmware Flasher"
+msgstr "Pico mikrodasturini yuklab qo'yish"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "How to flash MicroPython to your Pico"
+msgstr "MicroPython-ni Pico-ga qanday yozish mumkin"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid ""
+"1. Hold the <b>BOOTSEL</b> button on your Pico and plug it "
+"into USB — it will appear as a drive called "
+"<b>RPI-RP2</b> (or RP2350 for Pico 2).<br>"
+"2. Click <b>Refresh Drive</b> until the drive is detected.<br>"
+"3. Click <b>Fetch Versions</b> to load available firmware.<br>"
+"4. Select a version and click <b>Download &amp; Flash</b>."
+msgstr ""
+"1. Pico-dagi <b>BOOTSEL</b> tugmasini bosib tuting va USB-ga ulang "
+"— u <b>RPI-RP2</b> (yoki Pico 2 uchun RP2350) nomli disk sifatida paydo bo'ladi.<br>"
+"2. Disk aniqlanguncha <b>Diskni yangilash</b> tugmasini bosing.<br>"
+"3. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>"
+"4. Versiyani tanlang va <b>Yuklab yozish</b> tugmasini bosing."
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Firmware version:"
+msgstr "Mikrodastur versiyasi:"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Fetch Versions"
+msgstr "Versiyalarni olish"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "BOOTSEL drive:"
+msgstr "BOOTSEL diski:"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Not detected"
+msgstr "Aniqlanmadi"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Refresh Drive"
+msgstr "Diskni yangilash"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Download && Flash"
+msgstr "Yuklab yozish"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Fetching firmware list from Thonny…"
+msgstr "Thonny-dan mikrodastur ro'yxati olinmoqda…"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "No compatible firmware found."
+msgstr "Mos mikrodastur topilmadi."
+
+#: mu/interface/pico_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded {} firmware versions."
+msgstr "{} ta mikrodastur versiyasi yuklandi."
+
+#: mu/interface/pico_flasher/dialog.py
+#, python-brace-format
+msgid "Error fetching versions: {}"
+msgstr "Versiyalarni olishda xato: {}"
+
+#: mu/interface/pico_flasher/dialog.py
+#, python-brace-format
+msgid "BOOTSEL drive detected: {}"
+msgstr "BOOTSEL diski aniqlandi: {}"
+
+#: mu/interface/pico_flasher/dialog.py
+#, python-brace-format
+msgid "Starting download: {} {}"
+msgstr "Yuklab olish boshlanmoqda: {} {}"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Downloading firmware…"
+msgstr "Mikrodastur yuklab olinmoqda…"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Download complete. Flashing…"
+msgstr "Yuklab olish tugadi. Yozilmoqda…"
+
+#: mu/interface/pico_flasher/dialog.py
+msgid "Flash complete! Pico is rebooting with the new firmware."
+msgstr "Yozish tugadi! Pico yangi mikrodastur bilan qayta ishga tushmoqda."
+
+#: mu/interface/pico_flasher/dialog.py
+#, python-brace-format
+msgid "Flash failed: {}"
+msgstr "Yozib bo'lmadi: {}"
+
+#: mu/interface/pico_flasher/dialog.py
+#, python-brace-format
+msgid "Download error: {}"
+msgstr "Yuklab olishda xato: {}"
+
