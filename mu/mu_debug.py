@@ -27,7 +27,11 @@ def debug(filename=None, *args):
     # Initialize i18n for the debug runner process.
     # This avoids a dependency on PyQt6 (required by mu.i18n).
     localedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "locale"))
-    gettext.translation("mu", localedir=localedir, fallback=True).install()
+    lang = os.environ.get("MU_LANG")
+    languages = [lang] if lang else None
+    gettext.translation(
+        "mu", localedir=localedir, languages=languages, fallback=True
+    ).install()
 
     if filename is None:
         print(_("Debugger requires a Python script filename to run."))

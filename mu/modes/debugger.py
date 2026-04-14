@@ -119,7 +119,8 @@ class DebugMode(BaseMode):
                 self.editor.save_tab_to_file(tab)
             logger.debug(tab.text())
             self.set_buttons(modes=False)
-            envars = self.editor.envars
+            envars = self.editor.envars.copy()
+            envars["MU_LANG"] = getattr(self.editor, "user_locale", "")
             cwd = os.path.dirname(tab.path)
             self.runner = self.view.add_python3_runner(
                 venv.interpreter, tab.path, cwd, debugger=True, envars=envars

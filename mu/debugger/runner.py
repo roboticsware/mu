@@ -515,7 +515,11 @@ def run(hostname, port, filename, args):
     localedir = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..", "locale")
     )
-    gettext.translation("mu", localedir=localedir, fallback=True).install()
+    lang = os.environ.get("MU_LANG")
+    languages = [lang] if lang else None
+    gettext.translation(
+        "mu", localedir=localedir, languages=languages, fallback=True
+    ).install()
 
     logger.debug("runner.run %s:%s %s %r", hostname, port, filename, args)
     # Create the correct context for the target Python script.

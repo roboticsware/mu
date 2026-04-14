@@ -1160,11 +1160,11 @@ msgstr "Python skriptini davom etib bajaradi."
 
 #: mu/modes/debugger.py:75
 msgid "Step Over"
-msgstr "O'tib ketish"
+msgstr "Bir qadam"
 
 #: mu/modes/debugger.py:76
 msgid "Step over a line of code."
-msgstr "Kodlarning bir qatorini o'tib ketadi."
+msgstr "Kodlarning bir qadamini bajaradi."
 
 #: mu/modes/debugger.py:82
 msgid "Step In"
@@ -1657,3 +1657,35 @@ msgstr "Mu faqat Python faylida ishlaydi. Iltimos, Mu-dagi joriy tasmali panelid
 msgid "To deploy your web application, there needs to be a 'templates' directory in the same place as your web application's Python code. Please fix this and try again. (Hint: Mu was expecting the `templates` directory to be here: )"
 msgstr "Veb-ilovangizni joylashtirish uchun veb-ilovangizning Python kodi bilan bir joyda \"shablonlar\" folderda bo'lishi kerak. Buni tuzatib, qayta urinib ko‘ring. (Maslahat: Mu \"shablonlar\" folderda bo'lishini kutgan edi:)"
 
+
+#: mu/modes/pygamezero.py:110
+msgid "Debug your Pygame Zero game."
+msgstr "Pygame Zero o'yiningizni debug qiling."
+
+#: mu/debugger/runner.py:214
+msgid "Unhandled error with command \"{}\": {}"
+msgstr "\"{}\" buyrug'i bilan ishlov berilmagan xatolik: {}"
+
+#: mu/debugger/runner.py:220
+msgid "Unknown command: {}"
+msgstr "Noma'lum buyruq: {}"
+
+#: mu/debugger/runner.py:338
+msgid "{}:{} is not executable"
+msgstr "{}:{} bajariladigan fayl emas"
+
+#: mu/debugger/runner.py:348 mu/debugger/runner.py:362 mu/debugger/runner.py:380
+msgid "No breakpoint numbered {}"
+msgstr "{} raqamli to'xtash nuqtasi yo'q"
+
+#: mu/debugger/runner.py:396
+msgid "No breakpoint numbered %s"
+msgstr "%s raqamli to'xtash nuqtasi yo'q"
+
+#: mu/debugger/runner.py:537
+msgid "Running in debug mode. Use the Stop, Continue, and Step toolbar buttons to debug the script"
+msgstr "Debug rejimida ishlanmoqda. Kodlarni debug qilish uchun To'xtatish, Davom etish va Qadam tugmalaridan foydalaning."
+
+#: mu/mu_debug.py:33
+msgid "Debugger requires a Python script filename to run."
+msgstr "Debuger ishlashi uchun Python kodlari fayl nomi kerak."
