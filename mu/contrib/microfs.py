@@ -189,16 +189,43 @@ def ls(path, serial=None):
     Returns a list of the files on the connected device or raises an IOError if
     there's a problem.
     """
-    out, err = execute(["import os", "print(os.listdir('" + path + "'))"], serial)
+    out, err = execute(
+        ["import os", "print(os.listdir({!r}))".format(path)], serial
+    )
     if err:
         raise IOError(clean_error(err))
     return ast.literal_eval(out.decode("utf-8"))
+
+
+def ls_with_types(path, serial=None):
+    """
+    List files on the device along with type information.
+
+    Uses a SINGLE execute() call so only one soft-reboot occurs.
+    On the device, tries os.ilistdir(); falls back to os.listdir() if
+    ilistdir is unavailable (catches AttributeError).
+
+    Returns a list of (name: str, is_dir: bool) tuples, or raises IOError.
+    """
+    cmd = (
+        "import os\n"
+        "try:\n"
+        " r=[(e[0],bool(e[1]&16384)) for e in os.ilistdir({!r})]\n"
+        "except Exception:\n"
+        " r=[(f,False) for f in os.listdir({!r})]\n"
+        "print(r)"
+    ).format(path, path)
+    out, err = execute([cmd], serial)
+    if err:
+        raise IOError(clean_error(err))
+    return [(n, d) for n, d in ast.literal_eval(out.decode("utf-8"))]
+
 
 def is_dir(path, serial=None):
     """
     Check if the path is a directory.
     """
-    out, err = execute(["import os", "print(os.stat('" + path + "'))"], serial)
+    out, err = execute(["import os", "print(os.stat({!r}))".format(path)], serial)
     if err:
         raise IOError(clean_error(err))
     return ast.literal_eval(out.decode("utf-8"))[0] & 0x4000 != 0
@@ -217,6 +244,39 @@ def rm(filename, serial=None):
     if err:
         raise IOError(clean_error(err))
     return True
+
+
+def rename(old_path, new_path, serial=None):
+    """
+    Renames (moves) a file on the device from old_path to new_path.
+
+    If no serial object is supplied, microfs will attempt to detect the
+    connection itself.
+
+    Returns True for success or raises an IOError if there's a problem.
+    """
+    commands = ["import os", "os.rename({!r}, {!r})".format(old_path, new_path)]
+    out, err = execute(commands, serial)
+    if err:
+        raise IOError(clean_error(err))
+    return True
+
+
+def mkdir(path, serial=None):
+    """
+    Creates a directory on the device at the given path.
+
+    If no serial object is supplied, microfs will attempt to detect the
+    connection itself.
+
+    Returns True for success or raises an IOError if there's a problem.
+    """
+    commands = ["import os", "os.mkdir({!r})".format(path)]
+    out, err = execute(commands, serial)
+    if err:
+        raise IOError(clean_error(err))
+    return True
+
 
 
 def put(self, filename, target=None, serial=None):

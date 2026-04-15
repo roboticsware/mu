@@ -24,6 +24,7 @@ import logging
 import signal
 import string
 import bisect
+import shutil
 import os.path
 import codecs
 
@@ -41,10 +42,12 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QFrame,
     QListWidget,
+    QListWidgetItem,
     QGridLayout,
     QLabel,
     QMenu,
     QTreeView,
+    QInputDialog,
 )
 from PyQt6.QtGui import (
     QKeySequence,
@@ -53,6 +56,8 @@ from PyQt6.QtGui import (
     QPainter,
     QDesktopServices,
     QStandardItem,
+    QColor,
+    QFont,
 )
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from ..i18n import language_code
@@ -713,6 +718,8 @@ class MicroPythonDeviceFileList(MuFileList):
 
     put = pyqtSignal(str, str)
     delete = pyqtSignal(str)
+    rename = pyqtSignal(str, str)   # (old_path, new_path)
+    mkdir = pyqtSignal(str)         # (dir_path)
     is_dir = pyqtSignal(str)
     open_file = pyqtSignal(str)
 
@@ -720,6 +727,7 @@ class MicroPythonDeviceFileList(MuFileList):
         super().__init__()
         self.home = home
         self.cur_home_dir = home
+        self._dir_names = frozenset()  # names of dirs in the current listing
         self.setDragDropMode(QListWidget.DragDrop)
 
     def dropEvent(self, event):
@@ -735,11 +743,52 @@ class MicroPythonDeviceFileList(MuFileList):
             ):
                 self.disable.emit()
                 local_filename = os.path.join(source.cur_home_dir, source.currentItem().text())
-                microbit_filename = os.path.join(self.cur_home_dir, source.currentItem().text())
+                # Detect if file is dropped onto a directory item
+                target_item = self.itemAt(event.position().toPoint())
+                if (
+                    target_item
+                    and target_item.text() != '..'
+                    and target_item.text() in self._dir_names
+                ):
+                    # Drop into the highlighted subdirectory
+                    subdir = os.path.join(self.cur_home_dir, target_item.text())
+                    microbit_filename = os.path.join(subdir, source.currentItem().text())
+                else:
+                    microbit_filename = os.path.join(self.cur_home_dir, source.currentItem().text())
                 msg = _("Copying '{}' to device.").format(local_filename)
                 logger.info(msg)
                 self.set_message.emit(msg)
                 self.put.emit(local_filename, microbit_filename)
+
+        elif source is self:
+            # Device intra-list drag: move file into a directory or parent (..)
+            dragged_item = self.currentItem()
+            if dragged_item is None or dragged_item.text() == '..':
+                return
+            target_item = self.itemAt(event.position().toPoint())
+            if target_item is None or target_item is dragged_item:
+                return  # Drop onto empty space or itself - ignore
+
+            filename = dragged_item.text()
+            old_path = os.path.join(self.cur_home_dir, filename)
+
+            if target_item.text() == '..':
+                # Resolve parent without '..' in the path
+                normalized = os.path.normpath(self.cur_home_dir.rstrip('/'))
+                parent = os.path.dirname(normalized)
+                target_dir = './' if (not parent or parent == '.') else parent + '/'
+                target_label = '..'
+            elif target_item.text() in self._dir_names:
+                target_dir = os.path.join(self.cur_home_dir, target_item.text()) + '/'
+                target_label = target_item.text()
+            else:
+                return  # Not a directory - ignore
+
+            new_path = os.path.join(target_dir, filename)
+            self.disable.emit()
+            msg = _("'{}' moved into '{}'.").format(filename, target_label)
+            self.set_message.emit(msg)
+            self.rename.emit(old_path, new_path)
 
     def on_put(self, microbit_file):
         """
@@ -755,13 +804,25 @@ class MicroPythonDeviceFileList(MuFileList):
         self.pbar_update.emit(amount)
 
     def contextMenuEvent(self, event):
-        menu_current_item = self.currentItem()
-        if menu_current_item is None:
-            return
         menu = QMenu(self)
-        delete_action = menu.addAction(_("Delete (cannot be undone)"))
+        menu_current_item = self.currentItem()
+
+        if menu_current_item is not None:
+            delete_action = menu.addAction(_("Delete (cannot be undone)"))
+            rename_action = menu.addAction(_("Rename"))
+            menu.addSeparator()
+        else:
+            delete_action = None
+            rename_action = None
+
+        mkdir_action = menu.addAction(_("New directory"))
+
         action = menu.exec(self.mapToGlobal(event.pos()))
-        if action == delete_action:
+
+        if action is None:
+            return
+
+        if action == delete_action and menu_current_item is not None:
             self.disable.emit()
             microbit_filename = os.path.join(self.cur_home_dir, menu_current_item.text())
             logger.info("Deleting {}".format(microbit_filename))
@@ -769,6 +830,35 @@ class MicroPythonDeviceFileList(MuFileList):
             logger.info(msg)
             self.set_message.emit(msg)
             self.delete.emit(microbit_filename)
+
+        elif action == rename_action and menu_current_item is not None:
+            old_name = menu_current_item.text()
+            old_path = os.path.join(self.cur_home_dir, old_name)
+            new_name, ok = QInputDialog.getText(
+                self,
+                _("Rename"),
+                _("New name for '{}':").format(old_name),
+                text=old_name,
+            )
+            if ok and new_name and new_name != old_name:
+                new_path = os.path.join(self.cur_home_dir, new_name)
+                self.disable.emit()
+                msg = _("Renaming '{}' to '{}'.").format(old_name, new_name)
+                self.set_message.emit(msg)
+                self.rename.emit(old_path, new_path)
+
+        elif action == mkdir_action:
+            dir_name, ok = QInputDialog.getText(
+                self,
+                _("New directory"),
+                _("Directory name:"),
+            )
+            if ok and dir_name:
+                dir_path = os.path.join(self.cur_home_dir, dir_name)
+                self.disable.emit()
+                msg = _("Creating directory '{}'.").format(dir_name)
+                self.set_message.emit(msg)
+                self.mkdir.emit(dir_path)
 
     def on_delete(self, microbit_file):
         """
@@ -778,15 +868,60 @@ class MicroPythonDeviceFileList(MuFileList):
         self.set_message.emit(msg)
         self.list_files.emit(self.cur_home_dir)
 
+    def on_rename(self, old_path):
+        """
+        Fired when the rename event is completed.
+        """
+        old_name = os.path.basename(old_path)
+        msg = _("'{}' successfully renamed.").format(old_name)
+        self.set_message.emit(msg)
+        self.enable.emit()
+        self.list_files.emit(self.cur_home_dir)
+
+    def on_mkdir(self, dir_path):
+        """
+        Fired when the mkdir event is completed.
+        """
+        dir_name = os.path.basename(dir_path)
+        msg = _("Directory '{}' created.").format(dir_name)
+        self.set_message.emit(msg)
+        self.enable.emit()
+        self.list_files.emit(self.cur_home_dir)
+
     def on_item_double_clicked(self, item):
-        # Get the path
-        local_name = item.text()
-        path = os.path.join(self.cur_home_dir, local_name)
-        # Check the name is directory or file
-        self.is_dir.emit(path)
+        name = item.text()
+        if name == '..':
+            # Navigate up without any serial round-trip
+            parent = os.path.normpath(self.cur_home_dir)
+            parent = os.path.dirname(parent)
+            if not parent or parent == '.':
+                parent = './'
+            elif not parent.endswith('/'):
+                parent = parent + '/'
+            self.set_cur_home_dir(parent)
+            self.list_files.emit(self.cur_home_dir)
+        elif name in self._dir_names:
+            # Navigate into known directory immediately
+            new_dir = self.cur_home_dir.rstrip('/') + '/' + name + '/'
+            self.set_cur_home_dir(new_dir)
+            self.list_files.emit(self.cur_home_dir)
+        else:
+            # Unknown type – use serial is_dir check (file → open, dir → navigate)
+            path = os.path.join(self.cur_home_dir, name)
+            # Strip './' prefix: MicroPython may not support it in os.stat()
+            if path.startswith('./'):
+                path = path[2:] or '/'
+            logger.debug("Device double-click: is_dir check for '{}'".format(path))
+            self.is_dir.emit(path)
 
     def on_is_dir(self, path):
-        self.set_cur_home_dir(path + '/')  # Change parent's sharedlass variable
+        # Normalise path so e.g. '/lib/..' resolves to '/'
+        normalized = os.path.normpath(path)
+        if not normalized or normalized == '.':
+            normalized = './'
+        elif not normalized.endswith('/'):
+            normalized = normalized + '/'
+        self.set_cur_home_dir(normalized)
         self.list_files.emit(self.cur_home_dir)  # Go to sub directory
 
 class LocalFileList(MuFileList):
@@ -808,6 +943,7 @@ class LocalFileList(MuFileList):
     def dropEvent(self, event):
         source = event.source()
         if isinstance(source, MicroPythonDeviceFileList):
+            # Device → PC copy
             file_exists = self.findItems(
                 source.currentItem().text(), Qt.MatchExactly
             )
@@ -826,6 +962,44 @@ class LocalFileList(MuFileList):
                 self.set_message.emit(msg)
                 self.get.emit(microbit_filename, local_filename)
 
+        elif source is self:
+            # PC intra-list drag: move file into a directory item or parent (..)
+            dragged_item = self.currentItem()
+            if dragged_item is None or dragged_item.text() == '..':
+                return
+            target_item = self.itemAt(event.position().toPoint())
+            if target_item is None or target_item is dragged_item:
+                return  # Drop onto empty space or itself – ignore
+
+            if target_item.text() == '..':
+                # Drop onto '..' → move to parent directory
+                target_path = os.path.normpath(
+                    os.path.join(self.cur_home_dir, '..')
+                )
+                target_label = '..'
+            else:
+                target_path = os.path.join(self.cur_home_dir, target_item.text())
+                if not os.path.isdir(target_path):
+                    return  # Target is not a directory – ignore
+                target_label = target_item.text()
+
+            src_path = os.path.join(self.cur_home_dir, dragged_item.text())
+            dst_path = os.path.join(target_path, dragged_item.text())
+            try:
+                shutil.move(src_path, dst_path)
+                msg = _("'{}' moved into '{}'.").format(
+                    dragged_item.text(), target_label
+                )
+                self.set_message.emit(msg)
+                self.list_sub_files.emit([], self.cur_home_dir)
+            except OSError as ex:
+                logger.error(ex)
+                self.set_message.emit(
+                    _("There was a problem moving '{}'. "
+                      "Please check Mu's logs for more information."
+                      ).format(dragged_item.text())
+                )
+
     def on_get(self, microbit_file):
         """
         Fired when the get event is completed for the given filename.
@@ -839,51 +1013,105 @@ class LocalFileList(MuFileList):
         self.enable.emit()
 
     def contextMenuEvent(self, event):
-        menu_current_item = self.currentItem()
-        if menu_current_item is None:
-            return
-        local_filename = menu_current_item.text()
-        # Get the file extension
-        ext = os.path.splitext(local_filename)[1].lower()
         menu = QMenu(self)
+        menu_current_item = self.currentItem()
+
         open_internal_action = None
-        # Mu micro:bit mode only handles .py & .hex
-        if ext == ".py" or ext == ".hex":
-            open_internal_action = menu.addAction(_("Open in Mu"))
-        if ext == ".py":
-            write_to_main_action = menu.addAction(
-                _("Write to main.py on device")
+        write_to_main_action = None
+        open_action = None
+        delete_action = None
+        rename_action = None
+
+        if menu_current_item is not None and menu_current_item.text() != '..':
+            local_filename = menu_current_item.text()
+            ext = os.path.splitext(local_filename)[1].lower()
+            if ext == ".py" or ext == ".hex":
+                open_internal_action = menu.addAction(_("Open in Mu"))
+            if ext == ".py":
+                write_to_main_action = menu.addAction(_("Write to main.py on device"))
+            open_action = menu.addAction(_("Open"))
+            delete_action = menu.addAction(_("Delete (cannot be undone)"))
+            rename_action = menu.addAction(_("Rename"))
+            menu.addSeparator()
+
+        mkdir_action = menu.addAction(_("New directory"))
+
+        action = menu.exec(self.mapToGlobal(event.pos()))
+        if action is None:
+            return
+
+        if menu_current_item is not None and menu_current_item.text() != '..':
+            local_filename = menu_current_item.text()
+
+            if action == open_action:
+                path = os.path.abspath(os.path.join(self.cur_home_dir, local_filename))
+                logger.info("Opening {}".format(path))
+                msg = _("Opening '{}'").format(local_filename)
+                logger.info(msg)
+                self.set_message.emit(msg)
+                QDesktopServices.openUrl(QUrl.fromLocalFile(path))
+
+            elif action == delete_action:
+                full_path = os.path.join(self.cur_home_dir, local_filename)
+                logger.info("Deleting {}".format(full_path))
+                msg = _("Deleting '{}' from device.").format(full_path)
+                logger.info(msg)
+                self.set_message.emit(msg)
+                self.disable.emit()
+                self.local_delete.emit(full_path)
+
+            elif action == rename_action:
+                new_name, ok = QInputDialog.getText(
+                    self,
+                    _("Rename"),
+                    _("New name for '{}':" ).format(local_filename),
+                    text=local_filename,
+                )
+                if ok and new_name and new_name != local_filename:
+                    old_path = os.path.join(self.cur_home_dir, local_filename)
+                    new_path = os.path.join(self.cur_home_dir, new_name)
+                    try:
+                        os.rename(old_path, new_path)
+                        msg = _("'{}' successfully renamed.").format(local_filename)
+                        self.set_message.emit(msg)
+                        self.list_sub_files.emit([], self.cur_home_dir)
+                    except OSError as ex:
+                        logger.error(ex)
+                        self.set_message.emit(
+                            _("There was a problem renaming '{}' on the "
+                              "device. Please check Mu's logs for "
+                              "more information.").format(local_filename)
+                        )
+
+            elif action == open_internal_action:
+                logger.info("Open {} internally".format(local_filename))
+                path = os.path.join(self.home, local_filename)
+                self.open_file.emit(path)
+
+            elif action == write_to_main_action:
+                path = os.path.join(self.cur_home_dir, local_filename)
+                self.put.emit(path, "main.py")
+
+        if action == mkdir_action:
+            dir_name, ok = QInputDialog.getText(
+                self,
+                _("New directory"),
+                _("Directory name:"),
             )
-        # Open outside Mu (things get meta if Mu is the default application)
-        open_action = menu.addAction(_("Open"))
-        delete_action = menu.addAction(_("Delete (cannot be undone)"))
-        action = menu.exec_(self.mapToGlobal(event.pos()))
-        if action == open_action:
-            # Get the file's path
-            path = os.path.abspath(os.path.join(self.cur_home_dir, local_filename))
-            logger.info("Opening {}".format(path))
-            msg = _("Opening '{}'").format(local_filename)
-            logger.info(msg)
-            self.set_message.emit(msg)
-            # Let Qt work out how to open it
-            QDesktopServices.openUrl(QUrl.fromLocalFile(path))
-        elif action == delete_action:
-            self.disable.emit()
-            local_filename = os.path.join(self.cur_home_dir, menu_current_item.text())
-            logger.info("Deleting {}".format(local_filename))
-            msg = _("Deleting '{}' from device.").format(local_filename)
-            logger.info(msg)
-            self.set_message.emit(msg)
-            self.local_delete.emit(local_filename)
-        elif action == open_internal_action:
-            logger.info("Open {} internally".format(local_filename))
-            # Get the file's path
-            path = os.path.join(self.home, local_filename)
-            # Send the signal bubbling up the tree
-            self.open_file.emit(path)
-        elif action == write_to_main_action:
-            path = os.path.join(self.cur_home_dir, local_filename)
-            self.put.emit(path, "main.py")
+            if ok and dir_name:
+                new_dir = os.path.join(self.cur_home_dir, dir_name)
+                try:
+                    os.makedirs(new_dir, exist_ok=True)
+                    msg = _("Directory '{}' created.").format(dir_name)
+                    self.set_message.emit(msg)
+                    self.list_sub_files.emit([], self.cur_home_dir)
+                except OSError as ex:
+                    logger.error(ex)
+                    self.set_message.emit(
+                        _("There was a problem creating directory '{}' on the "
+                          "device. Please check Mu's logs for "
+                          "more information.").format(dir_name)
+                    )
 
     def on_delete(self, local_file):
         """
@@ -903,7 +1131,10 @@ class LocalFileList(MuFileList):
             # Send the signal bubbling up the tree
             self.open_file.emit(path)
         elif os.path.isdir(path):
-            self.set_cur_home_dir(path + '/')  # Change parent's sharedlass variable
+            # Normalise so '..' is resolved immediately (prevents accumulation
+            # of e.g. '/mu_code/test/../../' across multiple navigations)
+            normalized = os.path.normpath(path) + os.sep
+            self.set_cur_home_dir(normalized)
             self.list_sub_files.emit([], self.cur_home_dir)  # Go to sub directory
 
 
@@ -994,24 +1225,38 @@ class FileSystemPane(QFrame):
         """
         self.set_pbar_update.emit(amount)
 
-    def on_ls(self, microbit_files, cwd=None, m_cwd=None):
+    def on_ls(self, microbit_files, dir_names=None, cwd=None, m_cwd=None):
         """
-        Displays a list of the files on the micro:bit.
+        Displays a list of the files on the micro:bit and the local computer.
 
-        Since listing files is always the final event in any interaction
-        between Mu and the micro:bit, this enables the controls again for
-        further interactions to take place.
+        dir_names is a frozenset of names (within m_cwd) that are directories.
+
+        NOTE: list_sub_files emits pyqtSignal(list, str) with only 2 args, so
+        the path string arrives in the dir_names slot positionally.  Detect
+        that case and redirect it to cwd so local directory navigation works.
         """
+        if isinstance(dir_names, str):
+            # Called from list_sub_files (local navigation) – str is the path
+            cwd = dir_names
+            dir_names = None
         if cwd:
             self.home = cwd  # Update home directory
-        else: 
+        else:
             cwd = self.home
-        if len(microbit_files):
+        if m_cwd is not None:  # Device listing: update even for empty directories
             self.microbit_fs.clear()
+            self.microbit_fs._dir_names = dir_names if dir_names is not None else frozenset()
             if os.path.normpath(m_cwd) != '.':
-                self.microbit_fs.addItem('..')
+                _item = QListWidgetItem('..')
+                _item.setForeground(QColor('#7EB8F7'))
+                _f = _item.font(); _f.setBold(True); _item.setFont(_f)
+                self.microbit_fs.addItem(_item)
             for f in microbit_files:
-                self.microbit_fs.addItem(f)
+                _item = QListWidgetItem(f)
+                if dir_names and f in dir_names:
+                    _item.setForeground(QColor('#4A90D9'))
+                    _f = _item.font(); _f.setBold(True); _item.setFont(_f)
+                self.microbit_fs.addItem(_item)
         self.local_fs.clear()
         if not os.path.isdir(cwd):
             # The directory has disappeared (e.g. device cache dir removed after
@@ -1030,7 +1275,11 @@ class FileSystemPane(QFrame):
             local_files.insert(0, '..')  # Add an item to go to upper directory
         local_files.sort()
         for f in local_files:
-            self.local_fs.addItem(f)
+            _item = QListWidgetItem(f)
+            if os.path.isdir(os.path.join(cwd, f)):
+                _item.setForeground(QColor('#4A90D9'))
+                _f = _item.font(); _f.setBold(True); _item.setFont(_f)
+            self.local_fs.addItem(_item)
         self.enable()
 
     def on_ls_fail(self):
@@ -1094,6 +1343,32 @@ class FileSystemPane(QFrame):
                 "device. Please check Mu's logs for "
                 "more information."
             ).format(filename)
+        )
+        self.enable()
+
+    def on_rename_fail(self, old_path):
+        """
+        Fired when renaming a file on the device failed.
+        """
+        self.show_warning(
+            _(
+                "There was a problem renaming '{}' on the "
+                "device. Please check Mu's logs for "
+                "more information."
+            ).format(os.path.basename(old_path))
+        )
+        self.enable()
+
+    def on_mkdir_fail(self, dir_path):
+        """
+        Fired when creating a directory on the device failed.
+        """
+        self.show_warning(
+            _(
+                "There was a problem creating directory '{}' on the "
+                "device. Please check Mu's logs for "
+                "more information."
+            ).format(os.path.basename(dir_path))
         )
         self.enable()
 

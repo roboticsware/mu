@@ -660,7 +660,8 @@ class FileManager(QObject):
     """
 
     # Emitted when the tuple of files on the device is known.
-    on_list_files = pyqtSignal(tuple, str, str)
+    # Args: (names: tuple, dir_names: frozenset, _unused: None, path: str)
+    on_list_files = pyqtSignal(tuple, object, object, str)
     # Emitted when the path is a file.
     on_file_check = pyqtSignal(str)
     # Emitted when the path is a directory.
@@ -684,6 +685,14 @@ class FileManager(QObject):
     on_put_fail = pyqtSignal(str)
     # Emitted when the referenced file fails to be deleted from the device.
     on_delete_fail = pyqtSignal(str)
+    # Emitted when a file is successfully renamed on the device.
+    on_rename_file = pyqtSignal(str)   # old_path
+    # Emitted when a rename operation fails.
+    on_rename_fail = pyqtSignal(str)   # old_path
+    # Emitted when a directory is successfully created on the device.
+    on_mkdir_file = pyqtSignal(str)    # dir_path
+    # Emitted when a mkdir operation fails.
+    on_mkdir_fail = pyqtSignal(str)    # dir_path
 
     def __init__(self, port):
         """
@@ -712,12 +721,14 @@ class FileManager(QObject):
 
     def ls(self, path='./'):
         """
-        List the files on the micro:bit. Emit the resulting tuple of filenames
-        or emit a failure signal.
+        List the files on the device with type information.
+        Emits on_list_files(names, dir_names, None, path).
         """
         try:
-            result = tuple(microfs.ls(path, self.serial))
-            self.on_list_files.emit(result, None, path)
+            entries = microfs.ls_with_types(path, self.serial)
+            names = tuple(name for name, _ in entries)
+            dir_names = frozenset(name for name, is_dir in entries if is_dir)
+            self.on_list_files.emit(names, dir_names, None, path)
         except Exception as ex:
             logger.exception(ex)
             self.on_list_fail.emit()
@@ -786,3 +797,27 @@ class FileManager(QObject):
         except Exception as ex:
             logger.error(ex)
             self.on_delete_fail.emit(local_filename)
+
+    def rename(self, old_path, new_path):
+        """
+        Rename a file on the device. Emits on_rename_file on success,
+        on_rename_fail on failure.
+        """
+        try:
+            microfs.rename(old_path, new_path, serial=self.serial)
+            self.on_rename_file.emit(old_path)
+        except Exception as ex:
+            logger.error(ex)
+            self.on_rename_fail.emit(old_path)
+
+    def mkdir(self, dir_path):
+        """
+        Create a new directory on the device. Emits on_mkdir_file on success,
+        on_mkdir_fail on failure.
+        """
+        try:
+            microfs.mkdir(dir_path, serial=self.serial)
+            self.on_mkdir_file.emit(dir_path)
+        except Exception as ex:
+            logger.error(ex)
+            self.on_mkdir_fail.emit(dir_path)

@@ -220,6 +220,46 @@ msgstr "Qurilma uzildi"
 msgid "Would you like to save this file to your computer instead?"
 msgstr "Buning o'rniga ushbu faylni kompyuteringizga saqlamoqchimisiz?"
 
+#: mu/interface/panes.py
+msgid "Rename"
+msgstr "Nomini o'zgartirish"
+
+#: mu/interface/panes.py
+msgid "New name for '{}':"
+msgstr "'{}' uchun yangi nom:"
+
+#: mu/interface/panes.py
+msgid "New directory"
+msgstr "Yangi papka"
+
+#: mu/interface/panes.py
+msgid "Directory name:"
+msgstr "Papka nomi:"
+
+#: mu/interface/panes.py
+msgid "Renaming '{}' to '{}'."
+msgstr "'{}' nomini '{}' ga o'zgartirmoqda."
+
+#: mu/interface/panes.py
+msgid "Creating directory '{}'."
+msgstr "'{}' papkasi yaratilmoqda."
+
+#: mu/interface/panes.py
+msgid "'{}' successfully renamed."
+msgstr "'{}' muvaffaqiyatli nomini o'zgartirdi."
+
+#: mu/interface/panes.py
+msgid "Directory '{}' created."
+msgstr "'{}' papkasi yaratildi."
+
+#: mu/interface/panes.py
+msgid "There was a problem renaming '{}' on the device. Please check Mu's logs for more information."
+msgstr "'{}' faylini qurilmada nomini o'zgartirishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu jurnallarini tekshiring."
+
+#: mu/interface/panes.py
+msgid "There was a problem creating directory '{}' on the device. Please check Mu's logs for more information."
+msgstr "'{}' papkasini qurilmada yaratishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu jurnallarini tekshiring."
+
 #: mu/interface/main.py:105
 msgid "Mode"
 msgstr "Rejim"
@@ -1712,7 +1752,7 @@ msgstr "Pico mikrodasturini yuklab qo'yish"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid "How to flash MicroPython to your Pico"
-msgstr "MicroPython-ni Pico-ga qanday yozish mumkin"
+msgstr "MicroPythonni Picoga qanday yozish mumkin"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid ""
@@ -1723,7 +1763,7 @@ msgid ""
 "3. Click <b>Fetch Versions</b> to load available firmware.<br>"
 "4. Select a version and click <b>Download &amp; Flash</b>."
 msgstr ""
-"1. Pico-dagi <b>BOOTSEL</b> tugmasini bosib tuting va USB-ga ulang "
+"1. Picodagi <b>BOOTSEL</b> tugmasini bosib tuting va USBga ulang "
 "— u <b>RPI-RP2</b> (yoki Pico 2 uchun RP2350) nomli disk sifatida paydo bo'ladi.<br>"
 "2. Disk aniqlanguncha <b>Diskni yangilash</b> tugmasini bosing.<br>"
 "3. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>"
@@ -1802,4 +1842,49 @@ msgstr "Yozib bo'lmadi: {}"
 #, python-brace-format
 msgid "Download error: {}"
 msgstr "Yuklab olishda xato: {}"
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "'{}' moved into '{}'."
+msgstr "'{}' '{}' papkasiga ko'chirildi."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "There was a problem moving '{}'. Please check Mu's logs for more information."
+msgstr "'{}' faylini ko'chirishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu jurnallarini tekshiring."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "Opening '{}'"
+msgstr "'{}' ochilmoqda"
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "Copying '{}' to device."
+msgstr "'{}' qurilmaga nusxalanmoqda."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "'{}' successfully copied to device."
+msgstr "'{}' qurilmaga muvaffaqiyatli nusxalandi."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "Deleting '{}' from device."
+msgstr "'{}' qurilmadan o'chirilmoqda."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "'{}' successfully deleted from device."
+msgstr "'{}' qurilmadan muvaffaqiyatli o'chirildi."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "Getting '{}' from device. Copying to '{}'."
+msgstr "Qurilmadan '{}' olinmoqda. '{}' ga nusxalanmoqda."
+
+#: mu/interface/panes.py
+#, python-brace-format
+msgid "Successfully copied '{}' from the device to your computer."
+msgstr "'{}' qurilmadan kompyuteringizga muvaffaqiyatli nusxalandi."
 

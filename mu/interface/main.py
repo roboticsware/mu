@@ -687,6 +687,17 @@ class Window(QMainWindow):
         file_manager.on_put_update_file.connect(self.fs_pane.microbit_fs.on_put_update)
         file_manager.on_delete_file.connect(self.fs_pane.microbit_fs.on_delete)
         file_manager.on_is_dir_file.connect(self.fs_pane.microbit_fs.on_is_dir)
+
+        # Rename
+        self.fs_pane.microbit_fs.rename.connect(file_manager.rename)
+        file_manager.on_rename_file.connect(self.fs_pane.microbit_fs.on_rename)
+        file_manager.on_rename_fail.connect(self.fs_pane.on_rename_fail)
+
+        # Mkdir
+        self.fs_pane.microbit_fs.mkdir.connect(file_manager.mkdir)
+        file_manager.on_mkdir_file.connect(self.fs_pane.microbit_fs.on_mkdir)
+        file_manager.on_mkdir_fail.connect(self.fs_pane.on_mkdir_fail)
+
         self.device_files_downloading = {}
 
         @file_manager.on_file_check.connect
