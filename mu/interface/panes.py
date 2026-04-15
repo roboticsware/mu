@@ -1013,13 +1013,21 @@ class FileSystemPane(QFrame):
             for f in microbit_files:
                 self.microbit_fs.addItem(f)
         self.local_fs.clear()
-        local_files = [
-            f
-            for f in os.listdir(cwd)
-        ]
+        if not os.path.isdir(cwd):
+            # The directory has disappeared (e.g. device cache dir removed after
+            # disconnect).  Fall back to the default home directory so the UI
+            # remains usable instead of crashing with FileNotFoundError.
+            logger.warning(
+                "on_ls: directory '{}' not found, falling back to '{}'.".format(
+                    cwd, self.home
+                )
+            )
+            cwd = self.home
+            self.home = cwd
+        local_files = [f for f in os.listdir(cwd)]
         # We're not in a root directory
         if os.path.normpath(cwd) != '/':
-            local_files.insert(0, '..')  # Add a item to go upper directory
+            local_files.insert(0, '..')  # Add an item to go to upper directory
         local_files.sort()
         for f in local_files:
             self.local_fs.addItem(f)

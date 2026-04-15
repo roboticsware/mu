@@ -204,6 +204,22 @@ msgstr "Uchinchi tomon paketining holati"
 msgid "untitled"
 msgstr "nomsiz"
 
+#: mu/interface/editor.py:330
+msgid "[Device] {}"
+msgstr "[Qurilma] {}"
+
+#: mu/logic.py:1550
+msgid "Saving file to device..."
+msgstr "Fayl qurilmaga saqlanmoqda..."
+
+#: mu/logic.py:1553
+msgid "Device disconnected"
+msgstr "Qurilma uzildi"
+
+#: mu/logic.py:1554
+msgid "Would you like to save this file to your computer instead?"
+msgstr "Buning o'rniga ushbu faylni kompyuteringizga saqlamoqchimisiz?"
+
 #: mu/interface/main.py:105
 msgid "Mode"
 msgstr "Rejim"

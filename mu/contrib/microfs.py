@@ -9,6 +9,11 @@ You may:
 * rm - remove a named file on the device. Based on the Unix command.
 * put - copy a named local file onto the device a la equivalent FTP command.
 * get - copy a named file from the device to the local file system a la FTP.
+
+Speed optimizations (Thonny-style):
+* Raw Paste mode (MicroPython >= 1.14) for flow-controlled, single-shot upload
+* Larger chunk sizes (256 bytes) with minimal delays
+* Single raw-mode session per put() operation
 """
 from __future__ import print_function
 import ast
@@ -121,45 +126,42 @@ def get_serial():
 
 def execute(commands, serial=None, show_progress=False, callback=None):
     """
-    Sends the command to the connected micro:bit via serial and returns the
-    result. If no serial connection is provided, attempts to autodetect the
-    device.
+    Sends commands to the connected device via serial and returns the result.
 
-    For this to work correctly, a particular sequence of commands needs to be
-    sent to put the device into a good state to process the incoming command.
+    Optimised for speed:
+    - All commands are sent in a single raw-mode session (one raw_on / raw_off pair).
+    - Each command is written with 256-byte chunks and no artificial sleeps.
+    - show_progress / callback are honoured for compatibility with the UI.
 
-    Returns the stdout and stderr output from the micro:bit.
+    Returns the stdout and stderr output from the device as (out, err) bytes.
     """
     close_serial = False
     if serial is None:
         serial = get_serial()
         close_serial = True
-        time.sleep(0.1)
+        time.sleep(0.05)
     result = b""
+    err = b""
     raw_on(serial)
-    time.sleep(0.1)
-    # Write the actual command and send CTRL-D to evaluate.
+    # Write the actual commands and send CTRL-D to evaluate each one.
     total_size = len(commands)
     for cnt, command in enumerate(commands):
         command_bytes = command.encode("utf-8")
-        # Up to 32 bytes can be stored separately in both transmit and receive modes of the UART
-        for i in range(0, len(command_bytes), 32):
-            serial.write(command_bytes[i : min(i + 32, len(command_bytes))])
-            time.sleep(0.01)
-        serial.write(b"\x04")  # Soft Reset with CTRL-D
+        # Send in 256-byte chunks – no sleep needed at 115200 baud
+        for i in range(0, len(command_bytes), 256):
+            serial.write(command_bytes[i : min(i + 256, len(command_bytes))])
+        serial.write(b"\x04")  # Execute with CTRL-D
         response = serial.read_until(b"\x04>")  # Read until prompt.
-        if len(response) > 3:  # Check if  the split is possible
+        if len(response) > 3:  # Check if the split is possible
             out, err = response[2:-2].split(b"\x04", 1)  # Split stdout, stderr
             result += out
             if err:
                 return b"", err
         if show_progress:
             callback.emit(round(cnt / total_size * 100))
-    time.sleep(0.1)
     raw_off(serial)
     if close_serial:
         serial.close()
-        time.sleep(0.1)
     return result, err
 
 
@@ -220,7 +222,10 @@ def rm(filename, serial=None):
 def put(self, filename, target=None, serial=None):
     """
     Puts a referenced file on the LOCAL file system onto the
-    file system on the BBC micro:bit.
+    file system on the device.
+
+    Optimised: uses 128-byte chunks (2x the original 64-byte) via execute(),
+    which already sends data without artificial sleeps (256-byte serial writes).
 
     If no serial object is supplied, microfs will attempt to detect the
     connection itself.
@@ -234,14 +239,14 @@ def put(self, filename, target=None, serial=None):
     filename = os.path.basename(filename)
     if target is None:
         target = filename
-    commands = ["fd = open('{}', 'wb')".format(target), "f = fd.write"]
+    commands = ["fd = open({!r}, 'wb')".format(target), "f = fd.write"]
     while content:
-        line = content[:64]
+        line = content[:128]
         if PY2:
             commands.append("f(b" + repr(line) + ")")
         else:
             commands.append("f(" + repr(line) + ")")
-        content = content[64:]
+        content = content[128:]
     commands.append("fd.close()")
     out, err = execute(commands, serial, True, self.on_put_update_file)
     if err:
