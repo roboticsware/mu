@@ -1888,3 +1888,10 @@ msgstr "Qurilmadan '{}' olinmoqda. '{}' ga nusxalanmoqda."
 msgid "Successfully copied '{}' from the device to your computer."
 msgstr "'{}' qurilmadan kompyuteringizga muvaffaqiyatli nusxalandi."
 
+#: mu/logic.py:1836
+msgid "Language changed."
+msgstr "Til o'zgartirildi."
+
+#: mu/logic.py:1837
+msgid "The language will change to the selected one after Mu is restarted."
+msgstr "Tanlangan til Mu qayta ishga tushirilgandan so'ng amal qiladi."

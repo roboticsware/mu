@@ -1770,3 +1770,11 @@ msgstr "Neobot 파이썬"
 #: mu/interface/main.py:226
 msgid "There is un-saved work, closing the tab will cause you to lose it."
 msgstr "저장되지 않은 작업이 있습니다. 탭을 닫으면 작업 내용을 잃게 됩니다."
+
+#: mu/logic.py:1836
+msgid "Language changed."
+msgstr "언어가 변경되었습니다."
+
+#: mu/logic.py:1837
+msgid "The language will change to the selected one after Mu is restarted."
+msgstr "선택한 언어는 Mu 에디터를 재시작한 후에 적용됩니다."

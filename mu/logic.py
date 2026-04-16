@@ -1831,7 +1831,19 @@ class Editor(QObject):
             if "pa_instance" in new_settings:
                 self.pa_instance = new_settings["pa_instance"].strip()
             if "locale" in new_settings:
-                self.user_locale = new_settings["locale"]
+                new_locale = new_settings["locale"]
+                if new_locale != self.user_locale:
+                    self.user_locale = new_locale
+                    self._view.show_message(
+                        _("Language changed."),
+                        _(
+                            "The language will change to the selected one "
+                            "after Mu is restarted."
+                        ),
+                    )
+                else:
+                    self.user_locale = new_locale
+
             # Ensure mode UI is updated given settings.
             self.modes[self.mode].ensure_state()
         else:
