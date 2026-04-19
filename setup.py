@@ -80,6 +80,8 @@ install_requires = [
     # pkg_resources has been removed in Python 3.12, until we move to importlib
     # we need it via setuptools: https://github.com/mu-editor/mu/issues/2485
     "setuptools",
+    # jedi is used for dynamic, context-aware autocompletion in the editor.
+    "jedi>=0.18.0",
 ]
 
 

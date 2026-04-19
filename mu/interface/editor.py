@@ -29,10 +29,19 @@ from PyQt6.Qsci import (
     QsciAPIs,
     QsciLexerCSS,
 )
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QThread, QObject
 from PyQt6.QtWidgets import QApplication
 from mu.interface.themes import Font, DayTheme
 from mu.logic import NEWLINE
+from mu import config as mu_config
+
+# Try to import jedi for dynamic autocompletion; fall back gracefully.
+try:
+    import jedi
+    jedi.settings.fast_parser = True  # Speed up for interactive use.
+    HAS_JEDI = True
+except ImportError:
+    HAS_JEDI = False
 
 
 # Regular Expression for valid individual code 'words'
@@ -41,6 +50,135 @@ RE_VALID_WORD = re.compile(r"^\w+$")
 
 logger = logging.getLogger(__name__)
 
+#: Minimum characters before triggering Jedi completions (non-dot triggers)
+_JEDI_TRIGGER_LEN = 2
+#: User-list ID used for Jedi completions in QScintilla
+_JEDI_LIST_ID = 1
+#: Max number of docstring lines shown inside a calltip.
+_CALLTIP_MAX_LINES = 8
+
+
+def _build_jedi_project(file_path):
+    """
+    Build a ``jedi.Project`` with all extra search paths that Mu cares about:
+    the workspace root, pico_lib, the current file's directory, and Mu's own
+    bundled resource directories (pico / pygamezero).
+
+    Returns (project, workspace_path).
+    """
+    workspace = os.path.join(mu_config.HOME_DIRECTORY, mu_config.WORKSPACE_NAME)
+    _mu_pkg = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    mu_resources_pico = os.path.join(_mu_pkg, "resources", "pico")
+    mu_resources_pgz  = os.path.join(_mu_pkg, "resources", "pygamezero")
+
+    extra_paths = []
+    for candidate in [
+        workspace,
+        os.path.join(workspace, "pico_lib"),
+        os.path.dirname(file_path) if file_path else None,
+        mu_resources_pico,
+        mu_resources_pgz,
+    ]:
+        if candidate and os.path.isdir(candidate) and candidate not in extra_paths:
+            extra_paths.append(candidate)
+
+    project_path = (
+        os.path.dirname(file_path)
+        if file_path and os.path.isfile(file_path)
+        else workspace
+    )
+    project = jedi.Project(path=project_path, added_sys_path=extra_paths)
+    return project, workspace
+
+
+class CompletionWorker(QObject):
+    """
+    Runs jedi completions in a background thread so the UI stays responsive.
+    """
+
+    # Emitted with (list-id, list of completion strings) when done.
+    completions_ready = pyqtSignal(int, list)
+
+    def __init__(self, source, line, column, path, extra_sys_path=None):
+        super().__init__()
+        self.source = source
+        self.line = line
+        self.column = column
+        self.path = path
+        self.extra_sys_path = extra_sys_path or []
+
+    def run(self):
+        """
+        Compute completions via Jedi and emit the result.
+        """
+        try:
+            project, _ws = _build_jedi_project(self.path)
+            script = jedi.Script(self.source, path=self.path, project=project)
+            completions = script.complete(self.line, self.column)
+            names = [c.name for c in completions if c.name and not c.name.startswith("__")]
+            # Re-include dunder names when the user has typed "__" already.
+            if self.column >= 2 and self.source[max(0, self._cursor_pos - 2):self._cursor_pos] == "__":
+                dunder = [c.name for c in completions if c.name.startswith("__")]
+                names = dunder + names
+            self.completions_ready.emit(_JEDI_LIST_ID, names)
+        except Exception as exc:
+            logger.debug("Jedi completion error: %s", exc)
+            self.completions_ready.emit(_JEDI_LIST_ID, [])
+
+    @property
+    def _cursor_pos(self):
+        """Approximate byte offset for the current cursor position."""
+        lines = self.source.splitlines(keepends=True)
+        return sum(len(l) for l in lines[: self.line - 1]) + self.column
+
+
+class CalltipWorker(QObject):
+    """
+    Runs jedi.Script.get_signatures() in a background thread so that
+    function signatures + docstrings can be shown without blocking the UI.
+    """
+
+    # Emitted with the calltip text (empty string → nothing to show).
+    calltip_ready = pyqtSignal(str)
+
+    def __init__(self, source, line, column, path):
+        super().__init__()
+        self.source = source
+        self.line   = line
+        self.column = column
+        self.path   = path
+
+    def run(self):
+        """
+        Fetch the function signature at the cursor and emit calltip text.
+        """
+        try:
+            project, _ws = _build_jedi_project(self.path)
+            script = jedi.Script(self.source, path=self.path, project=project)
+            signatures = script.get_signatures(self.line, self.column)
+            if not signatures:
+                self.calltip_ready.emit("")
+                return
+
+            sig = signatures[0]
+            # Build "name(param1, param2, ...)" header.
+            params = ", ".join(p.description for p in sig.params)
+            header = "{}({})".format(sig.name, params)
+
+            # Append a trimmed docstring (first few paragraphs).
+            doc = (sig.docstring() or "").strip()
+            if doc:
+                # Keep at most _CALLTIP_MAX_LINES lines to avoid giant tooltips.
+                lines = doc.splitlines()
+                trimmed = "\n".join(lines[:_CALLTIP_MAX_LINES])
+                if len(lines) > _CALLTIP_MAX_LINES:
+                    trimmed += "\n..."
+                self.calltip_ready.emit(header + "\n" + trimmed)
+            else:
+                self.calltip_ready.emit(header)
+        except Exception as exc:
+            logger.debug("Jedi calltip error: %s", exc)
+            self.calltip_ready.emit("")
 
 class PythonLexer(QsciLexerPython):
     """
@@ -126,7 +264,18 @@ class EditorPane(QsciScintilla):
         self.has_annotations = False
         self.setModified(False)
         self.breakpoint_handles = set()
+        # Jedi completion state
+        self._completion_thread = None
+        self._completion_worker = None
+        # Jedi calltip state
+        self._calltip_thread = None
+        self._calltip_worker = None
         self.configure()
+        # Connect SCN_CHARADDED for Jedi-based completion and calltips.
+        if HAS_JEDI:
+            self.SCN_CHARADDED.connect(self._on_char_added)
+        # Register user-list activation handler.
+        self.userListActivated.connect(self._on_completion_selected)
 
     def contextMenuEvent(self, event):
         """
@@ -282,11 +431,201 @@ class EditorPane(QsciScintilla):
     def set_api(self, api_definitions):
         """
         Sets the API entries for tooltips, calltips and the like.
+        These static entries serve as a baseline fallback; Jedi provides the
+        dynamic completions on top.
         """
         self.api = QsciAPIs(self.lexer)
         for entry in api_definitions:
             self.api.add(entry)
         self.api.prepare()
+
+    # ---------------------------------------------------------------------------
+    # Jedi-based dynamic completion
+    # ---------------------------------------------------------------------------
+
+    def _on_char_added(self, char_code):
+        """
+        Called by QScintilla whenever a character is typed.  We fire a Jedi
+        completion request when:
+        - A '.' is typed  (always), or
+        - We are inside a word with at least _JEDI_TRIGGER_LEN characters.
+        Additionally:
+        - '(' → show calltip (function signature + docstring)
+        - ')' → cancel calltip
+        """
+        ch = chr(char_code)
+        if ch == ".":
+            self._request_completion()
+            return
+        if ch == "(":
+            self._request_calltip()
+            return
+        if ch == ")":
+            self.SendScintilla(QsciScintilla.SCI_CALLTIPCANCEL)
+            return
+        if ch.isalpha() or ch == "_":
+            # Get the word fragment under the cursor.
+            line, col = self.getCursorPosition()
+            word = self._word_before_cursor(line, col)
+            if len(word) >= _JEDI_TRIGGER_LEN:
+                self._request_completion()
+
+    def _word_before_cursor(self, line, col):
+        """
+        Return the contiguous identifier fragment immediately left of the cursor.
+        """
+        text = self.text(line)[:col]
+        match = re.search(r"[\w]+$", text)
+        return match.group(0) if match else ""
+
+    def _request_completion(self):
+        """
+        Launch (or restart) a background thread to compute Jedi completions
+        for the current editor content and cursor position.
+        """
+        if not HAS_JEDI:
+            return
+        # Cancel any in-flight completion—results would be stale.
+        if self._completion_thread is not None:
+            try:
+                if self._completion_thread.isRunning():
+                    self._completion_thread.quit()
+                    self._completion_thread.wait(100)
+            except RuntimeError:
+                # Qt C++ object already deleted; just clear the reference.
+                pass
+            self._completion_thread = None
+            self._completion_worker = None
+
+        source = self.text()
+        line, col = self.getCursorPosition()
+        # Jedi uses 1-based line numbers.
+        jedi_line = line + 1
+        jedi_col = col
+
+        worker = CompletionWorker(
+            source=source,
+            line=jedi_line,
+            column=jedi_col,
+            path=self.path,
+        )
+        thread = QThread(self)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        worker.completions_ready.connect(self._show_completions)
+        worker.completions_ready.connect(thread.quit)
+        # Clear our references when the thread finishes so we never touch a
+        # deleted C++ object again.
+        thread.finished.connect(self._on_completion_thread_done)
+        thread.finished.connect(worker.deleteLater)
+
+        self._completion_worker = worker
+        self._completion_thread = thread
+        thread.start()
+
+    def _on_completion_thread_done(self):
+        """
+        Called when the completion thread finishes.  Clear the stored
+        references so we don't try to call methods on a deleted Qt object.
+        """
+        self._completion_thread = None
+        self._completion_worker = None
+
+    # ---------------------------------------------------------------------------
+    # Jedi calltip support
+    # ---------------------------------------------------------------------------
+
+    def _request_calltip(self):
+        """
+        Launch a background thread to fetch the function signature + docstring
+        at the current cursor position (called when '(' is typed).
+        """
+        if not HAS_JEDI:
+            return
+        if self._calltip_thread is not None:
+            try:
+                if self._calltip_thread.isRunning():
+                    self._calltip_thread.quit()
+                    self._calltip_thread.wait(100)
+            except RuntimeError:
+                pass
+            self._calltip_thread = None
+            self._calltip_worker = None
+
+        source = self.text()
+        line, col = self.getCursorPosition()
+        worker = CalltipWorker(
+            source=source,
+            line=line + 1,   # Jedi uses 1-based lines
+            column=col,
+            path=self.path,
+        )
+        thread = QThread(self)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        worker.calltip_ready.connect(self._show_calltip)
+        worker.calltip_ready.connect(thread.quit)
+        thread.finished.connect(self._on_calltip_thread_done)
+        thread.finished.connect(worker.deleteLater)
+
+        self._calltip_worker = worker
+        self._calltip_thread = thread
+        thread.start()
+
+    def _on_calltip_thread_done(self):
+        """
+        Clear calltip thread reference so we never touch a deleted Qt object.
+        """
+        self._calltip_thread = None
+        self._calltip_worker = None
+
+    def _show_calltip(self, text):
+        """
+        Display the calltip text via Scintilla's SCI_CALLTIPSHOW message.
+        QScintilla's PyQt6 binding does not expose callTipShow() or
+        callTipCancel() as Python methods, so we use SendScintilla() directly.
+        """
+        if not text:
+            return
+        try:
+            line, col = self.getCursorPosition()
+            # positionFromLineIndex gives the byte offset Scintilla expects.
+            pos = self.positionFromLineIndex(line, col)
+            # Scintilla expects the text as a null-terminated byte string.
+            self.SendScintilla(QsciScintilla.SCI_CALLTIPSHOW, pos, text.encode("utf-8"))
+        except Exception as exc:
+            logger.debug("Could not show calltip: %s", exc)
+
+
+    def _show_completions(self, list_id, completions):
+        """
+        Display completion results in a QScintilla user-list popup.
+        Called from the main thread via signal.
+        """
+        if not completions:
+            return
+        # Don't show if the editor has been modified significantly since the
+        # request was fired (cursor may have moved to a different token).
+        if self.isListActive():
+            self.cancelList()
+        self.showUserList(list_id, completions)
+
+    def _on_completion_selected(self, list_id, text):
+        """
+        Insert the selected completion text, replacing the partial word already
+        typed by the user.
+        """
+        if list_id != _JEDI_LIST_ID:
+            return
+        line, col = self.getCursorPosition()
+        word = self._word_before_cursor(line, col)
+        # If cursor is right after '.', word will be empty – just insert.
+        if word:
+            # Delete the partial word already in the editor.
+            start_col = col - len(word)
+            self.setSelection(line, start_col, line, col)
+            self.removeSelectedText()
+        self.insert(text)
 
     def set_zoom(self, size="m"):
         """
@@ -447,7 +786,9 @@ class EditorPane(QsciScintilla):
         for line, messages in lines.items():
             text = "\n".join(messages).strip()
             if text:
-                self.annotate(line, text, self.annotationDisplay())
+                self.annotate(line, text, self.annotationDisplay().value)
+
+
 
     def find_next_match(
         self,
