@@ -132,6 +132,7 @@ setup(
         "mu.modes",
         "mu.debugger",
         "mu.interface",
+        "mu.interface.pico_flasher",
         "mu.modes.api",
         "mu.wheels",
     ],
