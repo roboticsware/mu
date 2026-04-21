@@ -625,7 +625,10 @@ class EditorPane(QsciScintilla):
             start_col = col - len(word)
             self.setSelection(line, start_col, line, col)
             self.removeSelectedText()
+        else:
+            start_col = col
         self.insert(text)
+        self.setCursorPosition(line, start_col + len(text))
 
     def set_zoom(self, size="m"):
         """
