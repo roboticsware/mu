@@ -977,10 +977,16 @@ class VirtualEnvironment(object):
                 ok, output = self.run_subprocess(*args, env=env)
                 if ok:
                     logger.info("All wheel files were successfully installed.")
+                    return
                 else:
-                    logger.error(f"Failed to install wheels: {output}")
+                    logger.error(f"Failed to install wheels with uv: {output}. Falling back to standard pip.")
             except Exception as e:
-                logger.error(f"Failed to install wheels: {e}")
+                logger.error(f"Failed to install wheels with uv: {e}. Falling back to standard pip.")
+            
+            logger.info("Installing wheels using standard pip fallback.")
+            self.reset_pip()
+            # Pass individual wheels as arguments, so unpack the list
+            self.pip.install(all_wheels, find_links=unpacked_wheels_dirpath, no_index=True)
 
     def install_baseline_packages(self):
         """
