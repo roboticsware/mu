@@ -58,6 +58,7 @@ from PyQt6.QtGui import (
     QStandardItem,
     QColor,
     QFont,
+    QAction,
 )
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from ..i18n import language_code
@@ -219,8 +220,14 @@ class MicroPythonREPLPane(QTextEdit):
             copy_keys = QKeySequence("Ctrl+Shift+C")
             paste_keys = QKeySequence("Ctrl+Shift+V")
 
-        menu.addAction("Copy", self.copy, copy_keys)
-        menu.addAction("Paste", self.paste, paste_keys)
+        copy_action = QAction("Copy", self)
+        copy_action.setShortcut(copy_keys)
+        copy_action.triggered.connect(self.copy)
+        menu.addAction(copy_action)
+        paste_action = QAction("Paste", self)
+        paste_action.setShortcut(paste_keys)
+        paste_action.triggered.connect(self.paste)
+        menu.addAction(paste_action)
         menu.exec(QCursor.pos())
 
     def set_theme(self, theme):
@@ -1566,8 +1573,14 @@ class PythonProcessPane(QTextEdit):
             copy_keys = QKeySequence("Ctrl+Shift+C")
             paste_keys = QKeySequence("Ctrl+Shift+V")
 
-        menu.addAction("Copy", self.copy, copy_keys)
-        menu.addAction("Paste", self.paste, paste_keys)
+        copy_action = QAction("Copy", self)
+        copy_action.setShortcut(copy_keys)
+        copy_action.triggered.connect(self.copy)
+        menu.addAction(copy_action)
+        paste_action = QAction("Paste", self)
+        paste_action.setShortcut(paste_keys)
+        paste_action.triggered.connect(self.paste)
+        menu.addAction(paste_action)
         menu.exec(QCursor.pos())
 
     def insertFromMimeData(self, source):
