@@ -282,9 +282,7 @@ class PyGameZeroMode(BaseMode):
             logger.debug(tab.text())
 
             # Tidy source code to find error earlier
-            try:
-                self.editor.tidy_code()
-            except Exception:
+            if not self.editor.tidy_code():
                 logger.debug("Failed in tiding code")
                 return
 

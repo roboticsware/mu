@@ -2216,10 +2216,10 @@ class Editor(QObject):
         """
         tab = self._view.current_tab
         if not tab or sys.version_info[:2] < (3, 6):
-            return
+            return True
         # Only works on Python, so abort.
         if tab.path and not self.has_python_extension(tab.path):
-            return
+            return True
         from black import format_str, FileMode, TargetVersion
 
         try:
@@ -2238,6 +2238,7 @@ class Editor(QObject):
             self.show_status_message(
                 _("Successfully cleaned the code. " "Use CTRL-Z to undo.")
             )
+            return True
         except Exception as ex:
             # The user's code is problematic. Recover with a modal dialog
             # containing a helpful message.
@@ -2249,8 +2250,7 @@ class Editor(QObject):
                 "these problems."
             )
             self._view.show_message(message, information)
-            # Re-raise to stop next procedure
-            raise ex
+            return False
 
     def has_python_extension(self, filename):
         """
