@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
+import sys
 import logging
 from mu.modes.base import BaseMode
 from mu.modes.api import PYTHON3_APIS, SHARED_APIS, PI_APIS, PYGAMEZERO_APIS, NEOPIA_APIS
@@ -239,7 +240,7 @@ class PyGameZeroMode(BaseMode):
             self.stop_game()
             package_slot = self.view.button_bar.slots["package"]
             package_slot.setIcon(load_icon("package"))
-            package_slot.setText(_("package"))
+            package_slot.setText(_("Package"))
             package_slot.setToolTip(_("Package the game to one-file for distribution."))
             self.set_buttons(modes=True)
         else:
@@ -294,8 +295,23 @@ class PyGameZeroMode(BaseMode):
 
             # Make agrs
             cwd = os.path.dirname(tab.path)
+            # Generate unique output name
+            base_name = os.path.splitext(os.path.basename(tab.path))[0]
+            dist_dir = os.path.join(cwd, "dist")
+            ext = ".exe" if sys.platform == "win32" else ""
+
+            output_name = base_name
+            if os.path.exists(dist_dir):
+                count = 1
+                while os.path.exists(os.path.join(dist_dir, output_name + ext)):
+                    output_name = f"{base_name}_{count}"
+                    count += 1
+
             envars = self.editor.envars
-            cmd_args = ["--collect-all", "pgzero", "--onefile", "--clean"]
+            cmd_args = [
+                "--collect-all", "pgzero", "--onefile", "--clean",
+                "--name", output_name
+            ]
             img_dir = os.path.join(cwd, "images")
             if os.path.isdir(img_dir) and len(os.listdir(img_dir)) != 0:
                 cmd_args += ["--add-data", "images/*:images"]
