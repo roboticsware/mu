@@ -1574,7 +1574,7 @@ msgstr "Pygame Zero da ishlatadigan fon ovozlarini ko'rsatadi."
 
 #: mu/modes/pygamezero.py:101
 msgid "Package"
-msgstr ""
+msgstr "EXE fayliga"
 
 #: mu/modes/pygamezero.py:102 mu/modes/pygamezero.py:235
 msgid "Package the game to one-file for distribution."
@@ -1585,7 +1585,7 @@ msgid "Stop your Pygame Zero game."
 msgstr "Ishlayotgan kodlarni to'xtaydi."
 
 #: mu/modes/pygamezero.py:234
-msgid "package"
+msgid "Package"
 msgstr "EXE fayliga"
 
 #: mu/modes/pygamezero.py:243

@@ -337,12 +337,24 @@ class PyGameZeroMode(BaseMode):
             self.runner.process.waitForStarted()
             self.runner.process.finished.connect(self.finished)
 
-    def finished(self):
+    def finished(self, exit_code, exit_status):
         """
-        Remove pgzrun from the source when the packaging process is finished
+        Remove pgzrun from the source when the packaging process is finished,
+        reset the button state and open the dist folder if successful.
         """
         tab = self.view.current_tab
-        source_code = tab.text()
-        source_code = re.sub(r"import pgzrun\n", "", source_code, flags = re.DOTALL)
-        source_code = re.sub(r"\npgzrun\.go\(\)", "", source_code, flags = re.DOTALL)
-        tab.SendScintilla(tab.SCI_SETTEXT, source_code.encode("utf-8"))
+        if tab:
+            source_code = tab.text()
+            source_code = re.sub(r"import pgzrun\n", "", source_code, flags=re.DOTALL)
+            source_code = re.sub(r"\npgzrun\.go\(\)", "", source_code, flags=re.DOTALL)
+            tab.SendScintilla(tab.SCI_SETTEXT, source_code.encode("utf-8"))
+
+
+        # Open dist folder on success
+        if exit_code == 0 and tab and tab.path:
+            cwd = os.path.dirname(tab.path)
+            dist_path = os.path.join(cwd, "dist")
+            if os.path.isdir(dist_path):
+                self.view.open_directory_from_os(dist_path)
+
+        self.runner = None
