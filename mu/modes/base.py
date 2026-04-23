@@ -719,6 +719,17 @@ class FileManager(QObject):
             logger.exception(ex)
             self.on_list_fail.emit()
 
+    def close(self):
+        """
+        Close the serial connection to free the port.
+        """
+        if hasattr(self, "serial") and self.serial:
+            try:
+                self.serial.close()
+                self.serial = None
+            except Exception as ex:
+                logger.error("Error closing FileManager serial connection: %s", ex)
+
     def ls(self, path='./'):
         """
         List the files on the device with type information.

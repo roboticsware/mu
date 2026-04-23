@@ -637,6 +637,9 @@ class MicrobitMode(MicroPythonMode):
         """
         self.view.remove_filesystem()
         
+        if getattr(self, "file_manager", None):
+            self.file_manager.close()
+
         file_manager_thread = getattr(self, "file_manager_thread", None)
         if file_manager_thread:
             file_manager_thread.quit()
