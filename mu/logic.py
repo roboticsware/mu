@@ -834,6 +834,17 @@ class DeviceList(QtCore.QAbstractListModel):
         """
         return len(self._devices)
 
+    def distinguished_name(self, device):
+        """
+        Returns the name of the device, but if there are multiple devices
+        with the same name, adds the port to distinguish them.
+        """
+        name_count = sum(1 for d in self._devices if d.name == device.name)
+        if name_count > 1:
+            short_port = os.path.basename(device.port)
+            return "{} ({})".format(device.name, short_port)
+        return device.name
+
     def data(self, index, role):
         """
         Reimplements QAbstractListModel.data(): returns data for the
@@ -844,7 +855,7 @@ class DeviceList(QtCore.QAbstractListModel):
         if role == QtCore.Qt.ToolTipRole:
             return str(device)
         elif role == QtCore.Qt.DisplayRole:
-            return device.name
+            return self.distinguished_name(device)
 
     def add_device(self, new_device):
         """
@@ -2002,10 +2013,11 @@ class Editor(QObject):
         asked through a dialog.
         """
         if device:
+            name = self.connected_devices.distinguished_name(device)
             if self.current_device is None:
-                heading = _("Detected new {} device.").format(device.name)
+                heading = _("Detected new {} device.").format(name)
             else:
-                heading = _("Device changed to {}.").format(device.name)
+                heading = _("Device changed to {}.").format(name)
             self.ask_to_change_mode(
                 device.short_mode_name, device.long_mode_name, heading
             )
