@@ -284,7 +284,7 @@ class PyGameZeroMode(BaseMode):
 
             # Tidy source code to find error earlier
             if not self.editor.tidy_code():
-                logger.debug("Failed in tiding code")
+                logger.debug("Failed in tidying code")
                 return
 
             # Add pgzrun to the source
@@ -348,7 +348,6 @@ class PyGameZeroMode(BaseMode):
             source_code = re.sub(r"import pgzrun\n", "", source_code, flags=re.DOTALL)
             source_code = re.sub(r"\npgzrun\.go\(\)", "", source_code, flags=re.DOTALL)
             tab.SendScintilla(tab.SCI_SETTEXT, source_code.encode("utf-8"))
-
 
         # Open dist folder on success
         if exit_code == 0 and tab and tab.path:

@@ -2216,10 +2216,10 @@ class Editor(QObject):
         """
         tab = self._view.current_tab
         if not tab or sys.version_info[:2] < (3, 6):
-            return True
+            return False
         # Only works on Python, so abort.
         if tab.path and not self.has_python_extension(tab.path):
-            return True
+            return False
         from black import format_str, FileMode, TargetVersion
 
         try:

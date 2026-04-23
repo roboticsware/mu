@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 CHARTS = True
 try:  # pragma: no cover
     from PyQt6.QtCharts import QChart, QLineSeries, QChartView, QValueAxis
-except ImportError:  # pragma: no cover
+except Exception:  # pragma: no cover
     logger.info("Unable to find QChart. Plotter button will not display.")
     QChartView = object
     CHARTS = False

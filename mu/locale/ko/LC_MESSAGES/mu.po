@@ -588,7 +588,7 @@ msgstr "어떤 일을 하는 데는 명확한 방법이 한 가지, 가급적이
 
 #: mu/logic.py:152
 msgid "Now is better than never. Although never is often better than *right* now."
-msgstr "지금 하는 것이 아예 안 하는 것보다 낫습니다. 하지만 아예 안 하는 것이 '지금 당장' 하는 것보다 나은 경우도 많습니다."
+msgstr "지금 하는 것이 아예 안 하는 것보다 낫습니다. 하지만 아예 안 하는 것이 '지금 당장' 하는 것보다 나은 경우도 있습니다."
 
 #: mu/logic.py:156
 msgid "If the implementation is hard to explain, it's a bad idea."

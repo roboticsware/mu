@@ -564,7 +564,7 @@ msgstr "Bu editor Mu (inglizchada \"mew\" yoki \"moo\") deb ataladi."
 
 #: mu/logic.py:242
 msgid "Google, Facebook, NASA, Pixar, Disney and many more use Python."
-msgstr "Google, Facebook, NASA, Pixar, Disney va boshqalar Python’dan foydalanadi."
+msgstr "Google, Facebook, NASA, Pixar, Disney va boshqalar Pythondan foydalanadi."
 
 #: mu/logic.py:244
 msgid "Programming is a form of magic. Learn to cast the right spells with code and you'll be a wizard."
@@ -596,7 +596,7 @@ msgstr "Ochiq fikr, sarguzasht ruhi va xilma-xillikni hurmat qilish muhim ahamiy
 
 #: mu/logic.py:257
 msgid "Don't worry if it doesn't work. Learn the lesson, fix it and try again! :-)"
-msgstr "Agar u ishlamasa, tashvishlanmang. Darsni o'rganing, tuzating va qayta urinib ko'ring! :-)"
+msgstr "Agar u ishlamasa, tashvishlanmang. Dars oling, tuzating va qayta urinib ko'ring! :-)"
 
 #: mu/logic.py:260
 msgid "Coding is collaboration."
@@ -604,7 +604,7 @@ msgstr "Kodlash - bu hamkorlik."
 
 #: mu/logic.py:261
 msgid "Compliment and amplify the good things with code."
-msgstr "Kod bilan yaxshi narsalarni  maqtang va kuchaytiring."
+msgstr "Kod bilan yaxshi narsalarni maqtang va kuchaytiring."
 
 #: mu/logic.py:263
 msgid "In theory, theory and practice are the same. In practice, they're not. ;-)"
@@ -612,203 +612,203 @@ msgstr "Nazariy jihatdan nazariya va amaliyot bir xil. Amalda, ular yo'q. ;-)"
 
 #: mu/logic.py:266
 msgid "Debugging is twice as hard as writing the code in the first place."
-msgstr "Xatolarni topib tuzatish birinchi navbatda kod yozishdan ikki baravar qiyin."
+msgstr "Xatolarni topib tuzatish (Debug) birinchi navbatda kod yozishdan ikki baravar qiyin."
 
 #: mu/logic.py:267
 msgid "It's fun to program."
-msgstr ""
+msgstr "Dasturlash zavqli."
 
 #: mu/logic.py:268
 msgid "Programming has more to do with problem solving than writing code."
-msgstr ""
+msgstr "Dasturlash kod yozishdan ko'ra ko'proq muammolarni hal qilish bilan bog'liq."
 
 #: mu/logic.py:269
 msgid "Start with your users' needs."
-msgstr ""
+msgstr "Foydalanuvchilaringiz ehtiyojlaridan boshlang."
 
 #: mu/logic.py:270
 msgid "Try to see things from your users' point of view."
-msgstr ""
+msgstr "Narsalarga foydalanuvchilaringiz nuqtai nazaridan qarashga harakat qiling."
 
 #: mu/logic.py:271
 msgid "Put yourself in your users' shoes."
-msgstr ""
+msgstr "O'zingizni foydalanuvchilaringiz o'rniga qo'ying."
 
 #: mu/logic.py:273
 msgid "Explaining a programming problem to a friend often reveals the solution. :-)"
-msgstr ""
+msgstr "Dasturlash muammosini do'stingizga tushuntirish ko'pincha yechimni ochib beradi. :-)"
 
 #: mu/logic.py:276
 msgid "If you don't know, ask. Nobody to ask? Just look it up."
-msgstr ""
+msgstr "Agar bilmasangiz, so'rang. So'raydigan hech kim yo'qmi? Shunchaki qidirib ko'ring."
 
 #: mu/logic.py:277
 msgid "Complexity is the enemy. KISS - keep it simple, stupid!"
-msgstr ""
+msgstr "Murakkablik - bu dushman. KISS - uni oddiyroq qil!"
 
 #: mu/logic.py:278
 msgid "Beautiful is better than ugly."
-msgstr ""
+msgstr "Go'zal xunukdan yaxshiroqdir."
 
 #: mu/logic.py:279
 msgid "Explicit is better than implicit."
-msgstr ""
+msgstr "Aniq noaniqdan yaxshiroqdir."
 
 #: mu/logic.py:280
 msgid "Simple is better than complex. Complex is better than complicated."
-msgstr ""
+msgstr "Oddiy murakkabdan yaxshiroqdir. Murakkab chalkashib ketgandan yaxshiroqdir."
 
 #: mu/logic.py:281
 msgid "Flat is better than nested."
-msgstr ""
+msgstr "Yassi ichma-ich joylashgandan yaxshiroqdir."
 
 #: mu/logic.py:282
 msgid "Sparse is better than dense."
-msgstr ""
+msgstr "Siyrak zichdan yaxshiroqdir."
 
 #: mu/logic.py:283
 msgid "Readability counts."
-msgstr ""
+msgstr "O'qilishi muhim."
 
 #: mu/logic.py:285
 msgid "Special cases aren't special enough to break the rules. Although practicality beats purity."
-msgstr ""
+msgstr "Maxsus holatlar qoidalarni buzish uchun yetarlicha maxsus emas. Lekin ba'zida amaliylik soflikdan ustundir."
 
 #: mu/logic.py:288
 msgid "Errors should never pass silently. Unless explicitly silenced."
-msgstr ""
+msgstr "Xatolar hech qachon e'tiborsiz qolmasligi kerak. Agar ataylab yashirilgan bo'lmasa."
 
 #: mu/logic.py:289
 msgid "In the face of ambiguity, refuse the temptation to guess."
-msgstr ""
+msgstr "Noaniqlik qarshisida taxmin qilish vasvasasidan voz keching."
 
 #: mu/logic.py:290
 msgid "There should be one-- and preferably only one --obvious way to do it."
-msgstr ""
+msgstr "Buni qilishning bitta -- va afzalroq faqat bitta -- aniq yo'li bo'lishi kerak."
 
 #: mu/logic.py:292
 msgid "Now is better than never. Although never is often better than *right* now."
-msgstr ""
+msgstr "Hozir qilish hech narsa qilmaslikdan yaxshiroq. Lekin hech narsa qilmaslik ko'pincha *ayni* hozir qilishdan yaxshiroq bo'lgan holatlar ham mavjud."
 
 #: mu/logic.py:295
 msgid "If the implementation is hard to explain, it's a bad idea."
-msgstr ""
+msgstr "Agar amalga oshirishni tushuntirish qiyin bo'lsa, bu yomon g'oya."
 
 #: mu/logic.py:296
 msgid "If the implementation is easy to explain, it may be a good idea."
-msgstr ""
+msgstr "Agar amalga oshirishni tushuntirish oson bo'lsa, bu yaxshi g'oya bo'lishi mumkin."
 
 #: mu/logic.py:297
 msgid "Namespaces are one honking great idea -- let's do more of those!"
-msgstr ""
+msgstr "Namespaces (Nomlar makoni) juda ajoyib g'oya -- keling, ulardan ko'proq foydalanamiz!"
 
 #: mu/logic.py:298
 msgid "Mu was created by Nicholas H.Tollervey."
-msgstr ""
+msgstr "Mu ning asosiy yaratuvchisi Nicholas H.Tollervey dir."
 
 #: mu/logic.py:299
 msgid "To understand what recursion is, you must first understand recursion."
-msgstr ""
+msgstr "Rekursiya nimaligini tushunish uchun avval rekursiyani tushunishingiz kerak."
 
 #: mu/logic.py:301
 msgid "Algorithm: a word used by programmers when they don't want to explain what they did."
-msgstr ""
+msgstr "Algoritm: dasturchilar nima qilganini tushuntirishni xohlamaganlarida ishlatadigan so'z."
 
 #: mu/logic.py:304
 msgid "Programmers count from zero."
-msgstr ""
+msgstr "Dasturchilar noldan sanashadi."
 
 #: mu/logic.py:305
 msgid "Simplicity is the ultimate sophistication."
-msgstr ""
+msgstr "Oddiylik - bu eng oliy darajadagi murakkablik."
 
 #: mu/logic.py:306
 msgid "A good programmer is humble."
-msgstr ""
+msgstr "Yaxshi dasturchi kamtar bo'ladi."
 
 #: mu/logic.py:307
 msgid "A good programmer is playful."
-msgstr "Yaxshi dasturchi o'yinashni yaxsh ko'radi."
+msgstr "Yaxshi dasturchi quvnoq bo'ladi."
 
 #: mu/logic.py:308
 msgid "A good programmer learns to learn."
-msgstr ""
+msgstr "Yaxshi dasturchi o'rganishni o'rganadi."
 
 #: mu/logic.py:309
 msgid "A good programmer thinks beyond the obvious."
-msgstr ""
+msgstr "Yaxshi dasturchi aniq narsalardan tashqari ham o'ylaydi."
 
 #: mu/logic.py:310
 msgid "A good programmer promotes simplicity."
-msgstr ""
+msgstr "Yaxshi dasturchi oddiylikni targ'ib qiladi."
 
 #: mu/logic.py:311
 msgid "A good programmer avoids complexity."
-msgstr ""
+msgstr "Yaxshi dasturchi murakkablikdan qochadi."
 
 #: mu/logic.py:312
 msgid "A good programmer is patient."
-msgstr ""
+msgstr "Yaxshi dasturchi sabrli bo'ladi."
 
 #: mu/logic.py:313
 msgid "A good programmer asks questions."
-msgstr ""
+msgstr "Yaxshi dasturchi savollar beradi."
 
 #: mu/logic.py:314
 msgid "A good programmer is willing to say, 'I don't know'."
-msgstr ""
+msgstr "Yaxshi dasturchi 'Men bilmayman' deyishga tayyor bo'ladi."
 
 #: mu/logic.py:315
 msgid "Wisest are they that know they know nothing."
-msgstr ""
+msgstr "Hech narsa bilmasligini biladiganlar eng donodir."
 
 #: mu/logic.py:317
 msgid "Computers aren’t the thing. They’re the thing that gets us to the thing."
-msgstr ""
+msgstr "Kompyuterlar asosiy narsa emas. Ular bizni asosiy narsaga olib boradigan vositadir."
 
 #: mu/logic.py:319
 msgid "Don't stare at a blank screen - try something out."
-msgstr ""
+msgstr "Bo'sh ekranga tikilib turmang - biror narsani sinab ko'ring."
 
 #: mu/logic.py:320
 msgid "If you're stuck - try explaining it to a rubber duck."
-msgstr ""
+msgstr "Agar qiynalsangiz - uni rezina o'rdakka tushuntirib ko'ring."
 
 #: mu/logic.py:321
 msgid "It's ok to be stuck, go for a walk and then try again (:"
-msgstr ""
+msgstr "Qiynalish normal holat, sayr qilib keling va yana urinib ko'ring (:"
 
 #: mu/logic.py:322 mu/logic.py:326
 msgid "It's not a mistake to make an error."
-msgstr ""
+msgstr "Xatoni chiqarish - bu xato qilgani emas."
 
 #: mu/logic.py:323
 msgid "Errors are there to learn from them. Then avoid them."
-msgstr ""
+msgstr "Xatolar ulardan o'rganish uchun bor. Keyin ulardan qoching."
 
 #: mu/logic.py:324
 msgid "Don't look backwards for very long. We keep moving forward."
-msgstr ""
+msgstr "Orqaga uzoq qaramang. Biz oldinga harakat qilishda davom etamiz."
 
 #: mu/logic.py:325
 msgid "Keep moving forward."
-msgstr ""
+msgstr "Oldinga harakat qilishda davom eting."
 
 #: mu/logic.py:327
 msgid "Do not pass silently."
-msgstr ""
+msgstr "Indamay o'tib ketmang."
 
 #: mu/logic.py:328
 msgid "Computers are not humans. There is no need arguing with them."
-msgstr ""
+msgstr "Kompyuterlar inson emas. Ular bilan bahslashishga hojat yo'q."
 
 #: mu/logic.py:329
 msgid "Embrace change and seek growth."
-msgstr ""
+msgstr "O'zgarishlarni qabul qiling va o'sishga intiling."
 
 #: mu/logic.py:330
 msgid "Live, laugh, learn!"
-msgstr ""
+msgstr "Yashang, kuling, o'rganing!"
 
 #: mu/logic.py:331
 msgid "Let's get coding!"
@@ -1795,7 +1795,7 @@ msgstr "Yuklab yozish"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid "Fetching firmware list from Thonny…"
-msgstr "Thonny-dan mikrodastur ro'yxati olinmoqda…"
+msgstr "Internetdan mikrodastur ro'yxati olinmoqda…"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid "No compatible firmware found."
