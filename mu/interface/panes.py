@@ -49,6 +49,7 @@ from PyQt6.QtWidgets import (
     QTreeView,
     QInputDialog,
     QApplication,
+    QAbstractItemView,
 )
 from PyQt6.QtGui import (
     QKeySequence,
@@ -700,6 +701,7 @@ class MuFileList(QListWidget):
     list_sub_files = pyqtSignal(list, str)
     set_message = pyqtSignal(str)
     pbar_update = pyqtSignal(int)
+    transfers_added = pyqtSignal(int)
     cur_home_dir = ''
 
     def set_cur_home_dir(self, path):
@@ -717,6 +719,29 @@ class MuFileList(QListWidget):
         msg.setWindowTitle(_("File already exists"))
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return msg.exec() == QMessageBox.Ok
+
+    def clean_name(self, item):
+        """
+        Returns the filename without the directory indicator (trailing slash).
+        """
+        name = item.text()
+        if name != '..' and name.endswith('/'):
+            return name[:-1]
+        return name
+
+    def join_device_path(self, *parts):
+        """
+        Join path parts using forward slash (for device-side paths).
+        """
+        if not parts:
+            return ""
+        # Convert all to string and replace backslashes
+        clean_parts = [str(p).replace("\\", "/") for p in parts if p]
+        # Join with / but handle leading / correctly
+        res = "/".join(p.strip("/") for p in clean_parts)
+        if clean_parts[0].startswith("/"):
+            return "/" + res
+        return res
 
 
 class MicroPythonDeviceFileList(MuFileList):
@@ -736,40 +761,65 @@ class MicroPythonDeviceFileList(MuFileList):
         self.home = home
         self.cur_home_dir = home
         self._dir_names = frozenset()  # names of dirs in the current listing
-        self.setDragDropMode(QListWidget.DragDrop)
+        self.setDragDropMode(QListWidget.DragDropMode.DragDrop)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def dropEvent(self, event):
         source = event.source()
         if isinstance(source, LocalFileList):
-            current_item = source.currentItem()
-            if current_item is None:
+            selected_items = source.selectedItems()
+            if not selected_items:
                 return
-            file_exists = self.findItems(
-                current_item.text(), Qt.MatchExactly
-            )
-            if (
-                not file_exists
-                or file_exists
-                and self.show_confirm_overwrite_dialog()
-            ):
-                self.disable.emit()
-                local_filename = os.path.join(source.cur_home_dir, current_item.text())
-                # Detect if file is dropped onto a directory item
-                target_item = self.itemAt(event.position().toPoint())
-                if (
-                    target_item
-                    and target_item.text() != '..'
-                    and target_item.text() in self._dir_names
-                ):
-                    # Drop into the highlighted subdirectory
-                    subdir = os.path.join(self.cur_home_dir, target_item.text())
-                    microbit_filename = os.path.join(subdir, current_item.text())
+            
+            any_exists = False
+            for current_item in selected_items:
+                if self.findItems(current_item.text(), Qt.MatchExactly):
+                    any_exists = True
+                    break
+            
+            if any_exists and not self.show_confirm_overwrite_dialog():
+                return
+            
+            target_item = self.itemAt(event.position().toPoint())
+            target_name = self.clean_name(target_item) if target_item else None
+            if target_item and target_name != '..' and target_name in self._dir_names:
+                device_base_dir = self.join_device_path(self.cur_home_dir, target_name)
+            else:
+                device_base_dir = self.cur_home_dir
+
+            ops = []
+            
+            def gather_files(item_text, local_base, device_base):
+                # Strip directory indicator if present
+                clean_item = item_text[:-1] if item_text.endswith('/') else item_text
+                local_path = os.path.join(local_base, clean_item)
+                device_path = self.join_device_path(device_base, clean_item)
+                if os.path.isdir(local_path):
+                    ops.append(('mkdir', device_path))
+                    try:
+                        for child in os.listdir(local_path):
+                            gather_files(child, local_path, device_path)
+                    except Exception as e:
+                        logger.error(e)
                 else:
-                    microbit_filename = os.path.join(self.cur_home_dir, current_item.text())
-                msg = _("Copying '{}' to device.").format(local_filename)
-                logger.info(msg)
-                self.set_message.emit(msg)
-                self.put.emit(local_filename, microbit_filename)
+                    ops.append(('put', local_path, device_path))
+
+            for current_item in selected_items:
+                gather_files(current_item.text(), source.cur_home_dir, device_base_dir)
+
+            if not ops:
+                return
+
+            self.disable.emit()
+            self.transfers_added.emit(len(ops))
+            for op in ops:
+                if op[0] == 'mkdir':
+                    self.mkdir.emit(op[1])
+                elif op[0] == 'put':
+                    msg = _("Copying '{}' to device.").format(op[1])
+                    logger.info(msg)
+                    self.set_message.emit(msg)
+                    self.put.emit(op[1], op[2])
 
         elif source is self:
             # Device intra-list drag: move file into a directory or parent (..)
@@ -807,20 +857,25 @@ class MicroPythonDeviceFileList(MuFileList):
         """
         msg = _("'{}' successfully copied to device.").format(microbit_file)
         self.set_message.emit(msg)
-        self.list_files.emit(self.cur_home_dir)
         self.pbar_update.emit(-1)  # To remove the pbar UI
-        self.enable.emit()
+        if hasattr(self.parent(), 'finish_transfer'):
+            self.parent().finish_transfer()
+        else:
+            self.list_files.emit(self.cur_home_dir)
+            self.enable.emit()
 
     def on_put_update(self, amount):
         self.pbar_update.emit(amount)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
-        menu_current_item = self.currentItem()
+        
+        selected_items = self.selectedItems()
+        valid_items = [item for item in selected_items if self.clean_name(item) != '..']
 
-        if menu_current_item is not None:
+        if valid_items:
             delete_action = menu.addAction(_("Delete (cannot be undone)"))
-            rename_action = menu.addAction(_("Rename"))
+            rename_action = menu.addAction(_("Rename")) if len(valid_items) == 1 else None
             menu.addSeparator()
         else:
             delete_action = None
@@ -833,18 +888,21 @@ class MicroPythonDeviceFileList(MuFileList):
         if action is None:
             return
 
-        if action == delete_action and menu_current_item is not None:
+        if action == delete_action and valid_items:
+            valid_names = [self.clean_name(item) for item in valid_items]
             self.disable.emit()
-            microbit_filename = os.path.join(self.cur_home_dir, menu_current_item.text())
-            logger.info("Deleting {}".format(microbit_filename))
-            msg = _("Deleting '{}' from device.").format(microbit_filename)
-            logger.info(msg)
-            self.set_message.emit(msg)
-            self.delete.emit(microbit_filename)
+            self.transfers_added.emit(len(valid_names))
+            for clean_filename in valid_names:
+                microbit_filename = self.join_device_path(self.cur_home_dir, clean_filename)
+                logger.info("Deleting {}".format(microbit_filename))
+                msg = _("Deleting '{}' from device.").format(clean_filename)
+                logger.info(msg)
+                self.set_message.emit(msg)
+                self.delete.emit(microbit_filename)
 
-        elif action == rename_action and menu_current_item is not None:
-            old_name = menu_current_item.text()
-            old_path = os.path.join(self.cur_home_dir, old_name)
+        elif action == rename_action and valid_items:
+            old_name = self.clean_name(valid_items[0])
+            old_path = self.join_device_path(self.cur_home_dir, old_name)
             new_name, ok = QInputDialog.getText(
                 self,
                 _("Rename"),
@@ -852,9 +910,11 @@ class MicroPythonDeviceFileList(MuFileList):
                 text=old_name,
             )
             if ok and new_name and new_name != old_name:
-                new_path = os.path.join(self.cur_home_dir, new_name)
+                new_path = self.join_device_path(self.cur_home_dir, new_name)
                 self.disable.emit()
+                self.transfers_added.emit(1)
                 msg = _("Renaming '{}' to '{}'.").format(old_name, new_name)
+                logger.info(msg)
                 self.set_message.emit(msg)
                 self.rename.emit(old_path, new_path)
 
@@ -875,9 +935,13 @@ class MicroPythonDeviceFileList(MuFileList):
         """
         Fired when the delete event is completed for the given filename.
         """
-        msg = _("'{}' successfully deleted from device.").format(microbit_file)
+        msg = _("'{}' successfully deleted.").format(microbit_file)
         self.set_message.emit(msg)
-        self.list_files.emit(self.cur_home_dir)
+        if hasattr(self.parent(), 'finish_transfer'):
+            self.parent().finish_transfer()
+        else:
+            self.enable.emit()
+            self.list_files.emit(self.cur_home_dir)
 
     def on_rename(self, old_path):
         """
@@ -886,8 +950,11 @@ class MicroPythonDeviceFileList(MuFileList):
         old_name = os.path.basename(old_path)
         msg = _("'{}' successfully renamed.").format(old_name)
         self.set_message.emit(msg)
-        self.enable.emit()
-        self.list_files.emit(self.cur_home_dir)
+        if hasattr(self.parent(), 'finish_transfer'):
+            self.parent().finish_transfer()
+        else:
+            self.enable.emit()
+            self.list_files.emit(self.cur_home_dir)
 
     def on_mkdir(self, dir_path):
         """
@@ -896,11 +963,14 @@ class MicroPythonDeviceFileList(MuFileList):
         dir_name = os.path.basename(dir_path)
         msg = _("Directory '{}' created.").format(dir_name)
         self.set_message.emit(msg)
-        self.enable.emit()
-        self.list_files.emit(self.cur_home_dir)
+        if hasattr(self.parent(), 'finish_transfer'):
+            self.parent().finish_transfer()
+        else:
+            self.enable.emit()
+            self.list_files.emit(self.cur_home_dir)
 
     def on_item_double_clicked(self, item):
-        name = item.text()
+        name = self.clean_name(item)
         if name == '..':
             # Navigate up without any serial round-trip
             parent = os.path.normpath(self.cur_home_dir)
@@ -920,7 +990,7 @@ class MicroPythonDeviceFileList(MuFileList):
             self.list_files.emit(self.cur_home_dir)
         else:
             # Unknown type – use serial is_dir check (file → open, dir → navigate)
-            path = os.path.join(self.cur_home_dir, name)
+            path = self.join_device_path(self.cur_home_dir, name)
             # Strip './' prefix: MicroPython may not support it in os.stat()
             if path.startswith('./'):
                 path = path[2:] or '/'
@@ -952,32 +1022,51 @@ class LocalFileList(MuFileList):
         super().__init__()
         self.home = home
         self.cur_home_dir = home
-        self.setDragDropMode(QListWidget.DragDrop)
+        self.setDragDropMode(QListWidget.DragDropMode.DragDrop)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def dropEvent(self, event):
         source = event.source()
         if isinstance(source, MicroPythonDeviceFileList):
             # Device → PC copy
-            current_item = source.currentItem()
-            if current_item is None:
+            selected_items = source.selectedItems()
+            if not selected_items:
                 return
-            file_exists = self.findItems(
-                current_item.text(), Qt.MatchExactly
-            )
-            if (
-                not file_exists
-                or file_exists
-                and self.show_confirm_overwrite_dialog()
-            ):
-                self.disable.emit()
-                microbit_filename = os.path.join(source.cur_home_dir, current_item.text())
-                local_filename = os.path.join(self.cur_home_dir, current_item.text())
-                msg = _(
-                    "Getting '{}' from device. " "Copying to '{}'."
-                ).format(microbit_filename, local_filename)
-                logger.info(msg)
-                self.set_message.emit(msg)
-                self.get.emit(microbit_filename, local_filename)
+
+            any_exists = False
+            for current_item in selected_items:
+                if self.findItems(current_item.text(), Qt.MatchExactly):
+                    any_exists = True
+                    break
+                    
+            if any_exists and not self.show_confirm_overwrite_dialog():
+                return
+
+            ops = []
+            
+            def gather_files(item_text, device_base, local_base):
+                # For now, device-to-local only supports single files or multiple files.
+                # Recursive GET is not natively supported yet unless we do is_dir checks over serial.
+                # Since is_dir over serial is slow, we assume selected items are files or we skip folders.
+                clean_item = item_text[:-1] if item_text.endswith('/') else item_text
+                local_path = os.path.join(local_base, clean_item)
+                device_path = self.join_device_path(device_base, clean_item)
+                ops.append(('get', device_path, local_path))
+
+            for current_item in selected_items:
+                gather_files(self.clean_name(current_item), source.cur_home_dir, self.cur_home_dir)
+
+            if not ops:
+                return
+
+            self.disable.emit()
+            self.transfers_added.emit(len(ops))
+            for op in ops:
+                if op[0] == 'get':
+                    msg = _("Getting '{}' from device. Copying to '{}'.").format(op[1], op[2])
+                    logger.info(msg)
+                    self.set_message.emit(msg)
+                    self.get.emit(op[1], op[2])
 
         elif source is self:
             # PC intra-list drag: move file into a directory item or parent (..)
@@ -1175,6 +1264,10 @@ class FileSystemPane(QFrame):
         self.font = Font().load()
         microbit_fs = MicroPythonDeviceFileList('./')
         local_fs = LocalFileList(home)
+        self.pending_transfers = 0
+        
+        local_fs.transfers_added.connect(self.on_transfers_added)
+        microbit_fs.transfers_added.connect(self.on_transfers_added)
 
         @local_fs.open_file.connect
         def on_open_file(file):
@@ -1182,6 +1275,8 @@ class FileSystemPane(QFrame):
             self.open_file.emit(file)
 
         layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         self.setLayout(layout)
         self._wait_cursor_active = False
         microbit_label = QLabel()
@@ -1193,10 +1288,23 @@ class FileSystemPane(QFrame):
         self.microbit_fs = microbit_fs 
         self.local_fs = local_fs
         self.set_font_size()
+        
+        self.divider = QFrame()
+        self.divider.setFrameShape(QFrame.Shape.VLine)
+        self.divider.setFrameShadow(QFrame.Shadow.Plain)
+        self.divider.setLineWidth(1)
+        
         layout.addWidget(microbit_label, 0, 0)
-        layout.addWidget(local_label, 0, 1)
+        layout.addWidget(self.divider, 0, 1, 2, 1)
+        layout.addWidget(local_label, 0, 2)
         layout.addWidget(microbit_fs, 1, 0)
-        layout.addWidget(local_fs, 1, 1)
+        layout.addWidget(local_fs, 1, 2)
+        
+        # Set column stretch so the file lists expand but the divider stays thin
+        layout.setColumnStretch(0, 1)
+        layout.setColumnStretch(1, 0)
+        layout.setColumnStretch(2, 1)
+
         self.microbit_fs.disable.connect(self.disable)
         self.microbit_fs.enable.connect(self.enable)
         self.microbit_fs.set_message.connect(self.show_message)
@@ -1206,6 +1314,16 @@ class FileSystemPane(QFrame):
         self.local_fs.enable.connect(self.enable)
         self.local_fs.set_message.connect(self.show_message)
         self.local_fs.list_sub_files.connect(self.on_ls)
+
+    def on_transfers_added(self, count):
+        self.pending_transfers += count
+
+    def finish_transfer(self):
+        self.pending_transfers -= 1
+        if self.pending_transfers <= 0:
+            self.pending_transfers = 0
+            self.enable()
+            self.microbit_fs.list_files.emit(self.microbit_fs.cur_home_dir)
 
     def disable(self):
         """
@@ -1226,6 +1344,8 @@ class FileSystemPane(QFrame):
         """
         Allows interaction with the list widgets.
         """
+        if self.pending_transfers > 0:
+            return
         try:
             self.microbit_fs.setDisabled(False)
             self.local_fs.setDisabled(False)
@@ -1282,7 +1402,8 @@ class FileSystemPane(QFrame):
                 _f = _item.font(); _f.setBold(True); _item.setFont(_f)
                 self.microbit_fs.addItem(_item)
             for f in microbit_files:
-                _item = QListWidgetItem(f)
+                display_name = f + '/' if dir_names and f in dir_names else f
+                _item = QListWidgetItem(display_name)
                 if dir_names and f in dir_names:
                     _item.setForeground(QColor('#4A90D9'))
                     _f = _item.font(); _f.setBold(True); _item.setFont(_f)
@@ -1305,8 +1426,10 @@ class FileSystemPane(QFrame):
             local_files.insert(0, '..')  # Add an item to go to upper directory
         local_files.sort()
         for f in local_files:
-            _item = QListWidgetItem(f)
-            if os.path.isdir(os.path.join(cwd, f)):
+            is_dir = os.path.isdir(os.path.join(cwd, f))
+            display_name = f + '/' if is_dir and f != '..' else f
+            _item = QListWidgetItem(display_name)
+            if is_dir:
                 _item.setForeground(QColor('#4A90D9'))
                 _f = _item.font(); _f.setBold(True); _item.setFont(_f)
             self.local_fs.addItem(_item)
@@ -1342,6 +1465,7 @@ class FileSystemPane(QFrame):
         """
         Fired when the referenced file cannot be copied onto the device.
         """
+        self.finish_transfer()
         self.show_warning(
             _(
                 "There was a problem copying the file '{}' onto "
@@ -1355,6 +1479,7 @@ class FileSystemPane(QFrame):
         """
         Fired when a deletion on the device for the given file failed.
         """
+        self.finish_transfer()
         self.show_warning(
             _(
                 "There was a problem deleting '{}' from the "
@@ -1368,6 +1493,7 @@ class FileSystemPane(QFrame):
         """
         Fired when getting the referenced file on the device failed.
         """
+        self.finish_transfer()
         self.show_warning(
             _(
                 "There was a problem getting '{}' from the "
@@ -1381,6 +1507,7 @@ class FileSystemPane(QFrame):
         """
         Fired when renaming a file on the device failed.
         """
+        self.finish_transfer()
         self.show_warning(
             _(
                 "There was a problem renaming '{}' on the "
@@ -1394,6 +1521,7 @@ class FileSystemPane(QFrame):
         """
         Fired when creating a directory on the device failed.
         """
+        self.finish_transfer()
         self.show_warning(
             _(
                 "There was a problem creating directory '{}' on the "
@@ -1404,7 +1532,20 @@ class FileSystemPane(QFrame):
         self.enable()
 
     def set_theme(self, theme):
-        pass
+        if theme in ("night", "contrast"):
+            self.divider.setStyleSheet("color: #6b6b6b;")
+            label_style = (
+                "background-color: #474747; color: white; padding: 6px; "
+                "font-weight: bold; border: 1px solid #6b6b6b;"
+            )
+        else:
+            self.divider.setStyleSheet("color: #b4b4b4;")
+            label_style = (
+                "background-color: #dcdcdc; color: black; padding: 6px; "
+                "font-weight: bold; border: 1px solid #b4b4b4;"
+            )
+        self.microbit_label.setStyleSheet(label_style)
+        self.local_label.setStyleSheet(label_style)
 
     def set_font_size(self, new_size=DEFAULT_FONT_SIZE):
         """

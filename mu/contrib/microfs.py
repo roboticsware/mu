@@ -258,7 +258,18 @@ def rm(filename, serial=None):
 
     Returns True for success or raises an IOError if there's a problem.
     """
-    commands = ["import os", "os.remove('{}')".format(filename)]
+    script = (
+        "import os\n"
+        "def r(p):\n"
+        " try:\n"
+        "  if os.stat(p)[0]&0x4000:\n"
+        "   for c in os.listdir(p): r(p.rstrip('/')+'/'+c)\n"
+        "   os.rmdir(p)\n"
+        "  else: os.remove(p)\n"
+        " except: pass\n"
+        "r('{}')"
+    ).format(filename)
+    commands = [script]
     out, err = execute(commands, serial)
     if err:
         raise IOError(clean_error(err))
