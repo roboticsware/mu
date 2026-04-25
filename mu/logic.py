@@ -227,6 +227,14 @@ DEFAULT_PICO_LIB = [
     "mfrc522.py",
 ]
 
+DEFAULT_ESP32_LIB = [
+    "__init__.py",
+    "_core.py",
+    "_hal.py",
+    "_wifi.py",
+    "_touch.py",
+]
+
 EXAMPLE_PICO_BASIC = [
     "bt_car.py",
     "wifi_car.py",
@@ -1010,6 +1018,8 @@ class Editor(QObject):
         sounds_path = os.path.join(wd, "sounds")
         music_path = os.path.join(wd, "music")
         pico_lib_path = os.path.join(wd, "pico_lib")
+        esp32_lib_path = os.path.join(wd, "esp32_lib")
+        esp32_lib_profiles_path = os.path.join(esp32_lib_path, "profiles")
         examples_path = os.path.join(wd, "examples")
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
@@ -1058,6 +1068,21 @@ class Editor(QObject):
             for sfx in DEFAULT_PICO_LIB:
                 shutil.copy(
                     path(sfx, "pico/"), os.path.join(pico_lib_path, sfx)
+                )
+        # ESP32_lib (espzero)
+        if not os.path.exists(esp32_lib_path):
+            logger.debug("Creating directory: {}".format(esp32_lib_path))
+            os.makedirs(esp32_lib_path)
+            os.makedirs(esp32_lib_profiles_path)
+            for sfx in DEFAULT_ESP32_LIB:
+                shutil.copy(
+                    path(sfx, "esp32/"), os.path.join(esp32_lib_path, sfx)
+                )
+            # profiles 서브디렉토리 복사
+            for sfx in ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"]:
+                shutil.copy(
+                    path(sfx, "esp32/profiles/"),
+                    os.path.join(esp32_lib_profiles_path, sfx)
                 )
         # Examples
         if not os.path.exists(examples_path):
