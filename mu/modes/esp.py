@@ -247,11 +247,12 @@ class ESPMode(MicroPythonMode):
         Handle a device disconnection event.
         """
         logger.info("ESPMode received device disconnection event: device.port %r", device.port)
-        if self.fs and self.file_manager:
+        file_manager = getattr(self, "file_manager", None)
+        if self.fs and file_manager:
             # fs is open, close it
             logger.info("File system open, closing due to device removal.")
             self.toggle_files(None)
-        elif self.fs is None and not self.file_manager:
+        elif self.fs is None and not file_manager:
             # fs was already closed (e.g. by fatal_error signal), but button may still be highlighted
             logger.info("File system already closed, resetting buttons.")
             self.set_buttons(run=True, repl=True, plotter=True, files=True)
