@@ -1895,3 +1895,88 @@ msgstr "Til o'zgartirildi."
 #: mu/logic.py:1837
 msgid "The language will change to the selected one after Mu is restarted."
 msgstr "Tanlangan til Mu qayta ishga tushirilgandan so'ng amal qiladi."
+
+#: mu/interface/dialogs.py
+msgid "ESP Online Flasher"
+msgstr "ESP onlayn mikrodastur yozish"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "How to flash MicroPython to your ESP board"
+msgstr "MicroPythonni ESP platangizga qanday yozish mumkin"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to load available firmware.<br>3. Select your <b>Board</b> and <b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be erased and the new firmware written automatically.<br><i>Note: hold the BOOT button on your board if the device does not enter programming mode automatically.</i>"
+msgstr "1. ESP platangizni USB orqali ulang.<br>2. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>3. <b>Plata</b> va <b>Versiya</b>-ni tanlang.<br>4. <b>O'chirish va yozish</b> tugmasini bosing — qurilma o'chiriladi va yangi mikrodastur avtomatik ravishda yoziladi.<br><i>Eslatma: agar qurilma avtomatik ravishda dasturlash rejimiga kirmasa, platangizdagi BOOT tugmasini bosib turing.</i>"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Board:"
+msgstr "Plata:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Fetch Versions"
+msgstr "Versiyalarni olish"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Version:"
+msgstr "Versiya:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Port:"
+msgstr "Port:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Erase && Flash"
+msgstr "O'chirish va yozish"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Downloading firmware…"
+msgstr "Mikrodastur yuklab olinmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Download complete. Erasing flash…"
+msgstr "Yuklab olish tugadi. Xotira o'chirilmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Erase complete. Writing firmware…"
+msgstr "O'chirish tugadi. Mikrodastur yozilmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Flash complete! Device is rebooting with the new firmware."
+msgstr "Yozish tugadi! Qurilma yangi mikrodastur bilan qayta ishga tushmoqda."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Flash failed: {}"
+msgstr "Yozishda xato: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Download error: {}"
+msgstr "Yuklab olishda xato: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Fetching firmware list…"
+msgstr "Mikrodastur ro'yxati olinmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "No compatible firmware found."
+msgstr "Mos mikrodastur topilmadi."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded firmware for {} boards."
+msgstr "{} ta plata uchun mikrodasturlar yuklandi."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Error fetching versions: {}"
+msgstr "Versiyalarni olishda xato: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "No port selected."
+msgstr "Port tanlanmagan."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Starting: {} on {}"
+msgstr "Boshlanmoqda: {} (port: {})"
