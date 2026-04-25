@@ -694,12 +694,13 @@ class FileManager(QObject):
     # Emitted when a mkdir operation fails.
     on_mkdir_fail = pyqtSignal(str)    # dir_path
 
-    def __init__(self, port):
+    def __init__(self, port, boot_delay=0):
         """
         Initialise with a port.
         """
         super().__init__()
         self.port = port
+        self.boot_delay = boot_delay
 
     def on_start(self):
         """
@@ -714,6 +715,9 @@ class FileManager(QObject):
                 timeout=settings.settings.get("serial_timeout", 2),
                 parity="N",
             )
+            if self.boot_delay:
+                import time
+                time.sleep(self.boot_delay)
             self.ls()
         except Exception as ex:
             logger.exception(ex)
