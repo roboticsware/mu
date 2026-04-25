@@ -48,6 +48,7 @@ from PyQt6.QtWidgets import (
     QMenu,
     QTreeView,
     QInputDialog,
+    QApplication,
 )
 from PyQt6.QtGui import (
     QKeySequence,
@@ -740,8 +741,11 @@ class MicroPythonDeviceFileList(MuFileList):
     def dropEvent(self, event):
         source = event.source()
         if isinstance(source, LocalFileList):
+            current_item = source.currentItem()
+            if current_item is None:
+                return
             file_exists = self.findItems(
-                source.currentItem().text(), Qt.MatchExactly
+                current_item.text(), Qt.MatchExactly
             )
             if (
                 not file_exists
@@ -749,7 +753,7 @@ class MicroPythonDeviceFileList(MuFileList):
                 and self.show_confirm_overwrite_dialog()
             ):
                 self.disable.emit()
-                local_filename = os.path.join(source.cur_home_dir, source.currentItem().text())
+                local_filename = os.path.join(source.cur_home_dir, current_item.text())
                 # Detect if file is dropped onto a directory item
                 target_item = self.itemAt(event.position().toPoint())
                 if (
@@ -759,9 +763,9 @@ class MicroPythonDeviceFileList(MuFileList):
                 ):
                     # Drop into the highlighted subdirectory
                     subdir = os.path.join(self.cur_home_dir, target_item.text())
-                    microbit_filename = os.path.join(subdir, source.currentItem().text())
+                    microbit_filename = os.path.join(subdir, current_item.text())
                 else:
-                    microbit_filename = os.path.join(self.cur_home_dir, source.currentItem().text())
+                    microbit_filename = os.path.join(self.cur_home_dir, current_item.text())
                 msg = _("Copying '{}' to device.").format(local_filename)
                 logger.info(msg)
                 self.set_message.emit(msg)
@@ -906,11 +910,13 @@ class MicroPythonDeviceFileList(MuFileList):
             elif not parent.endswith('/'):
                 parent = parent + '/'
             self.set_cur_home_dir(parent)
+            self.disable.emit()
             self.list_files.emit(self.cur_home_dir)
         elif name in self._dir_names:
             # Navigate into known directory immediately
             new_dir = self.cur_home_dir.rstrip('/') + '/' + name + '/'
             self.set_cur_home_dir(new_dir)
+            self.disable.emit()
             self.list_files.emit(self.cur_home_dir)
         else:
             # Unknown type – use serial is_dir check (file → open, dir → navigate)
@@ -919,6 +925,7 @@ class MicroPythonDeviceFileList(MuFileList):
             if path.startswith('./'):
                 path = path[2:] or '/'
             logger.debug("Device double-click: is_dir check for '{}'".format(path))
+            self.disable.emit()
             self.is_dir.emit(path)
 
     def on_is_dir(self, path):
@@ -951,8 +958,11 @@ class LocalFileList(MuFileList):
         source = event.source()
         if isinstance(source, MicroPythonDeviceFileList):
             # Device → PC copy
+            current_item = source.currentItem()
+            if current_item is None:
+                return
             file_exists = self.findItems(
-                source.currentItem().text(), Qt.MatchExactly
+                current_item.text(), Qt.MatchExactly
             )
             if (
                 not file_exists
@@ -960,8 +970,8 @@ class LocalFileList(MuFileList):
                 and self.show_confirm_overwrite_dialog()
             ):
                 self.disable.emit()
-                microbit_filename = os.path.join(source.cur_home_dir, source.currentItem().text())
-                local_filename = os.path.join(self.cur_home_dir, source.currentItem().text())
+                microbit_filename = os.path.join(source.cur_home_dir, current_item.text())
+                local_filename = os.path.join(self.cur_home_dir, current_item.text())
                 msg = _(
                     "Getting '{}' from device. " "Copying to '{}'."
                 ).format(microbit_filename, local_filename)
@@ -1173,6 +1183,7 @@ class FileSystemPane(QFrame):
 
         layout = QGridLayout()
         self.setLayout(layout)
+        self._wait_cursor_active = False
         microbit_label = QLabel()
         microbit_label.setText(_("Files on your device:"))
         local_label = QLabel()
@@ -1200,19 +1211,31 @@ class FileSystemPane(QFrame):
         """
         Stops interaction with the list widgets.
         """
-        self.microbit_fs.setDisabled(True)
-        self.local_fs.setDisabled(True)
-        self.microbit_fs.setAcceptDrops(False)
-        self.local_fs.setAcceptDrops(False)
+        try:
+            self.microbit_fs.setDisabled(True)
+            self.local_fs.setDisabled(True)
+            self.microbit_fs.setAcceptDrops(False)
+            self.local_fs.setAcceptDrops(False)
+        except RuntimeError:
+            pass
+        if not self._wait_cursor_active:
+            QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+            self._wait_cursor_active = True
 
     def enable(self):
         """
         Allows interaction with the list widgets.
         """
-        self.microbit_fs.setDisabled(False)
-        self.local_fs.setDisabled(False)
-        self.microbit_fs.setAcceptDrops(True)
-        self.local_fs.setAcceptDrops(True)
+        try:
+            self.microbit_fs.setDisabled(False)
+            self.local_fs.setDisabled(False)
+            self.microbit_fs.setAcceptDrops(True)
+            self.local_fs.setAcceptDrops(True)
+        except RuntimeError:
+            pass
+        if self._wait_cursor_active:
+            QApplication.restoreOverrideCursor()
+            self._wait_cursor_active = False
 
     def show_message(self, message):
         """
@@ -1313,6 +1336,7 @@ class FileSystemPane(QFrame):
         self.show_warning(
             _("The file open in device file system, Currently not supported.")
         )
+        self.enable()
 
     def on_put_fail(self, filename):
         """

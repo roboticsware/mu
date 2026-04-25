@@ -1580,18 +1580,25 @@ class Editor(QObject):
                 return
 
             active_mode = self.modes[self.mode]
-            if hasattr(active_mode, "file_manager") and active_mode.file_manager:
-                active_mode.file_manager.put(tab.path, target=tab.device_path)
-                tab.setModified(False)
-                self.show_status_message(_("Saving file to device..."))
-            else:
-                from PyQt6.QtWidgets import QMessageBox
-                message = _("Device disconnected")
-                info = _("Would you like to save this file to your computer instead?")
-                if self._view.show_confirmation(message, info, icon="Question") == QMessageBox.StandardButton.Ok:
-                    tab.device_path = None
-                    tab.path = None # Force Save As
-                    self.save()
+            
+            from PyQt6.QtWidgets import QApplication, QMessageBox
+            from PyQt6.QtCore import Qt
+            
+            QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+            try:
+                if hasattr(active_mode, "file_manager") and active_mode.file_manager:
+                    active_mode.file_manager.put(tab.path, target=tab.device_path)
+                    tab.setModified(False)
+                    self.show_status_message(_("Saving file to device..."))
+                else:
+                    message = _("Device disconnected")
+                    info = _("Would you like to save this file to your computer instead?")
+                    if self._view.show_confirmation(message, info, icon="Question") == QMessageBox.StandardButton.Ok:
+                        tab.device_path = None
+                        tab.path = None # Force Save As
+                        self.save()
+            finally:
+                QApplication.restoreOverrideCursor()
             return
             
         try:
