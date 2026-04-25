@@ -65,10 +65,17 @@ class EspFlasher:
         :param log_cb: Optional callable(str) for progress messages.
         :raises: Exception on failure.
         """
-        if chip_family == _ESP8266_FAMILY:
-            flash_args = ["--flash_size", "detect", WRITE_FLASH_ADDRESS, bin_path]
+        # Determine flash address based on chip family
+        if chip_family in ("esp32", "esp32s2"):
+            flash_address = "0x1000"
         else:
-            flash_args = [WRITE_FLASH_ADDRESS, bin_path]
+            # esp8266, esp32s3, esp32c3, etc. write at 0x0
+            flash_address = "0x0"
+
+        if chip_family == _ESP8266_FAMILY:
+            flash_args = ["--flash_size", "detect", flash_address, bin_path]
+        else:
+            flash_args = [flash_address, bin_path]
 
         self._run(
             args=_make_esptool_args(port, chip_family) + ["write_flash"] + flash_args,

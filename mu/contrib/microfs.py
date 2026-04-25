@@ -74,6 +74,8 @@ def raw_on(serial):
         if not data.endswith(msg):
             if COMMAND_LINE_FLAG:
                 print(data)
+            import logging
+            logging.getLogger(__name__).error("Failed to enter raw REPL. Expected %r, got %r", msg, data)
             raise IOError("Could not enter raw REPL.")
 
     def flush(serial):
@@ -84,12 +86,19 @@ def raw_on(serial):
             n = serial.inWaiting()
 
     raw_repl_msg = b"raw REPL; CTRL-B to exit\r\n>"
+    
+    # Allow board to settle before interrupting
+    time.sleep(0.5)
+
     # Send CTRL-B to end raw mode if required.
     serial.write(b"\x02")
-    # Send CTRL-C three times between pauses to break out of loop.
-    for i in range(3):
+    
+    # Send CTRL-C 10 times with 0.1s pauses to break out of any running loop.
+    # 0.01s is often too fast for MicroPython to register the interrupt.
+    for i in range(10):
         serial.write(b"\r\x03")
-        time.sleep(0.01)
+        time.sleep(0.1)
+    
     flush(serial)
     # Go into raw mode with CTRL-A.
     serial.write(b"\r\x01")
@@ -147,13 +156,23 @@ def execute(commands, serial=None, show_progress=False, callback=None):
     total_size = len(commands)
     for cnt, command in enumerate(commands):
         command_bytes = command.encode("utf-8")
-        # Send in 256-byte chunks – no sleep needed at 115200 baud
         for i in range(0, len(command_bytes), 256):
             serial.write(command_bytes[i : min(i + 256, len(command_bytes))])
+            time.sleep(0.01)
         serial.write(b"\x04")  # Execute with CTRL-D
-        response = serial.read_until(b"\x04>")  # Read until prompt.
-        if len(response) > 3:  # Check if the split is possible
-            out, err = response[2:-2].split(b"\x04", 1)  # Split stdout, stderr
+        
+        old_timeout = serial.timeout
+        serial.timeout = max(old_timeout if old_timeout is not None else 10, 10)
+        try:
+            response = serial.read_until(b"\x04>")  # Read until prompt.
+        finally:
+            serial.timeout = old_timeout
+            
+        if len(response) >= 2:  # OK is 2 bytes
+            body = response[2:-2]
+            parts = body.split(b"\x04", 1)
+            out = parts[0]
+            err = parts[1] if len(parts) > 1 else b""
             result += out
             if err:
                 return b"", err
@@ -320,7 +339,7 @@ def get(self, filename, target=None, serial=None):
         "f = open('{}', 'rb')".format(filename),
         "r = f.read",
         "result = True",
-        "while result:\n result = r(32)\n if result:\n  sys.stdout.buffer.write(result)\n",
+        "while result:\n result = r(256)\n if result:\n  sys.stdout.buffer.write(result)\n",
         "f.close()",
     ]
     out, err = execute(commands, serial, True, self.on_put_update_file)
@@ -363,7 +382,7 @@ def get_by_uart(self, filename, target=None, serial=None):
         "f = open('{}', 'rb')".format(filename),
         "r = f.read",
         "result = True",
-        "while result:\n result = r(32)\n if result:\n  u.write(result)\n",
+        "while result:\n result = r(256)\n if result:\n  u.write(result)\n",
         "f.close()",
     ]
     out, err = execute(commands, serial, True, self.on_put_update_file)

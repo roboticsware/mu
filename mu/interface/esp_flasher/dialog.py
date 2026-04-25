@@ -175,7 +175,6 @@ class EspOnlineFlasherWidget(QWidget):
         self.port_combo.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
         )
-        self._populate_ports(device_list)
         form.addWidget(port_label, 2, 0)
         form.addWidget(self.port_combo, 2, 1)
 
@@ -202,6 +201,9 @@ class EspOnlineFlasherWidget(QWidget):
         self.log_area.setReadOnly(True)
         self.log_area.setMaximumHeight(160)
         layout.addWidget(self.log_area)
+
+        # Initialize ports after button is created
+        self._populate_ports(device_list)
 
     # -----------------------------------------------------------------------
     # Helpers
