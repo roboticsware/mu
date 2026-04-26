@@ -33,7 +33,7 @@ ADC attenuation, strapping pins, NeoPixel vs GPIO LEDs, etc.) so that
 user code remains identical across supported boards.
 """
 
-import _hal
+from . import _hal
 
 # ── Board → profile class mapping ─────────────────────────────
 # Key   : user-facing board name (passed to begin())
@@ -48,10 +48,23 @@ _PROFILE_MAP = {
     "esp32_38pin_nodemcu":("profiles.esp32_boards", "ESP32_38Pin_NodeMCU"),
 }
 
-# ── Convenience objects — set by begin() ──────────────────────
-# Always call begin() before importing or accessing these objects.
-esp_led         = None   # Built-in LED (DigitalLED or NeoPixelLED)
-esp_temp_sensor = None   # Built-in temperature sensor
+# ── Internal state for convenience objects ─────────────────────
+_esp_led         = None   # Built-in LED (DigitalLED or NeoPixelLED)
+_esp_temp_sensor = None   # Built-in temperature sensor
+
+# Module-level __getattr__ (MicroPython 1.18+) for lazy loading.
+# This prevents NoneType errors if user imports before calling begin().
+def __getattr__(name):
+    if name == "esp_led":
+        if _esp_led is None:
+            raise RuntimeError(
+                "[espzero] ERROR: 'esp_led' is not initialized. "
+                "You must call espzero.begin() first."
+            )
+        return _esp_led
+    if name == "esp_temp_sensor":
+        return _esp_temp_sensor
+    raise AttributeError("module 'espzero' has no attribute '{}'".format(name))
 
 
 def begin(board="auto"):
@@ -65,15 +78,15 @@ def begin(board="auto"):
 
     Raises ``ValueError`` for unknown board name strings.
     """
-    global esp_led, esp_temp_sensor
+    global _esp_led, _esp_temp_sensor
 
-    from profiles._base import BoardProfile
+    from .profiles._base import BoardProfile
 
     if isinstance(board, BoardProfile):
         _hal._profile = board
 
     elif board == "auto":
-        from profiles.auto import detect
+        from .profiles.auto import detect
         begin(detect())
         return
 
@@ -84,33 +97,39 @@ def begin(board="auto"):
                 "Available boards: {}".format(board, list(_PROFILE_MAP.keys()))
             )
         mod_name, cls_name = _PROFILE_MAP[board]
-        import importlib
-        mod = importlib.import_module(mod_name)
+        # Dynamically import the profile module within the package
+        full_mod_name = __name__ + "." + mod_name
+        mod = __import__(full_mod_name, None, None, [cls_name])
         _hal._profile = getattr(mod, cls_name)()
 
     print("[espzero] Board: {} ({})".format(
         _hal._profile.NAME, _hal._profile.CHIP))
 
     # Initialise built-in LED — branch on LED type declared in the profile
-    from _core import NeoPixelLED, LED as _LED
+    from ._core import NeoPixelLED, LED as _LED
     try:
         p = _hal._profile
         if p.INTERNAL_LED_TYPE == "neopixel":
-            esp_led = NeoPixelLED(p.resolve_pin("internal"))
+            _esp_led = NeoPixelLED(p.resolve_pin("internal"))
         else:
-            esp_led = _LED("internal",
-                           pwm=False,
-                           active_high=p.INTERNAL_LED_ACTIVE_HIGH)
-    except Exception:
-        esp_led = None
+            _esp_led = _LED("internal",
+                            pwm=False,
+                            active_high=p.INTERNAL_LED_ACTIVE_HIGH)
+    except Exception as e:
+        print("[espzero] LED Init Error:", e)
+        _esp_led = None
 
     # Initialise built-in temperature sensor
-    from _core import ESPTemperatureSensor
-    esp_temp_sensor = ESPTemperatureSensor()
+    try:
+        from ._core import ESPTemperatureSensor
+        _esp_temp_sensor = ESPTemperatureSensor()
+    except Exception as e:
+        print("[espzero] TempSensor Init Error:", e)
+        _esp_temp_sensor = None
 
 
 # ── Re-export public API ───────────────────────────────────────
-from _core import (
+from ._core import (
     LED, DigitalLED, PWMLED, NeoPixelLED,
     Buzzer, PWMBuzzer, Speaker,
     RGBLED,
@@ -124,5 +143,5 @@ from _core import (
     DigitalOutputDevice, PWMOutputDevice,
     DigitalInputDevice, AnalogInputDevice,
 )
-from _wifi  import WiFi
-from _touch import CapTouch
+from ._wifi  import WiFi
+from ._touch import CapTouch

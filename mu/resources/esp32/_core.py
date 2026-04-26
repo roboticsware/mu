@@ -5,8 +5,8 @@
 """espzero/_core.py — ESP32 port of the picozero core logic."""
 from machine import Pin, Timer
 from micropython import schedule
-from time import ticks_ms, ticks_us, sleep
-import _hal
+from time import ticks_ms, ticks_us, ticks_diff, ticks_add, sleep
+from . import _hal
 
 
 class PWMChannelAlreadyInUse(Exception):
@@ -34,47 +34,119 @@ class PinsMixin:
         return "{} (pins - {})".format(self.__class__.__name__, self._pin_nums)
 
 
+# ── Software Timer Implementation ──────────────────────────────
+# ESP32 MicroPython doesn't support Timer(-1). We implement a simple
+# software scheduler using one hardware timer (Timer 3) to allow
+# unlimited concurrent blinks/pulses.
+
+class _SoftwareTimer:
+    def __init__(self):
+        self._callback = None
+        self._period = 0
+        self._next_tick = 0
+        self._active = False
+
+    def init(self, mode=None, period=0, callback=None):
+        self._callback = callback
+        self._period = period
+        self._next_tick = ticks_add(ticks_ms(), period)
+        self._active = True
+        _scheduler.register(self)
+
+    def deinit(self):
+        self._active = False
+        _scheduler.unregister(self)
+
+class _Scheduler:
+    def __init__(self):
+        self._tasks = []
+        self._hw_timer = None
+
+    def register(self, task):
+        if task not in self._tasks:
+            self._tasks.append(task)
+        if self._hw_timer is None:
+            # Start hardware timer when first task is added
+            try:
+                self._hw_timer = Timer(3) # Use the last hardware timer
+                self._hw_timer.init(period=10, mode=Timer.PERIODIC, callback=self._tick)
+            except Exception:
+                pass # Fallback or silent fail if T3 unavailable
+
+    def unregister(self, task):
+        if task in self._tasks:
+            self._tasks.remove(task)
+        if not self._tasks and self._hw_timer:
+            self._hw_timer.deinit()
+            self._hw_timer = None
+
+    def _tick(self, timer_obj):
+        now = ticks_ms()
+        for task in self._tasks[:]:
+            # Use ticks_diff for wraparound-safe comparison
+            if task._active and ticks_diff(task._next_tick, now) <= 0:
+                task._active = False
+                if task._callback:
+                    # Execute directly. ESP32 Timer callbacks are Soft-IRQs,
+                    # so they can allocate memory and run normal Python code.
+                    # This avoids micropython.schedule dropping tasks.
+                    try:
+                        task._callback(None)
+                    except Exception as e:
+                        print("[espzero] Timer callback error:", e)
+
+_scheduler = _Scheduler()
+
+
 class ValueChange:
-    def __init__(self, output_device, generator, n, wait):
+    def __init__(self, output_device, sequence, n, wait):
         self._output_device = output_device
-        self._generator = generator
+        self._sequence = sequence # List of (value, duration) tuples
         self._n = n
-        self._gen = self._generator()
-        self._timer = Timer(-1)
+        self._index = 0
+        self._timer = _SoftwareTimer()
         self._running = True
-        self._wait = wait
-        self._set_value()
-
-    def _set_value(self, timer_obj=None):
-        if self._wait:
-            next_seq = self._get_value()
-            while next_seq is not None:
-                value, seconds = next_seq
-                self._output_device._write(value)
-                sleep(seconds)
-                next_seq = self._get_value()
+        
+        if wait:
+            self._run_sync()
         else:
-            next_seq = self._get_value()
-            if next_seq is not None:
-                value, seconds = next_seq
-                self._output_device._write(value)
-                self._timer.init(period=int(seconds * 1000),
-                                 mode=Timer.ONE_SHOT,
-                                 callback=self._set_value)
-        if next_seq is None:
-            self._output_device.off()
-            self._running = False
+            self._step_async()
 
-    def _get_value(self):
-        try:
-            return next(self._gen)
-        except StopIteration:
-            self._n = self._n - 1 if self._n is not None else None
-            if self._n == 0:
-                return None
-            else:
-                self._gen = self._generator()
-                return next(self._gen)
+    def _run_sync(self):
+        # Synchronous execution using a while loop to avoid recursion limit
+        while self._running:
+            if self._index >= len(self._sequence):
+                self._index = 0
+                if self._n is not None:
+                    self._n -= 1
+                    if self._n <= 0:
+                        self._output_device.off()
+                        self._running = False
+                        break
+
+            value, seconds = self._sequence[self._index]
+            self._index += 1
+            self._output_device._write(value)
+            sleep(seconds)
+
+    def _step_async(self, timer_obj=None):
+        # Asynchronous execution triggered by hardware timer Soft-IRQ
+        if not self._running:
+            return
+
+        if self._index >= len(self._sequence):
+            self._index = 0
+            if self._n is not None:
+                self._n -= 1
+                if self._n <= 0:
+                    self._output_device.off()
+                    self._running = False
+                    return
+
+        value, seconds = self._sequence[self._index]
+        self._index += 1
+        self._output_device._write(value)
+        self._timer.init(period=int(seconds * 1000), callback=self._step_async)
 
     def stop(self):
         self._running = False
@@ -110,7 +182,7 @@ class OutputDevice:
         if t is None:
             self.value = value
         else:
-            self._start_change(lambda: iter([(value, t)]), 1, wait)
+            self._start_change([(value, t)], 1, wait)
 
     def off(self):
         self.value = 0
@@ -127,12 +199,12 @@ class OutputDevice:
 
     def blink(self, on_time=1, off_time=None, n=None, wait=False):
         off_time = on_time if off_time is None else off_time
-        self.off()
+        self._stop_change()
         if on_time > 0 or off_time > 0:
-            self._start_change(lambda: iter([(1, on_time), (0, off_time)]), n, wait)
+            self._start_change([(1, on_time), (0, off_time)], n, wait)
 
-    def _start_change(self, generator, n, wait):
-        self._value_changer = ValueChange(self, generator, n, wait)
+    def _start_change(self, sequence, n, wait):
+        self._value_changer = ValueChange(self, sequence, n, wait)
 
     def _stop_change(self):
         if self._value_changer is not None:
@@ -232,7 +304,8 @@ class PWMOutputDevice(OutputDevice, PinMixin):
                 yield (0, off_time)
 
         if on_time > 0 or off_time > 0 or fade_in_time > 0 or fade_out_time > 0:
-            self._start_change(blink_generator, n, wait)
+            # Convert generator to a list for the state-machine ValueChange
+            self._start_change(list(blink_generator()), n, wait)
 
     def pulse(self, fade_in_time=1, fade_out_time=None, n=None, wait=False, fps=25):
         self.blink(on_time=0, off_time=0, fade_in_time=fade_in_time,
@@ -257,34 +330,24 @@ def LED(pin, pwm=True, active_high=True, initial_value=False):
         return DigitalLED(pin=pin, active_high=active_high, initial_value=initial_value)
 
 
-class NeoPixelLED:
+class NeoPixelLED(OutputDevice):
     """WS2812 single-pixel wrapper for boards with a built-in RGB LED.
     Automatically used when INTERNAL_LED_TYPE == 'neopixel'.
     """
-    def __init__(self, pin, color=(255, 255, 255)):
+    def __init__(self, pin, color=(255, 255, 255), active_high=True, initial_value=False):
         import neopixel
         self._np = neopixel.NeoPixel(Pin(pin), 1)
         self._color = color
         self._pin_num = pin
+        super().__init__(active_high, initial_value)
 
-    def on(self):
-        self._np[0] = self._color
+    def _write(self, value):
+        self._np[0] = self._color if self._value_to_state(value) else (0, 0, 0)
         self._np.write()
 
-    def off(self):
-        self._np[0] = (0, 0, 0)
-        self._np.write()
-
-    def toggle(self):
-        self.off() if self._np[0] != (0, 0, 0) else self.on()
-
-    def blink(self, on_time=1, off_time=None, n=1, wait=True):
-        off_time = on_time if off_time is None else off_time
-        count = 0
-        while n is None or count < n:
-            self.on(); sleep(on_time)
-            self.off(); sleep(off_time)
-            count += 1
+    def close(self):
+        super().close()
+        self.off()
 
 
 class PWMBuzzer(PWMOutputDevice):
@@ -380,7 +443,8 @@ class Speaker(OutputDevice, PinMixin):
                     yield ((freq, freq_volume), freq_duration * 0.9)
                     yield ((freq, 0), freq_duration * 0.1)
 
-        self._start_change(tune_generator, n, wait)
+        # Convert generator to list for state-machine compatibility
+        self._start_change(list(tune_generator()), n, wait)
 
     def close(self):
         self._pwm_buzzer.close()

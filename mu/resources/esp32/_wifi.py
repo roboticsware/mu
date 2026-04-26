@@ -6,7 +6,7 @@
 espzero/_wifi.py
 WiFi class for ESP32 — wraps the network module in a picozero-style API.
 """
-import _hal
+from . import _hal
 
 
 class WiFi:

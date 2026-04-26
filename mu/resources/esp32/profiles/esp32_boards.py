@@ -244,9 +244,9 @@ class ESP32_38Pin_NodeMCU(BoardProfile):
     ADC_ATTEN = _atten()    # ATTN_11DB → 0–3.6 V range
     ADC_VREF  = 3.6
 
-    # This board's built-in LED is active-HIGH (HIGH = on), unlike most ESP32 boards
+    # This board's built-in LED is active-LOW (0 = on)
     INTERNAL_LED_TYPE        = "digital"
-    INTERNAL_LED_ACTIVE_HIGH = True
+    INTERNAL_LED_ACTIVE_HIGH = False
 
     # Boot strapping pins — attaching buttons here may cause boot failures
     STRAPPING_PINS = [0, 2, 5, 12, 15]
