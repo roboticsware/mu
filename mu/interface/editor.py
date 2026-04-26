@@ -68,16 +68,19 @@ def _build_jedi_project(file_path):
     """
     workspace = os.path.join(mu_config.HOME_DIRECTORY, mu_config.WORKSPACE_NAME)
     _mu_pkg = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    mu_resources_pico = os.path.join(_mu_pkg, "resources", "pico")
-    mu_resources_pgz  = os.path.join(_mu_pkg, "resources", "pygamezero")
+    mu_resources_pico  = os.path.join(_mu_pkg, "resources", "pico")
+    mu_resources_pgz   = os.path.join(_mu_pkg, "resources", "pygamezero")
+    mu_resources_esp32 = os.path.join(_mu_pkg, "resources", "esp32")
 
     extra_paths = []
     for candidate in [
         workspace,
         os.path.join(workspace, "pico_lib"),
+        os.path.join(workspace, "esp32_lib"),
         os.path.dirname(file_path) if file_path else None,
         mu_resources_pico,
         mu_resources_pgz,
+        mu_resources_esp32,
     ]:
         if candidate and os.path.isdir(candidate) and candidate not in extra_paths:
             extra_paths.append(candidate)

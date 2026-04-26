@@ -670,6 +670,10 @@ class Window(QMainWindow):
         self.fs.setAllowedAreas(Qt.BottomDockWidgetArea)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.fs)
         self.fs_pane.setFocus()
+        
+        # Disable UI and show hourglass while initially connecting
+        self.fs_pane.disable()
+
         file_manager.on_list_files.connect(self.fs_pane.on_ls)
         self.fs_pane.list_files.connect(file_manager.ls)
         self.fs_pane.microbit_fs.put.connect(file_manager.put)

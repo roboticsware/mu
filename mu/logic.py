@@ -227,6 +227,14 @@ DEFAULT_PICO_LIB = [
     "mfrc522.py",
 ]
 
+DEFAULT_ESP32_LIB = [
+    "__init__.py",
+    "_core.py",
+    "_hal.py",
+    "_wifi.py",
+    "_touch.py",
+]
+
 EXAMPLE_PICO_BASIC = [
     "bt_car.py",
     "wifi_car.py",
@@ -1010,6 +1018,7 @@ class Editor(QObject):
         sounds_path = os.path.join(wd, "sounds")
         music_path = os.path.join(wd, "music")
         pico_lib_path = os.path.join(wd, "pico_lib")
+        esp32_lib_path = os.path.join(wd, "esp32_lib")
         examples_path = os.path.join(wd, "examples")
         example_entry_b_path = os.path.join(wd, "examples/entry_basic/")
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
@@ -1058,6 +1067,25 @@ class Editor(QObject):
             for sfx in DEFAULT_PICO_LIB:
                 shutil.copy(
                     path(sfx, "pico/"), os.path.join(pico_lib_path, sfx)
+                )
+        # ESP32_lib (espzero)
+        espzero_path = os.path.join(esp32_lib_path, "espzero")
+        espzero_profiles_path = os.path.join(espzero_path, "profiles")
+        if not os.path.exists(espzero_path):
+            logger.debug("Creating directory: {}".format(espzero_path))
+            if not os.path.exists(esp32_lib_path):
+                os.makedirs(esp32_lib_path)
+            os.makedirs(espzero_path)
+            os.makedirs(espzero_profiles_path)
+            for sfx in DEFAULT_ESP32_LIB:
+                shutil.copy(
+                    path(sfx, "esp32/"), os.path.join(espzero_path, sfx)
+                )
+            # profiles 서브디렉토리 복사
+            for sfx in ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"]:
+                shutil.copy(
+                    path(sfx, "esp32/profiles/"),
+                    os.path.join(espzero_profiles_path, sfx)
                 )
         # Examples
         if not os.path.exists(examples_path):
@@ -1555,18 +1583,25 @@ class Editor(QObject):
                 return
 
             active_mode = self.modes[self.mode]
-            if hasattr(active_mode, "file_manager") and active_mode.file_manager:
-                active_mode.file_manager.put(tab.path, target=tab.device_path)
-                tab.setModified(False)
-                self.show_status_message(_("Saving file to device..."))
-            else:
-                from PyQt6.QtWidgets import QMessageBox
-                message = _("Device disconnected")
-                info = _("Would you like to save this file to your computer instead?")
-                if self._view.show_confirmation(message, info, icon="Question") == QMessageBox.StandardButton.Ok:
-                    tab.device_path = None
-                    tab.path = None # Force Save As
-                    self.save()
+            
+            from PyQt6.QtWidgets import QApplication, QMessageBox
+            from PyQt6.QtCore import Qt
+            
+            QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+            try:
+                if hasattr(active_mode, "file_manager") and active_mode.file_manager:
+                    active_mode.file_manager.put(tab.path, target=tab.device_path)
+                    tab.setModified(False)
+                    self.show_status_message(_("Saving file to device..."))
+                else:
+                    message = _("Device disconnected")
+                    info = _("Would you like to save this file to your computer instead?")
+                    if self._view.show_confirmation(message, info, icon="Question") == QMessageBox.StandardButton.Ok:
+                        tab.device_path = None
+                        tab.path = None # Force Save As
+                        self.save()
+            finally:
+                QApplication.restoreOverrideCursor()
             return
             
         try:

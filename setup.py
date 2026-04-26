@@ -73,6 +73,8 @@ install_requires = [
     "wheel",
     # Needed to deploy from web mode
     "requests>=2.0.0",
+    # Needed to flash MicroPython firmware to ESP8266/ESP32 boards
+    "esptool>=4.0",
     #
     # Needed to resolve an issue with paths in the user virtual environment
     #
@@ -133,6 +135,7 @@ setup(
         "mu.debugger",
         "mu.interface",
         "mu.interface.pico_flasher",
+        "mu.interface.esp_flasher",
         "mu.modes.api",
         "mu.wheels",
     ],

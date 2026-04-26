@@ -110,7 +110,7 @@ msgstr "Avtomatik aniqlash"
 
 #: mu/interface/dialogs.py:336
 msgid "Please select the language for Mu's user interface from the choices listed below. <strong>Restart Mu for these changes to take effect.</strong>"
-msgstr "Quyida keltirilgan variantlardan Mu foydalanuvchi interfeysi uchun tilni tanlang. <strong>Ushbu o'zgarishlar kuchga kirishi uchun Mu-ni qayta ishga tushiring.</strong>"
+msgstr "Quyida keltirilgan variantlardan Mu foydalanuvchi interfeysi uchun tilni tanlang. <strong>Ushbu o'zgarishlar kuchga kirishi uchun Muni qayta ishga tushiring.</strong>"
 
 #: mu/interface/dialogs.py:366
 msgid "How to flash MicroPython to your device"
@@ -170,7 +170,7 @@ msgstr "Qo'shimcha python paketlari "
 
 #: mu/interface/dialogs.py:607
 msgid "ESP Firmware flasher"
-msgstr "ESP mikrodasturini yuklab qo'yish dasturi"
+msgstr "ESP mikrodasturi oflayn yozish"
 
 #: mu/interface/dialogs.py:616
 msgid "PythonAnywhere API"
@@ -439,7 +439,7 @@ msgstr "PythonAnywhere ga joylashtirishda muammo yuz berdi:<br/><br/>"
 
 #: mu/interface/main.py:1494
 msgid "Please check your PythonAnywhere settings or connection and ensure you're using a recent version of Mu.<br/><br/>Alternatively, <a href='https://github.com/mu-editor/mu/issues/new/choose'>submit a bug report</a>."
-msgstr "Iltimos, PythonAnywhere sozlamalari yoki ulanishingizni tekshiring va Mu-ning so‘nggi versiyasidan foydalanayotganingizga ishonch hosil qiling.<br/><br/>Bo‘lmasa, <a href='https://github.com/mu-editor/mu/issues/new/choose'>xatolik hisobotini yuborish</a>."
+msgstr "Iltimos, PythonAnywhere sozlamalari yoki ulanishingizni tekshiring va Muning so‘nggi versiyasidan foydalanayotganingizga ishonch hosil qiling.<br/><br/>Bo‘lmasa, <a href='https://github.com/mu-editor/mu/issues/new/choose'>xatolik hisobotini yuborish</a>."
 
 #: mu/interface/main.py:1521
 msgid "Mu's current mode of behaviour."
@@ -524,7 +524,7 @@ msgstr "Kompyuteringizdagi fayllar:"
 
 #: mu/interface/panes.py:1032
 msgid "There was a problem getting the list of files on the device. Please check Mu's logs for technical information. Alternatively, try unplugging/plugging-in your device and/or restarting Mu."
-msgstr "Qurilmadagi fayllar roʻyxatini olishda muammo yuz berdi. Iltimos, texnik ma'lumot uchun Mu jurnalini tekshiring. Shu bilan bir qatorda, qurilmangizni uzib/ulang va/yoki Mu-ni qayta ishga tushiring."
+msgstr "Qurilmadagi fayllar roʻyxatini olishda muammo yuz berdi. Iltimos, texnik ma'lumot uchun Mu jurnalini tekshiring. Shu bilan bir qatorda, qurilmangizni uzib/ulang va/yoki Muni qayta ishga tushiring."
 
 #: mu/interface/panes.py:1045
 msgid "The file open in device file system, Currently not supported."
@@ -1895,3 +1895,88 @@ msgstr "Til o'zgartirildi."
 #: mu/logic.py:1837
 msgid "The language will change to the selected one after Mu is restarted."
 msgstr "Tanlangan til Mu qayta ishga tushirilgandan so'ng amal qiladi."
+
+#: mu/interface/dialogs.py
+msgid "ESP Online Flasher"
+msgstr "ESP mikrodastur onlayn yozish"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "How to flash MicroPython to your ESP board"
+msgstr "MicroPythonni ESP platangizga qanday yozish mumkin"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to load available firmware.<br>3. Select your <b>Board</b> and <b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be erased and the new firmware written automatically.<br><i>Note: hold the BOOT button on your board if the device does not enter programming mode automatically.</i>"
+msgstr "1. ESP platangizni USB orqali ulang.<br>2. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>3. <b>Plata</b> va <b>Versiya</b>ni tanlang.<br>4. <b>O'chirish va yozish</b> tugmasini bosing — qurilma o'chiriladi va yangi mikrodastur avtomatik ravishda yoziladi.<br><i>Eslatma: agar qurilma avtomatik ravishda dastur yozish rejimiga kirmasa, platangizdagi BOOT tugmasini bosib turib va rejimga kirgandan so'ng qo'yib yuboring.</i>"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Board:"
+msgstr "Plata:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Fetch Versions"
+msgstr "Versiyalarni olish"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Version:"
+msgstr "Versiya:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Port:"
+msgstr "Port:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Erase && Flash"
+msgstr "O'chirish va yozish"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Downloading firmware…"
+msgstr "Mikrodastur yuklab olinmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Download complete. Erasing flash…"
+msgstr "Yuklab olish tugadi. Xotira o'chirilmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Erase complete. Writing firmware…"
+msgstr "O'chirish tugadi. Mikrodastur yozilmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Flash complete! Device is rebooting with the new firmware."
+msgstr "Yozish tugadi! Qurilma yangi mikrodastur bilan qayta ishga tushmoqda."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Flash failed: {}"
+msgstr "Yozishda xato: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Download error: {}"
+msgstr "Yuklab olishda xato: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Fetching firmware list…"
+msgstr "Mikrodastur ro'yxati olinmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "No compatible firmware found."
+msgstr "Mos mikrodastur topilmadi."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded firmware for {} boards."
+msgstr "{} ta plata uchun mikrodasturlar yuklandi."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Error fetching versions: {}"
+msgstr "Versiyalarni olishda xato: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "No port selected."
+msgstr "Port tanlanmagan."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Starting: {} on {}"
+msgstr "Boshlanmoqda: {} (port: {})"
