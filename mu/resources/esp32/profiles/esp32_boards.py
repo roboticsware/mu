@@ -13,7 +13,7 @@ relevant fields.
 from ._base import BoardProfile
 
 
-# ── ADC attenuation helper ─────────────────────────────────────
+# --- ADC attenuation helper -------------------------------------
 # Imported lazily so the profiles module can be parsed on the host
 # (e.g. for IDE support) without requiring machine to be available.
 def _atten():
@@ -24,9 +24,9 @@ def _atten():
         return None
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # ESP32 DevKit V1 / WROOM-32
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class ESP32DevKitV1(BoardProfile):
     """
     Espressif ESP32 DevKit V1 (WROOM-32).
@@ -50,9 +50,9 @@ class ESP32DevKitV1(BoardProfile):
     ADC2_PINS            = [0, 2, 4, 12, 13, 14, 15, 25, 26, 27]
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # ESP32-S3 DevKit-C
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class ESP32S3DevKit(BoardProfile):
     """
     Espressif ESP32-S3 DevKitC-1.
@@ -76,9 +76,9 @@ class ESP32S3DevKit(BoardProfile):
     ADC2_PINS            = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # ESP32-C3 Mini / SuperMini
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class ESP32C3Mini(BoardProfile):
     """
     ESP32-C3 Mini / SuperMini.
@@ -102,9 +102,9 @@ class ESP32C3Mini(BoardProfile):
     ADC2_PINS            = []          # C3 has no ADC2
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # M5Stack ATOM Lite / Matrix
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class M5StackAtom(BoardProfile):
     """
     M5Stack ATOM Lite / Matrix.
@@ -128,9 +128,9 @@ class M5StackAtom(BoardProfile):
     ADC2_PINS            = [0, 2, 4, 12, 13, 14, 15, 25, 26, 27]
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # Wemos D1 Mini32 (ESP32)
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class WemosD1Mini32(BoardProfile):
     """Wemos / LOLIN D1 Mini32."""
     NAME = "wemos_d1_mini32"
@@ -149,9 +149,9 @@ class WemosD1Mini32(BoardProfile):
     ADC2_PINS            = [0, 2, 4, 12, 13, 14, 15, 25, 26, 27]
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # NodeMCU V3 Lolin (ESP8266)
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class ESP8266LolinV3(BoardProfile):
     """
     NodeMCU V3 Lolin (ESP8266).
@@ -207,9 +207,9 @@ class ESP8266LolinV3(BoardProfile):
         return ADC(0)   # channel 0 = A0 pin, the sole ADC input on ESP8266
 
 
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 # ESP32 38-Pin NodeMCU (Type-C / Micro-USB combo)
-# ──────────────────────────────────────────────────────────────
+# --------------------------------------------------------------
 class ESP32_38Pin_NodeMCU(BoardProfile):
     """
     ESP32 38-Pin NodeMCU development board (Type-C & Micro-USB combo).
@@ -231,9 +231,9 @@ class ESP32_38Pin_NodeMCU(BoardProfile):
 
     PIN_ALIASES = {
         # Built-in LED (active-HIGH on this board)
-        "internal":    2,
-        "led":         2,
-        "builtin_led": 2,
+        "internal":    1,
+        "led":         1,
+        "builtin_led": 1,
         # Built-in BOOT button
         "button": 0,
         # Standard I2C bus
