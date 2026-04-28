@@ -25,13 +25,13 @@ install_requires = [
     # The core 'install_requires' should only be things
     # which are needed for the main editor to function.
     #
-    "PyQt6==6.5.3"
+    "PyQt6==6.6.0"
     + ';"arm" not in platform_machine and "aarch" not in platform_machine',
-    "PyQt6-Qt6==6.5.3"
+    "PyQt6-Qt6==6.6.0"
     + ';"arm" not in platform_machine and "aarch" not in platform_machine',
-    "PyQt6-QScintilla==2.14.0"
+    "PyQt6-QScintilla==2.14.1"
     + ';"arm" not in platform_machine and "aarch" not in platform_machine',
-    "PyQt6-Charts==6.5.0"
+    "PyQt6-Charts==6.6.0"
     + ';"arm" not in platform_machine and "aarch" not in platform_machine',
     # FIXME: jupyter-client added for Py3.5 compatibility, to be dropped after
     # Mu v1.1 release. So, qtconsole < 5 and jupyter-client < 6.2 (issue #1444)
