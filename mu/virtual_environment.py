@@ -28,7 +28,11 @@ from . import settings
 from . import config
 from . import __version__ as mu_version
 
-wheels_dirpath = os.path.dirname(wheels.__file__)
+wheels_dirpath = getattr(wheels, "__file__", None)
+if wheels_dirpath is None:
+    wheels_dirpath = list(wheels.__path__)[0]
+else:
+    wheels_dirpath = os.path.dirname(wheels_dirpath)
 
 logger = logging.getLogger(__name__)
 
@@ -956,6 +960,13 @@ class VirtualEnvironment(object):
             with zipfile.ZipFile(zipped_wheels_filepath) as zip:
                 zip.extractall(unpacked_wheels_dirpath)
             # Install all the wheels in one go using uv for speed
+            # Pass SYSTEM_VERSION_COMPAT=0 to uv so it correctly identifies
+            # the macOS version (e.g. 13.x instead of 10.16) and accepts
+            # wheels with newer platform tags (11_0, 12_0, etc.)
+            env = os.environ.copy()
+            if sys.platform == "darwin":
+                env["SYSTEM_VERSION_COMPAT"] = "0"
+
             all_wheels = glob.glob(
                 os.path.join(unpacked_wheels_dirpath, "*.whl")
             )
@@ -972,15 +983,18 @@ class VirtualEnvironment(object):
                     "--no-index",
                     "--find-links", unpacked_wheels_dirpath,
                 ] + all_wheels 
-                env = dict(os.environ)
                 env["VIRTUAL_ENV"] = os.path.dirname(os.path.dirname(self.interpreter))
                 ok, output = self.run_subprocess(*args, env=env)
                 if ok:
                     logger.info("All wheel files were successfully installed.")
                 else:
-                    logger.error(f"Failed to install wheels: {output}")
+                    raise VirtualEnvironmentCreateError(
+                        f"Failed to install wheels: {output}"
+                    )
+            except VirtualEnvironmentError:
+                raise
             except Exception as e:
-                logger.error(f"Failed to install wheels: {e}")
+                raise VirtualEnvironmentCreateError(f"Failed to install wheels: {e}")
 
     def install_baseline_packages(self):
         """

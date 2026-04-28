@@ -149,7 +149,6 @@ class StartupWorker(QObject):
         """
         try:
             venv.ensure_and_create(self.display_text)
-            self.finished.emit()  # Always called last.
         except Exception as ex:
             # Catch all exceptions just in case.
             # Report the failure, along with a summary to show the user.
@@ -159,10 +158,10 @@ class StartupWorker(QObject):
             self.failed.emit(msg)
             # Sleep a while in the thread so the user sees something is wrong.
             time.sleep(7)
-            self.finished.emit()
             # Re-raise for crash handler to kick in.
             raise ex
         finally:
+            self.finished.emit()  # Always called last.
             # Always clean up the startup splash/venv logging handlers.
             if vlogger.handlers:
                 handler = vlogger.handlers[0]
