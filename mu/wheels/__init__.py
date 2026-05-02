@@ -45,8 +45,12 @@ mode_packages = [
     # ipykernel max ver added for macOS 10.13 compatibility, min taken
     # from setup.py. This is version has to mirror the one from setup.py
     ("ipykernel", ("ipykernel>=5.5.6,<6",)),
-    # For Neopia mode
-    ("neopia", ("neopia>=0.4.0",)),
+    # For Neopia mode. We group these together to help pip resolve the 
+    # conflict between opencv-python and opencv-contrib-python.
+    (
+        "neopia", 
+        ("neopia>=0.4.0", "mediapipe==0.10.11", "opencv-contrib-python<=4.10.0.84", "opencv-python<=4.10.0.84"),
+    ),
     # For pgzero's extenstion
     ("pgzhelper", ("pgzhelper_rw>=1.0.10",)),
 ]
@@ -56,22 +60,9 @@ def os_compatibility_flags():
     """
     Determine additional `pip download` flags required to maximise
     compatibility with older versions of the current operating system.
-
-    If downloading wheels with these flags fails, then we should consider it
-    an issue to be resolved before doing a Mu release.
     """
     extra_flags = []
-    # For macOS the oldest supported version is 10.13 High Sierra,
-    # as that's the oldest version supported by PyQt5 v5.15
-    if sys.platform == "darwin":
-        extra_flags.extend(
-            [
-                # Comment out to fix a issue not to be able to install neopia >= 0.3.6 
-                # "--platform=macosx_10_15_x86_64",
-                # "--only-binary=:all:",
-            ]
-        )
-    # At the moment there aren't any additional flags for Windows or Linux
+    # At the moment there aren't any additional flags for Windows, Linux or macOS
     return extra_flags
 
 
@@ -83,86 +74,86 @@ def compact(text):
 def remove_dist_files(dirpath, logger):
     #
     # Clear the directory of any existing wheels and source distributions
-    # (this is especially important because there may have been wheels
-    # left over from a test with a different Python version)
     #
-    logger.info("Removing wheel/sdist files from %s", dirpath)
-    rm_files = (
-        glob.glob(os.path.join(dirpath, "*.whl"))
-        + glob.glob(os.path.join(dirpath, "*.gz"))
-        + glob.glob(os.path.join(dirpath, "*.zip"))
-    )
-    for rm_filepath in rm_files:
-        logger.debug("Removing existing wheel/sdist %s", rm_filepath)
+    for rm_filepath in glob.glob(os.path.join(dirpath, "*.whl")):
+        os.remove(rm_filepath)
+    for rm_filepath in glob.glob(os.path.join(dirpath, "*.tar.gz")):
         os.remove(rm_filepath)
 
 
-def pip_download(dirpath, logger, additional_flags=[]):
+def pip_download(dirpath, logger, extra_pip_flags=None):
+    """
+    Download the wheels for the mode packages.
+    """
+    logger.info("Downloading mode wheels to %s", dirpath)
+    
+    all_identifiers = []
     for name, pip_identifiers, *extra_flags in mode_packages:
-        logger.info(
-            "Running pip download for %s / %s / %s / %s",
-            name,
-            pip_identifiers,
-            extra_flags,
-            additional_flags,
+        all_identifiers.extend(pip_identifiers)
+
+    additional_flags = extra_pip_flags if extra_pip_flags else []
+
+    env = os.environ.copy()
+    if sys.platform == "darwin":
+        env["SYSTEM_VERSION_COMPAT"] = "0"
+        
+    process = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "--disable-pip-version-check",
+            "download",
+            "--destination-directory",
+            dirpath,
+            "--find-links",
+            dirpath,
+            *all_identifiers,
+            *additional_flags,
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf-8",
+        env=env,
+    )
+    if process.returncode != 0:
+        logger.error(
+            "pip download failed with the following output:\n%s",
+            process.stdout,
         )
+        raise WheelsDownloadError(
+            f"Pip was unable to download {tuple(all_identifiers)}\n\nOutput:\n{process.stdout}"
+        )
+    else:
+        logger.debug(compact(process.stdout))
+
+
+def convert_sdists_to_wheels(dirpath, logger):
+    """
+    Take any source distributions in dirpath and convert them to wheels in the same directory
+    """
+    logger.info("Converting source distributions in %s", dirpath)
+    # Get all .tar.gz files in the directory
+    for filepath in glob.glob(os.path.join(dirpath, "*.tar.gz")):
+        logger.info("Converting %s", filepath)
         process = subprocess.run(
             [
                 sys.executable,
                 "-m",
                 "pip",
-                "--disable-pip-version-check",
-                "download",
-                "--destination-directory",
+                "wheel",
+                "--no-deps",
+                "--wheel-dir",
                 dirpath,
-                "--find-links",
-                dirpath,
-                *pip_identifiers,
-            ]
-            + extra_flags
-            + additional_flags,
+                filepath,
+            ],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        logger.debug(compact(process.stdout.decode("utf-8")))
-
-        #
-        # If any wheel fails to download, remove any files already downloaded
-        # (to ensure the download is triggered again) and raise an exception
-        # NB Probably not necessary now that we're using a temp directory
-        #
         if process.returncode != 0:
-            raise WheelsDownloadError(
-                "Pip was unable to download %s" % pip_identifiers
-            )
-
-
-def convert_sdists_to_wheels(dirpath, logger):
-    #
-    # Convert any sdists to wheels
-    #
-    for filepath in glob.glob(os.path.join(dirpath, "*")):
-        if filepath.endswith(("gz", ".zip")):
-            logger.info("Building wheel for %s", filepath)
-            process = subprocess.run(
-                [
-                    sys.executable,
-                    "-m",
-                    "pip",
-                    "wheel",
-                    "--no-deps",
-                    "--wheel-dir",
-                    dirpath,
-                    filepath,
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-            logger.debug(compact(process.stdout.decode("utf-8")))
-            if process.returncode != 0:
-                logger.warning("Unable to build a wheel for %s", filepath)
-            else:
-                os.remove(filepath)
+            logger.warning("Unable to build a wheel for %s", filepath)
+        else:
+            os.remove(filepath)
 
 
 def zip_wheels(zip_filepath, dirpath, logger=logger):
@@ -175,7 +166,7 @@ def zip_wheels(zip_filepath, dirpath, logger=logger):
             z.write(filepath, filename)
 
 
-def download(zip_filepath=ZIP_FILEPATH, logger=logger, os_old_compat=False):
+def download(zip_filepath=ZIP_FILEPATH, logger=logger, os_old_compat=True):
     """Download from PyPI, convert to wheels, and zip up
 
     To make all the libraries available for Mu modes (eg pygame zero, Flask etc.)
