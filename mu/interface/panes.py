@@ -1440,6 +1440,12 @@ class FileSystemPane(QFrame):
         Fired when listing files fails.
         """
         self.disable()
+        # Restore the cursor immediately since this is a fatal error and 
+        # the pane will be closed, so enable() won't be called.
+        if self._wait_cursor_active:
+            QApplication.restoreOverrideCursor()
+            self._wait_cursor_active = False
+            
         self.show_warning(
             _(
                 "There was a problem getting the list of files on "

@@ -575,12 +575,12 @@ class AdminDialog(QDialog):
         self.setLayout(widget_layout)
         self.tabs = QTabWidget()
         widget_layout.addWidget(self.tabs)
-        button_box = QDialogButtonBox(
+        self.button_box = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         )
-        button_box.accepted.connect(self.accept)
-        button_box.rejected.connect(self.reject)
-        widget_layout.addWidget(button_box)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        widget_layout.addWidget(self.button_box)
         # Tabs
         self.log_widget = LogWidget(self)
         self.log_widget.setup(log)
@@ -613,6 +613,11 @@ class AdminDialog(QDialog):
             self.pico_flasher_widget = PicoFirmwareFlasherWidget(self)
             self.pico_flasher_widget.setup(mode)
             self.tabs.addTab(self.pico_flasher_widget, _("Pico Firmware Flasher"))
+            
+        if mode.short_name in ["pico", "esp"]:
+            from mu.interface.mip_packages.widget import MicroPythonPackagesWidget
+            self.mip_packages_widget = MicroPythonPackagesWidget(mode, self)
+            self.tabs.addTab(self.mip_packages_widget, _("MicroPython Packages"))
         if mode.short_name == "web":
             self.python_anywhere_widget = PythonAnywhereWidget(self)
             self.python_anywhere_widget.setup(
@@ -630,6 +635,27 @@ class AdminDialog(QDialog):
             self.locale_widget, load_icon("language.svg"), _("Select Language")
         )
         self.log_widget.log_text_area.setFocus()
+
+    def accept(self):
+        if getattr(self, "mip_packages_widget", None) and getattr(self.mip_packages_widget, "is_installing", False):
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.warning(self, _("Installing"), _("Please wait until the package installation is complete before closing."))
+            return
+        super().accept()
+
+    def reject(self):
+        if getattr(self, "mip_packages_widget", None) and getattr(self.mip_packages_widget, "is_installing", False):
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.warning(self, _("Installing"), _("Please wait until the package installation is complete before closing."))
+            return
+        super().reject()
+
+    def set_buttons_enabled(self, enabled):
+        """
+        Enables or disables the dialog's main buttons (Ok/Cancel).
+        """
+        if hasattr(self, "button_box"):
+            self.button_box.setEnabled(enabled)
 
     def settings(self):
         """

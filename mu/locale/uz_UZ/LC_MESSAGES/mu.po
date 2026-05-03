@@ -1980,3 +1980,75 @@ msgstr "Port tanlanmagan."
 #, python-brace-format
 msgid "Starting: {} on {}"
 msgstr "Boshlanmoqda: {} (port: {})"
+
+#: mu/interface/dialogs.py:620
+msgid "MicroPython Packages"
+msgstr "MicroPython paketlari"
+
+#: mu/interface/mip_packages/widget.py:168
+msgid "Search PyPI for MicroPython packages (e.g. picozero-rw)"
+msgstr "MicroPython paketlarini qidirish (masalan: picozero-rw)"
+
+#: mu/interface/mip_packages/widget.py:171
+msgid "Search"
+msgstr "Qidirish"
+
+#: mu/interface/mip_packages/widget.py:179
+msgid "Internet connection required for searching and downloading packages."
+msgstr "Paketlarni qidirish va yuklab olish uchun internet aloqasi zarur."
+
+#: mu/interface/mip_packages/widget.py:202
+msgid "Package Details"
+msgstr "Paket ma'lumotlari"
+
+#: mu/interface/mip_packages/widget.py:252
+msgid "Version"
+msgstr "Versiya"
+
+#: mu/interface/mip_packages/widget.py:254
+msgid "Summary"
+msgstr "Qisqacha ma'lumot"
+
+#: mu/interface/mip_packages/widget.py:256
+msgid "Author"
+msgstr "Muallif"
+
+#: mu/interface/mip_packages/widget.py:258
+msgid "Homepage"
+msgstr "Uy sahifasi"
+
+#: mu/interface/mip_packages/widget.py:260
+msgid "PyPI page"
+msgstr "PyPI sahifasi"
+
+#: mu/interface/mip_packages/widget.py:267
+msgid "Not Found"
+msgstr "Topilmadi"
+
+#: mu/interface/mip_packages/widget.py:268
+msgid "Could not find package."
+msgstr "Paketni topib bo'lmadi."
+
+#: mu/interface/mip_packages/widget.py:279
+msgid "Error"
+msgstr "Xato"
+
+#: mu/interface/mip_packages/widget.py:280
+msgid "No device connected. Please connect a device first."
+msgstr "Qurilma ulanmagan. Iltimos, avval qurilmani ulang."
+
+#: mu/interface/mip_packages/widget.py:295
+msgid "Installing..."
+msgstr "O'rnatilmoqda..."
+
+#: mu/interface/mip_packages/widget.py:317 mu/interface/mip_packages/widget.py:330
+msgid "Install"
+msgstr "O'rnatish"
+
+#: mu/interface/dialogs.py:642 mu/interface/dialogs.py:649
+msgid "Installing"
+msgstr "O'rnatilmoqda"
+
+#: mu/interface/dialogs.py:642 mu/interface/dialogs.py:649
+msgid "Please wait until the package installation is complete before closing."
+msgstr "Iltimos, paket o'rnatilishi tugaguncha kutib turing."

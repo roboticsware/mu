@@ -1863,3 +1863,75 @@ msgstr "포트가 선택되지 않았습니다."
 #, python-brace-format
 msgid "Starting: {} on {}"
 msgstr "시작 중: {} (포트: {})"
+
+#: mu/interface/dialogs.py:620
+msgid "MicroPython Packages"
+msgstr "MicroPython 패키지"
+
+#: mu/interface/mip_packages/widget.py:168
+msgid "Search PyPI for MicroPython packages (e.g. picozero-rw)"
+msgstr "MicroPython 패키지 검색 (예: picozero-rw)"
+
+#: mu/interface/mip_packages/widget.py:171
+msgid "Search"
+msgstr "검색"
+
+#: mu/interface/mip_packages/widget.py:179
+msgid "Internet connection required for searching and downloading packages."
+msgstr "패키지 검색 및 다운로드를 위해 인터넷 연결이 필요합니다."
+
+#: mu/interface/mip_packages/widget.py:202
+msgid "Package Details"
+msgstr "패키지 상세 정보"
+
+#: mu/interface/mip_packages/widget.py:252
+msgid "Version"
+msgstr "버전"
+
+#: mu/interface/mip_packages/widget.py:254
+msgid "Summary"
+msgstr "요약"
+
+#: mu/interface/mip_packages/widget.py:256
+msgid "Author"
+msgstr "작성자"
+
+#: mu/interface/mip_packages/widget.py:258
+msgid "Homepage"
+msgstr "홈페이지"
+
+#: mu/interface/mip_packages/widget.py:260
+msgid "PyPI page"
+msgstr "PyPI 페이지"
+
+#: mu/interface/mip_packages/widget.py:267
+msgid "Not Found"
+msgstr "찾을 수 없음"
+
+#: mu/interface/mip_packages/widget.py:268
+msgid "Could not find package."
+msgstr "패키지를 찾을 수 없습니다."
+
+#: mu/interface/mip_packages/widget.py:279
+msgid "Error"
+msgstr "오류"
+
+#: mu/interface/mip_packages/widget.py:280
+msgid "No device connected. Please connect a device first."
+msgstr "연결된 장치가 없습니다. 먼저 장치를 연결해 주세요."
+
+#: mu/interface/mip_packages/widget.py:295
+msgid "Installing..."
+msgstr "설치 중..."
+
+#: mu/interface/mip_packages/widget.py:317 mu/interface/mip_packages/widget.py:330
+msgid "Install"
+msgstr "설치"
+
+#: mu/interface/dialogs.py:642 mu/interface/dialogs.py:649
+msgid "Installing"
+msgstr "설치 중"
+
+#: mu/interface/dialogs.py:642 mu/interface/dialogs.py:649
+msgid "Please wait until the package installation is complete before closing."
+msgstr "패키지 설치가 완료될 때까지 기다려 주세요."
