@@ -1,14 +1,3 @@
-"""
-
-This module is directly copied from
-
-    https://github.com/roboticsware/nethelper
-
-at revision 2ff1343b2b78c4e699e1c2302c415c0ebbee64df
-and used under CC0.
-
-"""
-# flake8: noqa: E501
 from machine import Pin, PWM, Timer, ADC, I2C
 from micropython import schedule
 from time import ticks_ms, ticks_us, sleep_ms, sleep
@@ -25,7 +14,6 @@ MASK_RW = 0x02
 MASK_E = 0x04
 SHIFT_BACKLIGHT = 3
 SHIFT_DATA = 4
-
 
 class LcdApi:
 
@@ -214,7 +202,6 @@ class LcdApi:
         """Sleep for some time (given in microseconds)."""
         time.sleep_us(usecs)
 
-
 class I2cLcd(LcdApi):
     """Implements a character based lcd connected via PCF8574 on i2c."""
 
@@ -259,8 +246,7 @@ class I2cLcd(LcdApi):
         """Writes a command to the LCD.
         Data is latched on the falling edge of E.
         """
-        byte = ((self.backlight << SHIFT_BACKLIGHT) |
-                (((cmd >> 4) & 0x0f) << SHIFT_DATA))
+        byte = ((self.backlight << SHIFT_BACKLIGHT) | (((cmd >> 4) & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))
         byte = ((self.backlight << SHIFT_BACKLIGHT) | ((cmd & 0x0f) << SHIFT_DATA))
@@ -272,12 +258,10 @@ class I2cLcd(LcdApi):
 
     def hal_write_data(self, data):
         """Write data to the LCD."""
-        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT)
-                | (((data >> 4) & 0x0f) << SHIFT_DATA))
+        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT) | (((data >> 4) & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))
-        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT)
-                | ((data & 0x0f) << SHIFT_DATA))
+        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT) | ((data & 0x0f) << SHIFT_DATA))
         self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
         self.i2c.writeto(self.i2c_addr, bytearray([byte]))
 
@@ -447,6 +431,7 @@ class GpioLcd(LcdApi):
 # EXCEPTIONS
 ###############################################################################
 
+
 class PWMChannelAlreadyInUse(Exception):
     pass
 
@@ -454,12 +439,14 @@ class PWMChannelAlreadyInUse(Exception):
 class EventFailedScheduleQueueFull(Exception):
     pass
 
+
 ###############################################################################
 # SUPPORTING CLASSES
 ###############################################################################
 
 
-def clamp(n, low, high): return max(low, min(n, high))
+def clamp(n, low, high):
+    return max(low, min(n, high))
 
 
 def pinout(output=True):
@@ -532,7 +519,7 @@ class PinsMixin:
 
 class ValueChange:
     """
-    Internal class to control the value of an output device. 
+    Internal class to control the value of an output device.
 
     :param OutputDevice output_device:
         The OutputDevice object you wish to change the value of.
@@ -546,7 +533,7 @@ class ValueChange:
 
     :param int n:
         The number of times to repeat the sequence. If None, the
-        sequence will repeat forever. 
+        sequence will repeat forever.
 
     :param bool wait:
         If True the ValueChange object will block (wait) until
@@ -585,8 +572,11 @@ class ValueChange:
                 value, seconds = next_seq
 
                 self._output_device._write(value)
-                self._timer.init(period=int(seconds * 1000),
-                                 mode=Timer.ONE_SHOT, callback=self._set_value)
+                self._timer.init(
+                    period=int(seconds * 1000),
+                    mode=Timer.ONE_SHOT,
+                    callback=self._set_value,
+                )
 
         if next_seq is None:
             # the sequence has finished, turn the device off
@@ -615,6 +605,7 @@ class ValueChange:
         self._running = False
         self._timer.deinit()
 
+
 ###############################################################################
 # OUTPUT DEVICES
 ###############################################################################
@@ -622,7 +613,7 @@ class ValueChange:
 
 class OutputDevice:
     """
-    Base class for output devices. 
+    Base class for output devices.
     """
 
     def __init__(self, active_high=True, initial_value=False):
@@ -634,9 +625,9 @@ class OutputDevice:
     @property
     def active_high(self):
         """
-        Sets or returns the active_high property. If :data:`True`, the 
-        :meth:`on` method will set the Pin to HIGH. If :data:`False`, 
-        the :meth:`on` method will set the Pin to LOW (the :meth:`off` method 
+        Sets or returns the active_high property. If :data:`True`, the
+        :meth:`on` method will set the Pin to HIGH. If :data:`False`,
+        the :meth:`on` method will set the Pin to LOW (the :meth:`off` method
         always does the opposite).
         """
         return self._active_state
@@ -666,11 +657,11 @@ class OutputDevice:
             The value to set when turning on. Defaults to 1.
 
         :param float t:
-            The time in seconds that the device should be on. If None is 
+            The time in seconds that the device should be on. If None is
             specified, the device will stay on. The default is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the device will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -678,7 +669,15 @@ class OutputDevice:
         if t is None:
             self.value = value
         else:
-            self._start_change(lambda: iter([(value, t), ]), 1, wait)
+            self._start_change(
+                lambda: iter(
+                    [
+                        (value, t),
+                    ]
+                ),
+                1,
+                wait,
+            )
 
     def off(self):
         """
@@ -710,18 +709,18 @@ class OutputDevice:
             The length of time in seconds that the device will be on. Defaults to 1.
 
         :param float off_time:
-            The length of time in seconds that the device will be off. If `None`, 
+            The length of time in seconds that the device will be off. If `None`,
             it will be the same as ``on_time``. Defaults to `None`.
 
         :param int n:
-            The number of times to repeat the blink operation. If None is 
+            The number of times to repeat the blink operation. If None is
             specified, the device will continue blinking forever. The default
             is None.
 
         :param bool wait:
-           If True, the method will block until the device stops turning on and off. 
+           If True, the method will block until the device stops turning on and off.
            If False, the method will return and the device will turn on and off in
-           the background. Defaults to False.        
+           the background. Defaults to False.
         """
         off_time = on_time if off_time is None else off_time
 
@@ -805,6 +804,7 @@ class DigitalLED(DigitalOutputDevice):
         If :data:`False` (the default), the LED will be off initially. If
         :data:`True`, the LED will be switched on initially.
     """
+
     pass
 
 
@@ -827,6 +827,7 @@ class Buzzer(DigitalOutputDevice):
         If :data:`False` (the default), the Buzzer will be off initially. If
         :data:`True`, the Buzzer will be switched on initially.
     """
+
     pass
 
 
@@ -857,11 +858,43 @@ class PWMOutputDevice(OutputDevice, PinMixin):
         :data:`True`, the LED will be switched on initially.
     """
 
-    PIN_TO_PWM_CHANNEL = ["0A", "0B", "1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A",
-                          "6B", "7A", "7B", "0A", "0B", "1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B"]
+    PIN_TO_PWM_CHANNEL = [
+        "0A",
+        "0B",
+        "1A",
+        "1B",
+        "2A",
+        "2B",
+        "3A",
+        "3B",
+        "4A",
+        "4B",
+        "5A",
+        "5B",
+        "6A",
+        "6B",
+        "7A",
+        "7B",
+        "0A",
+        "0B",
+        "1A",
+        "1B",
+        "2A",
+        "2B",
+        "3A",
+        "3B",
+        "4A",
+        "4B",
+        "5A",
+        "5B",
+        "6A",
+        "6B",
+    ]
     _channels_used = {}
 
-    def __init__(self, pin, freq=100, duty_factor=65535, active_high=True, initial_value=False):
+    def __init__(
+        self, pin, freq=100, duty_factor=65535, active_high=True, initial_value=False
+    ):
         self._check_pwm_channel(pin)
         self._pin_num = pin
         self._duty_factor = duty_factor
@@ -874,15 +907,16 @@ class PWMOutputDevice(OutputDevice, PinMixin):
         if channel in PWMOutputDevice._channels_used.keys():
             raise PWMChannelAlreadyInUse(
                 "PWM channel {} is already in use by {}. Use a different pin".format(
-                    channel,
-                    str(PWMOutputDevice._channels_used[channel])
+                    channel, str(PWMOutputDevice._channels_used[channel])
                 )
             )
         else:
             PWMOutputDevice._channels_used[channel] = self
 
     def _state_to_value(self, state):
-        return (state if self.active_high else self._duty_factor - state) / self._duty_factor
+        return (
+            state if self.active_high else self._duty_factor - state
+        ) / self._duty_factor
 
     def _value_to_state(self, value):
         return int(self._duty_factor * (value if self.active_high else 1 - value))
@@ -914,7 +948,16 @@ class PWMOutputDevice(OutputDevice, PinMixin):
         """
         self._pwm.freq(freq)
 
-    def blink(self, on_time=1, off_time=None, n=None, wait=False, fade_in_time=0, fade_out_time=None, fps=25):
+    def blink(
+        self,
+        on_time=1,
+        off_time=None,
+        n=None,
+        wait=False,
+        fade_in_time=0,
+        fade_out_time=None,
+        fps=25,
+    ):
         """
         Makes the device turn on and off repeatedly.
 
@@ -922,11 +965,11 @@ class PWMOutputDevice(OutputDevice, PinMixin):
             The length of time in seconds the device will be on. Defaults to 1.
 
         :param float off_time:
-            The length of time in seconds the device will be off. If `None`, 
+            The length of time in seconds the device will be off. If `None`,
             it will be the same as ``on_time``. Defaults to `None`.
 
         :param int n:
-            The number of times to repeat the blink operation. If `None`, the 
+            The number of times to repeat the blink operation. If `None`, the
             device will continue blinking forever. The default is `None`.
 
         :param bool wait:
@@ -1000,8 +1043,15 @@ class PWMOutputDevice(OutputDevice, PinMixin):
            the method will return and the LED will pulse in the background.
            Defaults to False.
         """
-        self.blink(on_time=0, off_time=0, fade_in_time=fade_in_time,
-                   fade_out_time=fade_out_time, n=n, wait=wait, fps=fps)
+        self.blink(
+            on_time=0,
+            off_time=0,
+            fade_in_time=fade_in_time,
+            fade_out_time=fade_out_time,
+            n=n,
+            wait=wait,
+            fps=fps,
+        )
 
     def close(self):
         """
@@ -1047,7 +1097,7 @@ PWMLED.brightness = PWMLED.value
 def LED(pin, pwm=True, active_high=True, initial_value=False):
     """
     Returns an instance of :class:`DigitalLED` or :class:`PWMLED` depending on
-    the value of the `pwm` parameter. 
+    the value of the `pwm` parameter.
 
     ::
 
@@ -1060,7 +1110,7 @@ def LED(pin, pwm=True, active_high=True, initial_value=False):
     :param int pin:
         The pin that the device is connected to.
 
-    :param int pin:
+    :param bool pwm:
         If `pwm` is :data:`True` (the default), a :class:`PWMLED` will be
         returned. If `pwm` is :data:`False`, a :class:`DigitalLED` will be
         returned. A :class:`PWMLED` can control the brightness of the LED but
@@ -1076,15 +1126,9 @@ def LED(pin, pwm=True, active_high=True, initial_value=False):
         :data:`True`, the device will be switched on initially.
     """
     if pwm:
-        return PWMLED(
-            pin=pin,
-            active_high=active_high,
-            initial_value=initial_value)
+        return PWMLED(pin=pin, active_high=active_high, initial_value=initial_value)
     else:
-        return DigitalLED(
-            pin=pin,
-            active_high=active_high,
-            initial_value=initial_value)
+        return DigitalLED(pin=pin, active_high=active_high, initial_value=initial_value)
 
 
 try:
@@ -1118,7 +1162,9 @@ class PWMBuzzer(PWMOutputDevice):
         :data:`True`, the buzzer will be switched on initially.
     """
 
-    def __init__(self, pin, freq=440, duty_factor=1023, active_high=True, initial_value=False):
+    def __init__(
+        self, pin, freq=440, duty_factor=1023, active_high=True, initial_value=False
+    ):
         super().__init__(pin, freq, duty_factor, active_high, initial_value)
 
 
@@ -1149,20 +1195,107 @@ class Speaker(OutputDevice, PinMixin):
         to HIGH. If :data:`False`, the :meth:`on` method will set the Pin to
         LOW (the :meth:`off` method always does the opposite).
     """
+
     NOTES = {
-        'b0': 31, 'c1': 33, 'c#1': 35, 'd1': 37, 'd#1': 39, 'e1': 41, 'f1': 44, 'f#1': 46, 'g1': 49, 'g#1': 52, 'a1': 55,
-        'a#1': 58, 'b1': 62, 'c2': 65, 'c#2': 69, 'd2': 73, 'd#2': 78,
-        'e2': 82, 'f2': 87, 'f#2': 93, 'g2': 98, 'g#2': 104, 'a2': 110, 'a#2': 117, 'b2': 123,
-        'c3': 131, 'c#3': 139, 'd3': 147, 'd#3': 156, 'e3': 165, 'f3': 175, 'f#3': 185, 'g3': 196, 'g#3': 208, 'a3': 220, 'a#3': 233, 'b3': 247,
-        'c4': 262, 'c#4': 277, 'd4': 294, 'd#4': 311, 'e4': 330, 'f4': 349, 'f#4': 370, 'g4': 392, 'g#4': 415, 'a4': 440, 'a#4': 466, 'b4': 494,
-        'c5': 523, 'c#5': 554, 'd5': 587, 'd#5': 622, 'e5': 659, 'f5': 698, 'f#5': 740, 'g5': 784, 'g#5': 831, 'a5': 880, 'a#5': 932, 'b5': 988,
-        'c6': 1047, 'c#6': 1109, 'd6': 1175, 'd#6': 1245, 'e6': 1319, 'f6': 1397, 'f#6': 1480, 'g6': 1568, 'g#6': 1661, 'a6': 1760, 'a#6': 1865, 'b6': 1976,
-        'c7': 2093, 'c#7': 2217, 'd7': 2349, 'd#7': 2489,
-        'e7': 2637, 'f7': 2794, 'f#7': 2960, 'g7': 3136, 'g#7': 3322, 'a7': 3520, 'a#7': 3729, 'b7': 3951,
-        'c8': 4186, 'c#8': 4435, 'd8': 4699, 'd#8': 4978
+        "b0": 31,
+        "c1": 33,
+        "c#1": 35,
+        "d1": 37,
+        "d#1": 39,
+        "e1": 41,
+        "f1": 44,
+        "f#1": 46,
+        "g1": 49,
+        "g#1": 52,
+        "a1": 55,
+        "a#1": 58,
+        "b1": 62,
+        "c2": 65,
+        "c#2": 69,
+        "d2": 73,
+        "d#2": 78,
+        "e2": 82,
+        "f2": 87,
+        "f#2": 93,
+        "g2": 98,
+        "g#2": 104,
+        "a2": 110,
+        "a#2": 117,
+        "b2": 123,
+        "c3": 131,
+        "c#3": 139,
+        "d3": 147,
+        "d#3": 156,
+        "e3": 165,
+        "f3": 175,
+        "f#3": 185,
+        "g3": 196,
+        "g#3": 208,
+        "a3": 220,
+        "a#3": 233,
+        "b3": 247,
+        "c4": 262,
+        "c#4": 277,
+        "d4": 294,
+        "d#4": 311,
+        "e4": 330,
+        "f4": 349,
+        "f#4": 370,
+        "g4": 392,
+        "g#4": 415,
+        "a4": 440,
+        "a#4": 466,
+        "b4": 494,
+        "c5": 523,
+        "c#5": 554,
+        "d5": 587,
+        "d#5": 622,
+        "e5": 659,
+        "f5": 698,
+        "f#5": 740,
+        "g5": 784,
+        "g#5": 831,
+        "a5": 880,
+        "a#5": 932,
+        "b5": 988,
+        "c6": 1047,
+        "c#6": 1109,
+        "d6": 1175,
+        "d#6": 1245,
+        "e6": 1319,
+        "f6": 1397,
+        "f#6": 1480,
+        "g6": 1568,
+        "g#6": 1661,
+        "a6": 1760,
+        "a#6": 1865,
+        "b6": 1976,
+        "c7": 2093,
+        "c#7": 2217,
+        "d7": 2349,
+        "d#7": 2489,
+        "e7": 2637,
+        "f7": 2794,
+        "f#7": 2960,
+        "g7": 3136,
+        "g#7": 3322,
+        "a7": 3520,
+        "a#7": 3729,
+        "b7": 3951,
+        "c8": 4186,
+        "c#8": 4435,
+        "d8": 4699,
+        "d#8": 4978,
     }
 
-    def __init__(self, pin, initial_freq=440, initial_volume=0, duty_factor=1023, active_high=True):
+    def __init__(
+        self,
+        pin,
+        initial_freq=440,
+        initial_volume=0,
+        duty_factor=1023,
+        active_high=True,
+    ):
 
         self._pin_num = pin
         self._pwm_buzzer = PWMBuzzer(
@@ -1227,18 +1360,27 @@ class Speaker(OutputDevice, PinMixin):
             self._pwm_buzzer.volume = value[1]
 
     def _to_freq(self, freq):
-        if freq is not None and freq != '' and freq != 0:
+        if freq is not None and freq != "" and freq != 0:
             if type(freq) is str:
                 return int(self.NOTES[freq])
             elif freq <= 128 and freq > 0:  # MIDI
-                midi_factor = 2**(1 / 12)
+                midi_factor = 2 ** (1 / 12)
                 return int(440 * midi_factor ** (freq - 69))
             else:
                 return freq
         else:
             return None
 
-    def beep(self, on_time=1, off_time=None, n=None, wait=False, fade_in_time=0, fade_out_time=None, fps=25):
+    def beep(
+        self,
+        on_time=1,
+        off_time=None,
+        n=None,
+        wait=False,
+        fade_in_time=0,
+        fade_out_time=None,
+        fps=25,
+    ):
         """
         Makes the buzzer turn on and off repeatedly.
 
@@ -1246,11 +1388,11 @@ class Speaker(OutputDevice, PinMixin):
             The length of time in seconds that the device will be on. Defaults to 1.
 
         :param float off_time:
-            The length of time in seconds that the device will be off. If `None`, 
+            The length of time in seconds that the device will be off. If `None`,
             it will be the same as ``on_time``. Defaults to `None`.
 
         :param int n:
-            The number of times to repeat the beep operation. If `None`, the 
+            The number of times to repeat the beep operation. If `None`, the
             device will continue beeping forever. The default is `None`.
 
         :param bool wait:
@@ -1269,12 +1411,13 @@ class Speaker(OutputDevice, PinMixin):
            The frames per second that will be used to calculate the number of
            steps between off/on states when fading. Defaults to 25.
         """
-        self._pwm_buzzer.blink(on_time, off_time, n, wait,
-                               fade_in_time, fade_out_time, fps)
+        self._pwm_buzzer.blink(
+            on_time, off_time, n, wait, fade_in_time, fade_out_time, fps
+        )
 
     def play(self, tune=440, duration=1, volume=1, n=1, wait=True):
         """
-        Plays a tune for a given duration. 
+        Plays a tune for a given duration.
 
         :param int tune:
 
@@ -1359,7 +1502,7 @@ class RGBLED(OutputDevice, PinsMixin):
 
     :type red: int
     :param red:
-        The GP pin that controls the red component of the RGB LED. 
+        The GP pin that controls the red component of the RGB LED.
     :type green: int
     :param green:
         The GP pin that controls the green component of the RGB LED.
@@ -1374,25 +1517,32 @@ class RGBLED(OutputDevice, PinsMixin):
         The initial color for the RGB LED. Defaults to black ``(0, 0, 0)``.
     :param bool pwm:
         If :data:`True` (the default), construct :class:`PWMLED` instances for
-        each component of the RGBLED. If :data:`False`, construct 
+        each component of the RGBLED. If :data:`False`, construct
         :class:`DigitalLED` instances.
 
     """
 
-    def __init__(self, red=None, green=None, blue=None, active_high=True,
-                 initial_value=(0, 0, 0), pwm=True):
+    def __init__(
+        self,
+        red=None,
+        green=None,
+        blue=None,
+        active_high=True,
+        initial_value=(0, 0, 0),
+        pwm=True,
+    ):
         self._pin_nums = (red, green, blue)
         self._leds = ()
         self._last = initial_value
         LEDClass = PWMLED if pwm else DigitalLED
         self._leds = tuple(
-            LEDClass(pin, active_high=active_high)
-            for pin in (red, green, blue))
+            LEDClass(pin, active_high=active_high) for pin in (red, green, blue)
+        )
         super().__init__(active_high, initial_value)
 
     def _write(self, value):
         if type(value) is not tuple:
-            value = (value, ) * 3
+            value = (value,) * 3
         for led, v in zip(self._leds, value):
             led.value = v
 
@@ -1501,7 +1651,7 @@ class RGBLED(OutputDevice, PinsMixin):
 
     def toggle(self):
         """
-        Toggles the state of the device. If the device has a specific colour, then that colour is saved and the device is turned off. 
+        Toggles the state of the device. If the device has a specific colour, then that colour is saved and the device is turned off.
         If the device is off, it will be changed to the last colour it had when it was on or, if none, to fully on (:attr:`value` is ``(1, 1, 1)``).
         """
         if self.value == (0, 0, 0):
@@ -1510,12 +1660,20 @@ class RGBLED(OutputDevice, PinsMixin):
             self._last = self.value
             self.value = (0, 0, 0)
 
-    def blink(self, on_times=1, fade_times=0, colors=((1, 0, 0), (0, 1, 0), (0, 0, 1)), n=None, wait=False, fps=25):
+    def blink(
+        self,
+        on_times=1,
+        fade_times=0,
+        colors=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+        n=None,
+        wait=False,
+        fps=25,
+    ):
         """
         Makes the device blink between colours repeatedly.
 
         :param float on_times:
-            Single value or tuple of numbers of seconds to stay on each colour. Defaults to 1 second. 
+            Single value or tuple of numbers of seconds to stay on each colour. Defaults to 1 second.
         :param float fade_times:
             Single value or tuple of times to fade between each colour. Must be 0 if
             *pwm* was :data:`False` when the class was constructed.
@@ -1535,9 +1693,9 @@ class RGBLED(OutputDevice, PinsMixin):
         self.off()
 
         if type(on_times) is not tuple:
-            on_times = (on_times, ) * len(colors)
+            on_times = (on_times,) * len(colors)
         if type(fade_times) is not tuple:
-            fade_times = (fade_times, ) * len(colors)
+            fade_times = (fade_times,) * len(colors)
         # If any value is above zero then treat all as 0-255 values
         if any(v > 1 for v in sum(colors, ())):
             colors = tuple(tuple(self._from_255(v) for v in t) for t in colors)
@@ -1547,10 +1705,8 @@ class RGBLED(OutputDevice, PinsMixin):
             # Define a linear interpolation between
             # off_color and on_color
 
-            def lerp(t, fade_in, color1, color2): return tuple(
-                (1 - t) * off + t * on
-                if fade_in else
-                (1 - t) * on + t * off
+            lerp = lambda t, fade_in, color1, color2: tuple(
+                (1 - t) * off + t * on if fade_in else (1 - t) * on + t * off
                 for off, on in zip(color2, color1)
             )
 
@@ -1561,13 +1717,24 @@ class RGBLED(OutputDevice, PinsMixin):
                 if fade_times[c] > 0:
                     for i in range(int(fps * fade_times[c])):
                         v = lerp(
-                            i * (1 / fps) / fade_times[c], True, colors[(c + 1) % len(colors)], colors[c])
+                            i * (1 / fps) / fade_times[c],
+                            True,
+                            colors[(c + 1) % len(colors)],
+                            colors[c],
+                        )
                         t = 1 / fps
                         yield (v, t)
 
         self._start_change(blink_generator, n, wait)
 
-    def pulse(self, fade_times=1, colors=((0, 0, 0), (1, 0, 0), (0, 0, 0), (0, 1, 0), (0, 0, 0), (0, 0, 1)), n=None, wait=False, fps=25):
+    def pulse(
+        self,
+        fade_times=1,
+        colors=((0, 0, 0), (1, 0, 0), (0, 0, 0), (0, 1, 0), (0, 0, 0), (0, 0, 1)),
+        n=None,
+        wait=False,
+        fps=25,
+    ):
         """
         Makes the device fade between colours repeatedly.
 
@@ -1576,8 +1743,8 @@ class RGBLED(OutputDevice, PinsMixin):
         :param float fade_out_time:
             Number of seconds to spend fading out. Defaults to 1.
         :type colors: tuple
-        :param on_color:
-            Tuple of colours to pulse between in order. Defaults to red, off, green, off, blue, off. 
+        :param colors:
+            Tuple of colours to pulse between in order. Defaults to red, off, green, off, blue, off.
         :type off_color: ~colorzero.Color or tuple
         :type n: int or None
         :param n:
@@ -1586,7 +1753,14 @@ class RGBLED(OutputDevice, PinsMixin):
         on_times = 0
         self.blink(on_times, fade_times, colors, n, wait, fps)
 
-    def cycle(self, fade_times=1, colors=((1, 0, 0), (0, 1, 0), (0, 0, 1)), n=None, wait=False, fps=25):
+    def cycle(
+        self,
+        fade_times=1,
+        colors=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+        n=None,
+        wait=False,
+        fps=25,
+    ):
         """
         Makes the device fade in and out repeatedly.
 
@@ -1595,8 +1769,8 @@ class RGBLED(OutputDevice, PinsMixin):
         :param float fade_times:
             Number of seconds to spend fading out. Defaults to 1.
         :type colors: tuple
-        :param on_color:
-            Tuple of colours to cycle between. Defaults to red, green, blue. 
+        :param colors:
+            Tuple of colours to cycle between. Defaults to red, green, blue.
         :type n: int or None
         :param n:
             Number of times to cycle; :data:`None` (the default) means forever.
@@ -1622,25 +1796,27 @@ class Motor(PinsMixin):
 
     :type forward: int
     :param forward:
-        The GP pin that controls the "forward" motion of the motor. 
+        The GP pin that controls the "forward" motion of the motor.
 
     :type backward: int
     :param backward:
-        The GP pin that controls the "backward" motion of the motor. 
+        The GP pin that controls the "backward" motion of the motor.
 
     :param bool pwm:
-        If :data:`True` (the default), PWM pins are used to drive the motor. 
-        When using PWM pins, values between 0 and 1 can be used to set the 
+        If :data:`True` (the default), PWM pins are used to drive the motor.
+        When using PWM pins, values between 0 and 1 can be used to set the
         speed.
 
     """
 
     def __init__(self, forward, backward, pwm=True):
         self._pin_nums = (forward, backward)
-        self._forward = PWMOutputDevice(
-            forward) if pwm else DigitalOutputDevice(forward)
-        self._backward = PWMOutputDevice(
-            backward) if pwm else DigitalOutputDevice(backward)
+        self._forward = (
+            PWMOutputDevice(forward) if pwm else DigitalOutputDevice(forward)
+        )
+        self._backward = (
+            PWMOutputDevice(backward) if pwm else DigitalOutputDevice(backward)
+        )
 
     def on(self, speed=1, t=None, wait=False):
         """
@@ -1652,11 +1828,11 @@ class Motor(PinsMixin):
             the opposite direction. Defaults to 1.
 
         :param float t:
-            The time in seconds that the motor should run for. If None is 
+            The time in seconds that the motor should run for. If None is
             specified, the motor will stay on. The default is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1702,11 +1878,11 @@ class Motor(PinsMixin):
             The speed as a value between 0 and 1: 1 is full speed, 0 is stop. Defaults to 1.
 
         :param float t:
-            The time in seconds that the motor should turn for. If None is 
+            The time in seconds that the motor should turn for. If None is
             specified, the motor will stay on. The default is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1721,11 +1897,11 @@ class Motor(PinsMixin):
             The speed as a value between 0 and 1: 1 is full speed, 0 is stop. Defaults to 1.
 
         :param float t:
-            The time in seconds that the motor should turn for. If None is 
+            The time in seconds that the motor should turn for. If None is
             specified, the motor will stay on. The default is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1763,16 +1939,16 @@ class Robot:
         robot.forward()
 
     :param tuple left:
-        A tuple of two pins representing the forward and backward inputs of the 
+        A tuple of two pins representing the forward and backward inputs of the
         left motor's controller.
 
     :param tuple right:
-        A tuple of two pins representing the forward and backward inputs of the 
+        A tuple of two pins representing the forward and backward inputs of the
         right motor's controller.
 
     :param bool pwm:
-        If :data:`True` (the default), pwm pins will be used, allowing variable 
-        speed control. 
+        If :data:`True` (the default), pwm pins will be used, allowing variable
+        speed control.
 
     """
 
@@ -1816,12 +1992,12 @@ class Robot:
             The speed as a value between 0 and 1: 1 is full speed, 0 is stop. Defaults to 1.
 
         :param float t:
-            The time in seconds that the robot should move for. If None is 
-            specified, the robot will continue to move until stopped. The default 
+            The time in seconds that the robot should move for. If None is
+            specified, the robot will continue to move until stopped. The default
             is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1837,12 +2013,12 @@ class Robot:
             The speed as a value between 0 and 1: 1 is full speed, 0 is stop. Defaults to 1.
 
         :param float t:
-            The time in seconds that the robot should move for. If None is 
-            specified, the robot will continue to move until stopped. The default 
+            The time in seconds that the robot should move for. If None is
+            specified, the robot will continue to move until stopped. The default
             is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1852,19 +2028,19 @@ class Robot:
 
     def left(self, speed=1, t=None, wait=False):
         """
-        Makes the robot turn "left" by turning the left motor backward and the 
+        Makes the robot turn "left" by turning the left motor backward and the
         right motor forward.
 
         :param float speed:
             The speed as a value between 0 and 1: 1 is full speed, 0 is stop. Defaults to 1.
 
         :param float t:
-            The time in seconds that the robot should turn for. If None is 
-            specified, the robot will continue to turn until stopped. The default 
+            The time in seconds that the robot should turn for. If None is
+            specified, the robot will continue to turn until stopped. The default
             is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1874,19 +2050,19 @@ class Robot:
 
     def right(self, speed=1, t=None, wait=False):
         """
-        Makes the robot turn "right" by turning the left motor forward and the 
+        Makes the robot turn "right" by turning the left motor forward and the
         right motor backward.
 
         :param float speed:
             The speed as a value between 0 and 1: 1 is full speed, 0 is stop. Defaults to 1.
 
         :param float t:
-            The time in seconds that the robot should turn for. If None is 
-            specified, the robot will continue to turn until stopped. The default 
+            The time in seconds that the robot should turn for. If None is
+            specified, the robot will continue to turn until stopped. The default
             is None.
 
         :param bool wait:
-           If True, the method will block until the time `t` has expired. 
+           If True, the method will block until the time `t` has expired.
            If False, the method will return and the motor will turn on in
            the background. Defaults to False. Only effective if `t` is not
            None.
@@ -1913,6 +2089,329 @@ class Robot:
 Rover = Robot
 
 
+class Stepper(PinsMixin):
+    """
+    Represents a stepper motor connected via a driver board (e.g. ULN2003).
+
+    Supports both 4-pin unipolar stepper motors and bipolar steppers via driver boards.
+
+    :param tuple pins:
+        A tuple of 4 pins connected to the stepper motor driver.
+        For ULN2003: (IN1, IN2, IN3, IN4)
+
+    :param str step_sequence:
+        The stepping sequence to use. Options are:
+        - 'wave' - Wave drive (1 coil energized, lower torque, lower power)
+        - 'full' - Full step (2 coils energized, higher torque)
+        - 'half' - Half step (alternates between wave and full, smoother)
+        Defaults to 'full'.
+
+    :param float step_delay:
+        Delay in seconds between steps. Smaller values = faster rotation.
+        Defaults to 0.002 (2ms) which gives ~500 steps/second.
+
+    :param int steps_per_rotation:
+        Number of steps for a complete 360-degree rotation.
+        Common values: 2048 (28BYJ-48 with ULN2003), 200 (NEMA steppers).
+        Defaults to 2048.
+    """
+
+    # Step sequences for different drive modes
+    STEP_SEQUENCES = {
+        "wave": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+        "full": [[1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [1, 0, 0, 1]],
+        "half": [
+            [1, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 1, 1],
+            [0, 0, 0, 1],
+            [1, 0, 0, 1],
+        ],
+    }
+
+    def __init__(
+        self, pins, step_sequence="full", step_delay=0.002, steps_per_rotation=2048
+    ):
+        if len(pins) != 4:
+            raise ValueError("Stepper requires exactly 4 pins")
+
+        self._pin_nums = tuple(pins)
+        self._pins = tuple(DigitalOutputDevice(pin) for pin in pins)
+        self._step_delay = step_delay
+        self._steps_per_rotation = steps_per_rotation
+        self._current_step = 0
+        self._step_count = 0
+
+        if step_sequence not in self.STEP_SEQUENCES:
+            raise ValueError(
+                f"Invalid step_sequence. Must be one of: {list(self.STEP_SEQUENCES.keys())}"
+            )
+        self._step_sequence = step_sequence
+        self._sequence = self.STEP_SEQUENCES[step_sequence]
+
+        # Turn off all coils initially
+        self._set_step([0, 0, 0, 0])
+
+    def _normalise_direction(self, direction):
+        """
+        normalise direction parameter to internal numeric representation.
+
+        Accepts:
+        - Numeric: 1 or positive numbers for clockwise, -1 or negative for counter-clockwise
+        - String: 'cw' or 'clockwise' for clockwise, 'ccw' or 'counter-clockwise' for counter-clockwise
+
+        Returns: 1 for clockwise, -1 for counter-clockwise
+        """
+        if isinstance(direction, str):
+            direction_lower = direction.lower().strip()
+            if direction_lower in ("cw", "clockwise"):
+                return 1
+            elif direction_lower in ("ccw", "counter-clockwise", "counterclockwise"):
+                return -1
+            else:
+                raise ValueError(
+                    f"Invalid direction string: '{direction}'. Use 'cw', 'ccw', 'clockwise', or 'counter-clockwise'"
+                )
+        else:
+            # Numeric direction: positive = clockwise, negative = counter-clockwise
+            return 1 if direction >= 0 else -1
+
+    def _set_step(self, pattern):
+        """Set the pin states for a step pattern."""
+        for pin, state in zip(self._pins, pattern):
+            pin.value = state
+
+    def _single_step(self, direction=1):
+        """Execute a single step in the given direction."""
+        normalised_direction = self._normalise_direction(direction)
+
+        if normalised_direction > 0:  # Clockwise
+            self._current_step = (self._current_step + 1) % len(self._sequence)
+            self._step_count += 1
+        else:  # Counter-clockwise
+            self._current_step = (self._current_step - 1) % len(self._sequence)
+            self._step_count -= 1
+
+        self._set_step(self._sequence[self._current_step])
+        sleep(self._step_delay)
+
+    def step(self, steps, direction=1):
+        """
+        Move the stepper motor by a number of steps.
+
+        :param int steps:
+            Number of steps to move. Must be positive.
+
+        :param direction:
+            Direction to move. Accepts:
+            - Numeric: 1 or positive for clockwise, -1 or negative for counter-clockwise
+            - String: 'cw'/'clockwise' for clockwise, 'ccw'/'counter-clockwise' for counter-clockwise
+            Defaults to 1 (clockwise).
+        :type direction: int or str
+        """
+        steps = abs(int(steps))
+
+        for _ in range(steps):
+            self._single_step(direction)
+
+    def step_to(self, steps, direction):
+        """
+        Move to a specific step position from the current position.
+
+        For clockwise direction: moves TO the target position (absolute).
+        For counter-clockwise direction: moves BY the number of steps (relative).
+
+        :param int steps:
+            Target step position (absolute) for clockwise,
+            or number of steps to move for counter-clockwise.
+
+        :param direction:
+            Direction to move. Accepts:
+            - String: 'cw'/'clockwise' for clockwise, 'ccw'/'counter-clockwise' for counter-clockwise
+        :type direction: str
+        """
+        target_steps = int(steps)
+        current_steps = self._step_count
+
+        normalised_dir = self._normalise_direction(direction)
+
+        if normalised_dir > 0:  # Clockwise - move TO absolute position
+            distance = target_steps - current_steps
+            if distance > 0:
+                self.step(distance, direction)
+            elif distance < 0:
+                # Wrap around clockwise
+                self.step(self._steps_per_rotation + distance, direction)
+            # if distance == 0, don't move
+        else:  # Counter-clockwise - move BY relative steps
+            if target_steps > 0:
+                self.step(target_steps, direction)
+
+    def turn(self, angle, direction):
+        """
+        Turn the stepper motor by a specific angle.
+
+        :param float angle:
+            Angle to turn in degrees. Must be positive.
+
+        :param direction:
+            Direction to turn. Accepts:
+            - String: 'cw'/'clockwise' for clockwise, 'ccw'/'counter-clockwise' for counter-clockwise
+        :type direction: str
+        """
+        angle = abs(float(angle))
+        steps = int((angle / 360.0) * self._steps_per_rotation)
+        self.step(steps, direction)
+
+    def rotate(self, rotations, direction):
+        """
+        Rotate the stepper motor by full rotations.
+
+        :param float rotations:
+            Number of full rotations. Must be positive.
+
+        :param direction:
+            Direction to rotate. Accepts:
+            - String: 'cw'/'clockwise' for clockwise, 'ccw'/'counter-clockwise' for counter-clockwise
+        :type direction: str
+        """
+        rotations = abs(float(rotations))
+        steps = int(rotations * self._steps_per_rotation)
+        self.step(steps, direction)
+
+    def turn_to(self, angle, direction):
+        """
+        Turn to a specific angle position (0-359 degrees).
+
+        :param float angle:
+            Target angle in degrees (0-359). If angle is outside this range,
+            it will be normalised to 0-359.
+
+        :param direction:
+            Direction to turn. Accepts:
+            - String: 'cw'/'clockwise' for clockwise, 'ccw'/'counter-clockwise' for counter-clockwise
+        :type direction: str
+        """
+        # normalise target angle to 0-359 range
+        target_angle = abs(float(angle)) % 360.0
+        current_angle = self.angle
+
+        # Calculate the shortest path to target angle
+        if direction.lower() in ("cw", "clockwise"):
+            # Clockwise: calculate distance going clockwise
+            if target_angle >= current_angle:
+                rotation_angle = target_angle - current_angle
+            else:
+                rotation_angle = 360.0 - current_angle + target_angle
+        else:  # counter-clockwise
+            # Counter-clockwise: calculate distance going counter-clockwise
+            if target_angle <= current_angle:
+                rotation_angle = current_angle - target_angle
+            else:
+                rotation_angle = current_angle + (360.0 - target_angle)
+
+        # Convert angle to steps and rotate
+        steps = int((rotation_angle / 360.0) * self._steps_per_rotation)
+        if steps > 0:
+            self.step(steps, direction)
+
+    def reset_position(self):
+        """Reset the step counter to zero (home position)."""
+        self._step_count = 0
+
+    def off(self):
+        """Turn off all coils to reduce power consumption."""
+        self._set_step([0, 0, 0, 0])
+
+    def set_speed(self, rpm):
+        """
+        Set the motor speed in rotations per minute (RPM).
+
+        :param float rpm:
+            Speed in rotations per minute. Must be positive.
+            The step delay will be calculated based on the number of steps
+            per rotation and the desired RPM.
+        """
+        rpm = float(rpm)
+        if rpm <= 0:
+            raise ValueError("RPM must be positive")
+
+        # Calculate step delay from RPM
+        # RPM = rotations per minute
+        # steps per rotation = self._steps_per_rotation
+        # Total steps per minute = RPM * steps_per_rotation
+        # Total steps per second = (RPM * steps_per_rotation) / 60
+        # Delay per step = 1 / steps_per_second = 60 / (RPM * steps_per_rotation)
+        self._step_delay = 60.0 / (rpm * self._steps_per_rotation)
+
+    def run_continuous(self, seconds=None, direction=1):
+        """
+        Run the stepper motor continuously for a specified duration or until stopped.
+
+        :param float seconds:
+            Duration to run in seconds. If None (the default), the motor will run
+            until stopped by calling off() or close().
+
+        :param direction:
+            Direction to run. Accepts:
+            - Numeric: 1 or positive for clockwise, -1 or negative for counter-clockwise
+            - String: 'cw'/'clockwise' for clockwise, 'ccw'/'counter-clockwise' for counter-clockwise
+            Defaults to 1 (clockwise).
+        :type direction: int or str
+        """
+        if seconds is None:
+            # Run until manually stopped
+            try:
+                while True:
+                    self._single_step(direction)
+            except KeyboardInterrupt:
+                self.off()
+        else:
+            # Run for specified duration
+            seconds = abs(float(seconds))
+            start_time = ticks_ms()
+            end_time = start_time + int(seconds * 1000)
+
+            while ticks_ms() < end_time:
+                self._single_step(direction)
+
+            self.off()
+
+    @property
+    def step_delay(self):
+        """Get or set the delay between steps in seconds."""
+        return self._step_delay
+
+    @step_delay.setter
+    def step_delay(self, value):
+        self._step_delay = float(value)
+
+    @property
+    def step_count(self):
+        """Get the current step count (can be negative)."""
+        return self._step_count
+
+    @property
+    def angle(self):
+        """Get the current angle in degrees (0-359) from the reset position."""
+        return ((self._step_count / self._steps_per_rotation) * 360.0) % 360.0
+
+    @property
+    def steps_per_rotation(self):
+        """Get the configured steps per full rotation."""
+        return self._steps_per_rotation
+
+    def close(self):
+        """Turn off the motor and close all pin resources."""
+        self.off()
+        for pin in self._pins:
+            pin.close()
+        self._pins = None
+
+
 class Servo(PWMOutputDevice):
     """
     Represents a PWM-controlled servo motor.
@@ -1923,7 +2422,7 @@ class Servo(PWMOutputDevice):
 
     :type pin: int
     :param pin:
-        The pin the servo motor is connected to. 
+        The pin the servo motor is connected to.
 
     :param bool initial_value:
         If :data:`0`, the servo will be set to its minimum position.  If
@@ -1944,21 +2443,43 @@ class Servo(PWMOutputDevice):
 
     :param int duty_factor:
         The duty factor of the PWM signal. This is a value between 0 and 65535.
-        Defaults to 65535.    
+        Defaults to 65535.
     """
 
-    def __init__(self, pin, initial_value=None, min_pulse_width=1 / 1000, max_pulse_width=2 / 1000, frame_width=20 / 1000, duty_factor=65535):
+    def __init__(
+        self,
+        pin,
+        initial_value=None,
+        min_pulse_width=1 / 1000,
+        max_pulse_width=2 / 1000,
+        frame_width=20 / 1000,
+        duty_factor=65535,
+    ):
         self._min_duty = int((min_pulse_width / frame_width) * duty_factor)
         self._max_duty = int((max_pulse_width / frame_width) * duty_factor)
 
-        super().__init__(pin, freq=int(1 / frame_width),
-                         duty_factor=duty_factor, initial_value=initial_value)
+        super().__init__(
+            pin,
+            freq=int(1 / frame_width),
+            duty_factor=duty_factor,
+            initial_value=initial_value,
+        )
 
     def _state_to_value(self, state):
-        return None if state == 0 else clamp((state - self._min_duty) / (self._max_duty - self._min_duty), 0, 1)
+        return (
+            None
+            if state == 0
+            else clamp(
+                (state - self._min_duty) / (self._max_duty - self._min_duty), 0, 1
+            )
+        )
 
     def _value_to_state(self, value):
-        return 0 if value is None else int(self._min_duty + ((self._max_duty - self._min_duty) * value))
+        return (
+            0
+            if value is None
+            else int(self._min_duty + ((self._max_duty - self._min_duty) * value))
+        )
 
     def min(self):
         """
@@ -1984,13 +2505,13 @@ class Servo(PWMOutputDevice):
         """
         self.value = None
 
-    def move_to_degree(self, degree, max_degree=180):
+    def move_to_degree(self, degree, max_degree = 180):
         self.value = (1 / max_degree) * degree
-
 
 ###############################################################################
 # INPUT DEVICES
 ###############################################################################
+
 
 class InputDevice:
     """
@@ -2019,7 +2540,7 @@ class InputDevice:
     @property
     def value(self):
         """
-        Returns the current value of the device. This is either :data:`True` 
+        Returns the current value of the device. This is either :data:`True`
         or :data:`False` depending on the value of :attr:`active_state`.
         """
         return self._read()
@@ -2027,7 +2548,7 @@ class InputDevice:
 
 class DigitalInputDevice(InputDevice, PinMixin):
     """
-    Represents a generic input device with digital functionality e.g. buttons 
+    Represents a generic input device with digital functionality e.g. buttons
     that can be either active or inactive.
 
     :param int pin:
@@ -2046,7 +2567,7 @@ class DigitalInputDevice(InputDevice, PinMixin):
         The bounce time for the device. If set, the device will ignore
         any button presses that happen within the bounce time after a
         button release. This is useful to prevent accidental button
-        presses from registering as multiple presses. The default is 
+        presses from registering as multiple presses. The default is
         :data:`None`.
     """
 
@@ -2054,10 +2575,12 @@ class DigitalInputDevice(InputDevice, PinMixin):
         super().__init__(active_state)
         self._pin_num = pin
         self._pin = Pin(
-            pin,
-            mode=Pin.IN,
-            pull=Pin.PULL_UP if pull_up else Pin.PULL_DOWN)
+            pin, mode=Pin.IN, pull=Pin.PULL_UP if pull_up else Pin.PULL_DOWN
+        )
         self._bounce_time = bounce_time
+        self._last_callback_ms = (
+            None  # Track when we last fired a callback for debouncing
+        )
 
         if active_state is None:
             self._active_state = False if pull_up else True
@@ -2079,51 +2602,58 @@ class DigitalInputDevice(InputDevice, PinMixin):
         return self._state_to_value(self._state)
 
     def _pin_change(self, p):
-        # turn off the interupt
-        p.irq(handler=None)
+        # read the state that triggered the interrupt
+        new_state = p.value()
 
-        last_state = p.value()
+        # did the state actually change from our stored state?
+        if self._state != new_state:
+            # check if enough time has passed since last callback (debounce)
+            current_time_ms = ticks_ms()
+            # Use infinity for first event to ensure it always passes the time check.
+            # This is mathematically cleaner than checking if _last_callback_ms is None separately.
+            time_since_last_callback = (
+                current_time_ms - self._last_callback_ms
+                if hasattr(self, "_last_callback_ms")
+                and self._last_callback_ms is not None
+                else float("inf")
+            )
 
-        if self._bounce_time is not None:
-            # wait for stability
-            stop = ticks_ms() + (self._bounce_time * 1000)
-            while ticks_ms() < stop:
-                # keep checking, reset the stop if the value changes
-                if p.value() != last_state:
-                    stop = ticks_ms() + self._bounce_time
-                    last_state = p.value()
+            bounce_time = getattr(self, "_bounce_time", None)
+            if bounce_time is None or time_since_last_callback >= (bounce_time * 1000):
+                # Enough time has passed - update state, fire callback, and record timestamp
+                self._state = new_state
+                self._last_callback_ms = current_time_ms
 
-        # re-enable the interupt
-        p.irq(self._pin_change, Pin.IRQ_RISING | Pin.IRQ_FALLING)
+                # manage call backs
+                callback_to_run = None
+                if self.value and self._when_activated is not None:
+                    callback_to_run = self._when_activated
 
-        # did the value actually change?
-        if self._state != last_state:
-            # set the state
-            self._state = self._pin.value()
+                elif not self.value and self._when_deactivated is not None:
+                    callback_to_run = self._when_deactivated
 
-            # manage call backs
-            callback_to_run = None
-            if self.value and self._when_activated is not None:
-                callback_to_run = self._when_activated
+                if callback_to_run is not None:
 
-            elif not self.value and self._when_deactivated is not None:
-                callback_to_run = self._when_deactivated
+                    def schedule_callback(callback):
+                        callback()
 
-            if callback_to_run is not None:
+                    try:
+                        schedule(schedule_callback, callback_to_run)
 
-                def schedule_callback(callback):
-                    callback()
-
-                try:
-                    schedule(schedule_callback, callback_to_run)
-
-                except RuntimeError as e:
-                    if str(e) == "schedule queue full":
-                        raise EventFailedScheduleQueueFull(
-                            "{} - {} not run due to the micropython schedule being full".format(
-                                str(self), callback_to_run.__name__))
-                    else:
-                        raise e
+                    except RuntimeError as e:
+                        if str(e) == "schedule queue full":
+                            raise EventFailedScheduleQueueFull(
+                                "{} - {} not run due to the micropython schedule being full".format(
+                                    str(self), callback_to_run.__name__
+                                )
+                            )
+                        else:
+                            raise e
+            else:
+                # Within bounce time - update state to track reality, but suppress callback.
+                # Note: _last_callback_ms is intentionally NOT updated here because we want
+                # to measure time from the last callback, not the last state change.
+                self._state = new_state
 
     @property
     def is_active(self):
@@ -2185,7 +2715,7 @@ class Switch(DigitalInputDevice):
         The bounce time for the device. If set, the device will ignore
         any button presses that happen within the bounce time after a
         button release. This is useful to prevent accidental button
-        presses from registering as multiple presses. Defaults to 0.02 
+        presses from registering as multiple presses. Defaults to 0.02
         seconds.
     """
 
@@ -2214,9 +2744,10 @@ class Button(Switch):
         The bounce time for the device. If set, the device will ignore
         any button presses that happen within the bounce time after a
         button release. This is useful to prevent accidental button
-        presses from registering as multiple presses. Defaults to 0.02 
+        presses from registering as multiple presses. Defaults to 0.02
         seconds.
     """
+
     pass
 
 
@@ -2226,9 +2757,68 @@ Button.when_pressed = Button.when_activated
 Button.when_released = Button.when_deactivated
 
 
+class MotionSensor(DigitalInputDevice):
+    """
+    Represents a PIR (Passive Infrared) motion sensor (e.g. HC-SR501)
+
+    :param int pin:
+        The pin that the motion sensor is connected to.
+
+    :param bool pull_up:
+        If :data:`True` (the default), the device will be pulled up to
+        HIGH. If :data:`False`, the device will be pulled down to LOW.
+        Most PIR sensors work with pull_up=False.
+
+    :param float bounce_time:
+        The bounce time for the device. If set, the device will ignore
+        any motion events that happen within the bounce time after a
+        motion event. This is useful to prevent false triggers.
+        Defaults to 1 seconds.
+    """
+
+    def __init__(self, pin, pull_up=False, bounce_time=1.00):
+        super().__init__(pin=pin, pull_up=pull_up, bounce_time=bounce_time)
+
+
+MotionSensor.motion_detected = MotionSensor.is_active
+MotionSensor.motion_not_detected = MotionSensor.is_inactive
+MotionSensor.when_motion = MotionSensor.when_activated
+MotionSensor.when_no_motion = MotionSensor.when_deactivated
+
+
+class TouchSensor(Button):
+    """
+    Represents a capacitive touch sensor (e.g. TTP223)
+
+    :param int pin:
+        The pin that the capacitive touch sensor is connected to.
+
+    :param bool pull_up:
+        If :data:`True`, the device will be pulled up to
+        HIGH. If :data:`False` (the default), the device will be pulled down to LOW.
+        Most capacitive touch sensors work with pull_up=False.
+
+    :param float bounce_time:
+        The bounce time for the device. If set, the device will ignore
+        any touch events that happen within the bounce time after a
+        touch event. This is useful to prevent false triggers from
+        electrical noise or multiple rapid touches.
+        Defaults to 0.02 seconds.
+    """
+
+    def __init__(self, pin, pull_up=False, bounce_time=0.02):
+        super().__init__(pin=pin, pull_up=pull_up, bounce_time=bounce_time)
+
+
+TouchSensor.is_touched = TouchSensor.is_active
+TouchSensor.is_not_touched = TouchSensor.is_inactive
+TouchSensor.when_touch_starts = TouchSensor.when_activated
+TouchSensor.when_touch_ends = TouchSensor.when_deactivated
+
+
 class AnalogInputDevice(InputDevice, PinMixin):
     """
-    Represents a generic input device with analogue functionality, e.g. 
+    Represents a generic input device with analogue functionality, e.g.
     a potentiometer.
 
     :param int pin:
@@ -2237,9 +2827,9 @@ class AnalogInputDevice(InputDevice, PinMixin):
     :param active_state:
         The active state of the device. If :data:`True` (the default),
         the :class:`AnalogInputDevice` will assume that the device is
-        active when the pin is high and above the threshold. If 
-        ``active_state`` is ``False``, the device will be active when 
-        the pin is low and below the threshold. 
+        active when the pin is high and above the threshold. If
+        ``active_state`` is ``False``, the device will be active when
+        the pin is low and below the threshold.
 
     :param float threshold:
         The threshold that the device must be above or below to be
@@ -2287,7 +2877,7 @@ class AnalogInputDevice(InputDevice, PinMixin):
         Returns the voltage of the analogue device.
         """
         return self.value * 3.3
-
+    
     @property
     def raw_value(self):
         """
@@ -2312,15 +2902,16 @@ class Potentiometer(AnalogInputDevice):
     :param active_state:
         The active state of the device. If :data:`True` (the default),
         the :class:`AnalogInputDevice` will assume that the device is
-        active when the pin is high and above the threshold. If 
-        ``active_state`` is ``False``, the device will be active when 
-        the pin is low and below the threshold. 
+        active when the pin is high and above the threshold. If
+        ``active_state`` is ``False``, the device will be active when
+        the pin is low and below the threshold.
 
     :param float threshold:
         The threshold that the device must be above or below to be
         considered active. The default is 0.5.
 
     """
+
     pass
 
 
@@ -2334,8 +2925,8 @@ def pico_temp_conversion(voltage):
 
 class TemperatureSensor(AnalogInputDevice):
     """
-    Represents a TemperatureSensor, which outputs a variable voltage. The voltage 
-    can be converted to a temperature using a `conversion` function passed as a 
+    Represents a TemperatureSensor, which outputs a variable voltage. The voltage
+    can be converted to a temperature using a `conversion` function passed as a
     parameter.
 
     Alias for :class:`Thermistor` and :class:`TempSensor`.
@@ -2346,18 +2937,18 @@ class TemperatureSensor(AnalogInputDevice):
     :param active_state:
         The active state of the device. If :data:`True` (the default),
         the :class:`AnalogInputDevice` will assume that the device is
-        active when the pin is high and above the threshold. If 
-        ``active_state`` is ``False``, the device will be active when 
-        the pin is low and below the threshold. 
+        active when the pin is high and above the threshold. If
+        ``active_state`` is ``False``, the device will be active when
+        the pin is low and below the threshold.
 
     :param float threshold:
         The threshold that the device must be above or below to be
         considered active. The default is 0.5.
 
     :param float conversion:
-        A function that takes a voltage and returns a temperature. 
+        A function that takes a voltage and returns a temperature.
 
-        e.g. The internal temperature sensor has a voltage range of 0.706V to 0.716V 
+        e.g. The internal temperature sensor has a voltage range of 0.706V to 0.716V
         and would use the follow conversion function::
 
             def temp_conversion(voltage):
@@ -2409,7 +3000,7 @@ class DistanceSensor(PinsMixin):
         The pin that the ECHO pin is connected to.
 
     :param int trigger:
-        The pin that the TRIG pin is connected to. 
+        The pin that the TRIG pin is connected to.
 
     :param float max_distance:
         The :attr:`value` attribute reports a normalized value between 0 (too
@@ -2418,8 +3009,7 @@ class DistanceSensor(PinsMixin):
         (It was originally 1 (maximum distance), but changed to 400 becasue the distance sensor measures up to 4 meters.)
         (it was orgiinally meters, but changed to centimeters, so 400 means 400 centimeters)
     """
-
-    def __init__(self, echo, trigger, max_distance=400):
+    def __init__(self, echo, trigger, max_distance = 400):
         self._pin_nums = (echo, trigger)
         self._max_distance = max_distance
         self._echo = Pin(echo, mode=Pin.IN, pull=Pin.PULL_DOWN)
