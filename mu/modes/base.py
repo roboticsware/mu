@@ -803,11 +803,15 @@ class FileManager(QObject):
 
     def local_delete(self, local_filename):
         """
-        Delete the referenced file on the local's filesystem. Emit the name
-        of the file when complete, or emit a failure signal.
+        Delete the referenced file or directory on the local's filesystem. 
+        Emit the name of the path when complete, or emit a failure signal.
         """
+        import shutil
         try:
-            os.remove(local_filename)
+            if os.path.isdir(local_filename):
+                shutil.rmtree(local_filename)
+            else:
+                os.remove(local_filename)
             self.on_delete_file.emit(local_filename)
         except Exception as ex:
             logger.error(ex)

@@ -14,8 +14,8 @@ Raspberry Pi Pico
 `````````````````
 - Enhanced the file manager for `Raspberry Pi Pico board <https://www.raspberrypi.com/products/raspberry-pi-pico>`_
     - Navigation in the both local and device file manager
-    - Create a folder on the device file manager
-    - Copy, Delete files and a folder between both local and device file manager
+    - Create a folder both in local and device file manager
+    - Copy and delete files and a folder between both local and device file manager
 - Enhanced the Start/Stop button to run your code directly on the RPi Pico
 - Online Firmware Flasher to install MicroPython firmware easily
     .. image:: screenshots/pico-online-flashing.jpg

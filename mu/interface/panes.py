@@ -1212,16 +1212,21 @@ class LocalFileList(MuFileList):
         delete_action = None
         rename_action = None
 
-        if menu_current_item is not None and menu_current_item.text() != '..':
-            local_filename = menu_current_item.text()
+        selected_items = self.selectedItems()
+        valid_items = [item for item in selected_items if self.clean_name(item) != '..']
+
+        if valid_items:
+            local_filename = self.clean_name(valid_items[0])
             ext = os.path.splitext(local_filename)[1].lower()
-            if ext == ".py" or ext == ".hex":
-                open_internal_action = menu.addAction(_("Open in Mu"))
-            if ext == ".py":
-                write_to_main_action = menu.addAction(_("Write to main.py on device"))
-            open_action = menu.addAction(_("Open"))
+            if len(valid_items) == 1:
+                if ext == ".py" or ext == ".hex":
+                    open_internal_action = menu.addAction(_("Open in Mu"))
+                if ext == ".py":
+                    write_to_main_action = menu.addAction(_("Write to main.py on device"))
+                open_action = menu.addAction(_("Open"))
+            
             delete_action = menu.addAction(_("Delete (cannot be undone)"))
-            rename_action = menu.addAction(_("Rename"))
+            rename_action = menu.addAction(_("Rename")) if len(valid_items) == 1 else None
             menu.addSeparator()
 
         mkdir_action = menu.addAction(_("New directory"))
@@ -1230,10 +1235,9 @@ class LocalFileList(MuFileList):
         if action is None:
             return
 
-        if menu_current_item is not None and menu_current_item.text() != '..':
-            local_filename = menu_current_item.text()
-
+        if valid_items:
             if action == open_action:
+                local_filename = self.clean_name(valid_items[0])
                 path = os.path.abspath(os.path.join(self.cur_home_dir, local_filename))
                 logger.info("Opening {}".format(path))
                 msg = _("Opening '{}'").format(local_filename)
@@ -1242,13 +1246,17 @@ class LocalFileList(MuFileList):
                 QDesktopServices.openUrl(QUrl.fromLocalFile(path))
 
             elif action == delete_action:
-                full_path = os.path.join(self.cur_home_dir, local_filename)
-                logger.info("Deleting {}".format(full_path))
-                msg = _("Deleting '{}' from device.").format(full_path)
-                logger.info(msg)
-                self.set_message.emit(msg)
+                valid_names = [self.clean_name(item) for item in valid_items]
                 self.disable.emit()
-                self.local_delete.emit(full_path)
+                # For local delete, we can probably do it faster, but let's 
+                # keep it consistent with the signal pattern.
+                for clean_filename in valid_names:
+                    full_path = os.path.join(self.cur_home_dir, clean_filename)
+                    logger.info("Deleting {}".format(full_path))
+                    msg = _("Deleting '{}' from computer.").format(clean_filename)
+                    logger.info(msg)
+                    self.set_message.emit(msg)
+                    self.local_delete.emit(full_path)
 
             elif action == rename_action:
                 new_name, ok = QInputDialog.getText(
