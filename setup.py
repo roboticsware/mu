@@ -136,6 +136,7 @@ setup(
         "mu.interface",
         "mu.interface.pico_flasher",
         "mu.interface.esp_flasher",
+        "mu.interface.mip_packages",
         "mu.modes.api",
         "mu.wheels",
     ],

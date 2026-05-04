@@ -10,17 +10,26 @@ Pygame Zero
 - Integrated `PyInstaller <https://pyinstaller.org>`_ to package and deploy your Pygame Zero Game project to one executable file
     .. image:: screenshots/pyinstaller.png
 
-Respberry Pi Pico
+Raspberry Pi Pico
 `````````````````
-- Enhanced the file manager for `Respberry Pi Pico board <https://www.raspberrypi.com/products/raspberry-pi-pico>`_
-    - Navigation in the both local andd device file manager
-    - Copy a file between both local andd device file manager
-    - Delete a file in the local file manager 
+- Enhanced the file manager for `Raspberry Pi Pico board <https://www.raspberrypi.com/products/raspberry-pi-pico>`_
+    - Navigation in the both local and device file manager
+    - Create a folder on the device file manager
+    - Copy, Delete files and a folder between both local and device file manager
 - Enhanced the Start/Stop button to run your code directly on the RPi Pico
+- Online Firmware Flasher to install MicroPython firmware easily
+    .. image:: screenshots/pico-online-flashing.jpg
+- MicroPython Package Manager (mip) to install packages from PyPI or GitHub
+    .. image:: screenshots/mip-online-install.jpg
 - Integrated `the enhanced Picozero Lib <https://picozero-rw.readthedocs.io>`_ to Mu
     - Manual install of PicoZero Lib by Drag-and-drop
         .. image:: screenshots/picozero.png
 
+ESP32 / ESP8266
+```````````````
+- Online Firmware Flasher to install MicroPython firmware easily
+    .. image:: screenshots/esp32online-flashing.jpg
+- Integrated `the enhanced espzero Lib <https://espzero.readthedocs.io>`_ to Mu
 
 Editor
 ``````

@@ -120,7 +120,7 @@ macos: check
 		--nice-name="Mu Editor Custom" \
 		--icon-path=./package/icons/mac_icon.icns \
 		--license-path=./LICENSE \
-		--pip-platform=macosx_10_15_x86_64 .
+		--python-version=3.10 .
 	@sh -c ' \
         echo "\nPost-processing: Modifying Info.plist and Signing..."; \
         APP_PATH=$$(ls -d ./build/pup/*.app 2>/dev/null | head -n 1); \
