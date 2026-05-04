@@ -19,7 +19,7 @@ Raspberry Pi Pico
 - Enhanced the Start/Stop button to run your code directly on the RPi Pico
 - Online Firmware Flasher to install MicroPython firmware easily
     .. image:: screenshots/pico-online-flashing.jpg
-- MicroPython Package Manager (mip) to install packages from PyPI or GitHub
+- MicroPython Package Manager (mip) to install packages from micropython-lib repository or PyPI
     .. image:: screenshots/mip-online-install.jpg
 - Integrated `the enhanced Picozero Lib <https://picozero-rw.readthedocs.io>`_ to Mu
     - Manual install of PicoZero Lib by Drag-and-drop
@@ -29,7 +29,7 @@ ESP32 / ESP8266
 ```````````````
 - Online Firmware Flasher to install MicroPython firmware easily
     .. image:: screenshots/esp32online-flashing.jpg
-- Integrated `the enhanced espzero Lib <https://espzero.readthedocs.io>`_ to Mu
+- Integrated `the espzero Lib <https://espzero.readthedocs.io>`_ to Mu
 
 Editor
 ``````
