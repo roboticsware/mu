@@ -35,6 +35,7 @@ from PyQt6.QtCore import (
     pyqtSignal,
     QTimer,
     QUrl,
+    QEvent,
 )
 from collections import deque
 from PyQt6.QtWidgets import (
@@ -61,6 +62,8 @@ from PyQt6.QtGui import (
     QColor,
     QFont,
     QAction,
+    QSyntaxHighlighter,
+    QTextCharFormat,
 )
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from ..i18n import language_code
@@ -104,6 +107,37 @@ class JupyterREPLPane(RichJupyterWidget):
         super().__init__(parent)
         self.set_theme(theme)
         self.console_height = 10
+        self.highlighter = URLHighlighter(self._control.document())
+        self._control.setMouseTracking(True)
+        self._control.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        if obj == self._control:
+            if event.type() == QEvent.Type.MouseMove:
+                if self.get_url_at_pos(event.pos()):
+                    self._control.viewport().setCursor(Qt.PointingHandCursor)
+                else:
+                    self._control.viewport().setCursor(Qt.IBeamCursor)
+            elif event.type() == QEvent.Type.MouseButtonRelease:
+                # Only handle left click
+                if event.button() == Qt.MouseButton.LeftButton:
+                    url = self.get_url_at_pos(event.pos())
+                    if url:
+                        QDesktopServices.openUrl(QUrl(url))
+                        return True
+        return super().eventFilter(obj, event)
+
+    def get_url_at_pos(self, pos):
+        """
+        Returns the URL at the given position, if any.
+        """
+        cursor = self._control.cursorForPosition(pos)
+        line = cursor.block().text()
+        pos_in_line = cursor.positionInBlock()
+        for match in URLHighlighter.URL_REGEX.finditer(line):
+            if match.start() <= pos_in_line <= match.end():
+                return match.group(0)
+        return None
 
     def _append_plain_text(self, text, *args, **kwargs):
         """
@@ -159,6 +193,26 @@ VT100_HOME = b"\x1B[H"
 VT100_END = b"\x1B[F"
 
 
+class URLHighlighter(QSyntaxHighlighter):
+    """
+    Highlights URLs in the text.
+    """
+
+    URL_REGEX = re.compile(r"https?://[^\s\"'()<>\[\]]+")
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._format = QTextCharFormat()
+        self._format.setForeground(QColor("#0000FF"))
+        self._format.setFontUnderline(True)
+
+    def highlightBlock(self, text):
+        for match in self.URL_REGEX.finditer(text):
+            self.setFormat(
+                match.start(), match.end() - match.start(), self._format
+            )
+
+
 class MicroPythonREPLPane(QTextEdit):
     """
     REPL = Read, Evaluate, Print, Loop.
@@ -179,6 +233,8 @@ class MicroPythonREPLPane(QTextEdit):
         self.setUndoRedoEnabled(False)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
+        self.highlighter = URLHighlighter(self.document())
+        self.setMouseTracking(True)
         # The following variable maintains the position where we know
         # the device cursor is placed. It is initialized to the beginning
         # of the QTextEdit (i.e. equal to the Qt cursor position)
@@ -380,12 +436,40 @@ class MicroPythonREPLPane(QTextEdit):
         the device (except if a selection is made, for selections we first
         move the cursor on deselection)
         """
+        if mouseEvent.button() == Qt.MouseButton.LeftButton:
+            url = self.get_url_at_pos(mouseEvent.pos())
+            if url:
+                QDesktopServices.openUrl(QUrl(url))
+                return
+
         super().mouseReleaseEvent(mouseEvent)
 
         # If when a user have clicked and not made a selection
         # move the device cursor to where the user clicked
         if not self.textCursor().hasSelection():
             self.set_devicecursor_to_qtcursor()
+
+    def mouseMoveEvent(self, event):
+        """
+        Change cursor to hand when hovering over a URL.
+        """
+        if self.get_url_at_pos(event.pos()):
+            self.viewport().setCursor(Qt.PointingHandCursor)
+        else:
+            self.viewport().setCursor(Qt.IBeamCursor)
+        super().mouseMoveEvent(event)
+
+    def get_url_at_pos(self, pos):
+        """
+        Returns the URL at the given position, if any.
+        """
+        cursor = self.cursorForPosition(pos)
+        line = cursor.block().text()
+        pos_in_line = cursor.positionInBlock()
+        for match in URLHighlighter.URL_REGEX.finditer(line):
+            if match.start() <= pos_in_line <= match.end():
+                return match.group(0)
+        return None
 
     def process_tty_data(self, data):
         """
