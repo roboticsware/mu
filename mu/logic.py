@@ -1085,7 +1085,7 @@ class Editor(QObject):
                 shutil.copy(
                     path(sfx, "esp32/"), os.path.join(espzero_path, sfx)
                 )
-            # profiles 서브디렉토리 복사
+            # Copy profiles subdirectory
             for sfx in ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"]:
                 shutil.copy(
                     path(sfx, "esp32/profiles/"),

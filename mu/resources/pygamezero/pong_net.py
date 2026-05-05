@@ -159,8 +159,8 @@ class Bar(Rect):
                 else:  # bar2
                     self.ball.x -= 10
                 self.ball.vx = -self.ball.vx  * SPEED_UP # Reverse the x direction of the velocity
-                ''' 공이 윗측 진입하면서 반사판 윗측에 부딪힐 때 또는
-                    공이 아래측 진입하면서 반사판 아래측에 부딪힐 때는 진입방향 그대로 반사 '''
+                ''' Reflection when the ball enters from above and hits the top of the paddle, or
+                    when the ball enters from below and hits the bottom of the paddle. '''
                 if (self.ball.vy > 0 and self.ball.centery < self.centery) or \
                     (self.ball.vy < 0 and self.ball.centery > self.centery):
                     self.ball.vy = -self.ball.vy * SPEED_UP
