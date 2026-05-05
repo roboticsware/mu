@@ -215,16 +215,20 @@ EXAMPLE_NEOPIA = [
 ]
 
 DEFAULT_PICO_LIB = [
-    "picozero.py",
-    "piconethelper.py",
-    "stepper_motor.py",
+    "bt_car.py",
     "ds1302.py",
-    "LED_Matrix.py",
-    "nec.py",
+    "ir_rx.py",
     "keypad.py",
-    "neopixel.py",
-    "tcs3472.py",
+    "LED_Matrix.py",
     "mfrc522.py",
+    "nec.py",
+    "neopixel.py",
+    "piconethelper.py",
+    "picozero.py",
+    "stepper_motor.py",
+    "tcs3472.py",
+    "telegram.py",
+    "wifi_car.py",
 ]
 
 DEFAULT_ESP32_LIB = [
