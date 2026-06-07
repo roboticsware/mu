@@ -80,10 +80,20 @@ def raw_on(serial):
 
     def flush(serial):
         """Flush all rx input without relying on serial.flushInput()."""
-        n = serial.inWaiting()
+        try:
+            n = serial.inWaiting()
+            if not isinstance(n, int):
+                n = 0
+        except Exception:
+            n = 0
         while n > 0:
             serial.read(n)
-            n = serial.inWaiting()
+            try:
+                n = serial.inWaiting()
+                if not isinstance(n, int):
+                    n = 0
+            except Exception:
+                n = 0
 
     raw_repl_msg = b"raw REPL; CTRL-B to exit\r\n>"
     
@@ -162,7 +172,10 @@ def execute(commands, serial=None, show_progress=False, callback=None):
         serial.write(b"\x04")  # Execute with CTRL-D
         
         old_timeout = serial.timeout
-        serial.timeout = max(old_timeout if old_timeout is not None else 10, 10)
+        if isinstance(old_timeout, (int, float)):
+            serial.timeout = max(old_timeout, 10)
+        else:
+            serial.timeout = 10
         try:
             response = serial.read_until(b"\x04>")  # Read until prompt.
         finally:

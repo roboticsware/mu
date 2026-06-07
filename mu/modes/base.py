@@ -162,8 +162,20 @@ class REPLConnection(QObject):
             logger.info("Sending command {}".format(command))
             self.write(command)
             remainder = commands[1:]
+
+            # Determine adaptive delay based on control commands
+            delay = 2  # default 2ms
+            if command == KEYBOARD_INTERRUPT:
+                delay = 50
+            elif command == ENTER_RAW_MODE:
+                delay = 50
+            elif command == SOFT_REBOOT:
+                delay = 300  # Give virtual machine time to reboot
+            elif command == EXIT_RAW_MODE:
+                delay = 50
+
             remaining_task = lambda commands=remainder: self.execute(commands)
-            QTimer.singleShot(2, remaining_task)
+            QTimer.singleShot(delay, remaining_task)
 
     def send_commands(self, commands):
         """

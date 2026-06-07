@@ -407,7 +407,7 @@ def test_micropython_mode_add_repl_no_port():
     mm = MicroPythonMode(editor, view)
     mm.add_repl()
     assert view.show_message.call_count == 1
-    message = "Could not find an attached device."
+    message = _("Could not find an attached device.")
     assert view.show_message.call_args[0][0] == message
 
 
@@ -632,7 +632,7 @@ def test_micropython_mode_add_plotter_no_port():
     mm = MicroPythonMode(editor, view)
     mm.add_plotter()
     assert view.show_message.call_count == 1
-    message = "Could not find an attached device."
+    message = _("Could not find an attached device.")
     assert view.show_message.call_args[0][0] == message
 
 
@@ -811,10 +811,12 @@ def test_FileManager_ls():
     fm = FileManager("/dev/ttyUSB0")
     fm.serial = mock.MagicMock()
     fm.on_list_files = mock.MagicMock()
-    mock_ls = mock.MagicMock(return_value=["foo.py", "bar.py"])
-    with mock.patch("mu.modes.base.microfs.ls", mock_ls):
+    mock_ls = mock.MagicMock(return_value=[("foo.py", False), ("bar.py", False)])
+    with mock.patch("mu.modes.base.microfs.ls_with_types", mock_ls):
         fm.ls()
-    fm.on_list_files.emit.assert_called_once_with(("foo.py", "bar.py"))
+    fm.on_list_files.emit.assert_called_once_with(
+        ("foo.py", "bar.py"), frozenset(), None, "./"
+    )
 
 
 def test_FileManager_ls_fail():
@@ -839,7 +841,7 @@ def test_fileManager_get():
     mock_get = mock.MagicMock()
     with mock.patch("mu.modes.base.microfs.get", mock_get):
         fm.get("foo.py", "bar.py")
-    mock_get.assert_called_once_with("foo.py", "bar.py", serial=fm.serial)
+    mock_get.assert_called_once_with(fm, "foo.py", "bar.py", serial=fm.serial)
     fm.on_get_file.emit.assert_called_once_with("foo.py")
 
 
@@ -868,7 +870,7 @@ def test_FileManager_put():
     path = os.path.join("directory", "foo.py")
     with mock.patch("mu.modes.base.microfs.put", mock_put):
         fm.put(path)
-    mock_put.assert_called_once_with(path, target=None, serial=fm.serial)
+    mock_put.assert_called_once_with(fm, path, target=None, serial=fm.serial)
     fm.on_put_file.emit.assert_called_once_with("foo.py")
 
 
