@@ -46,7 +46,7 @@ jobs:
           make macos
           mv dist/*.dmg upload/
       - name: Upload Mu installer
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mu-editor-${{ runner.os }}-${{ github.sha }}
           path: upload
@@ -83,7 +83,7 @@ jobs:
           tar -cvf Mu_Editor-AppImage-x86_64-${{ github.sha }}.tar *.AppImage
           ls -la .
       - name: Upload Mu AppImage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mu-editor-${{ runner.os }}-${{ github.sha }}
           path: dist/Mu_Editor-AppImage-x86_64-${{ github.sha }}.tar
