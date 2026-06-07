@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         # macos-13 is the latest release on x86, and macos-14 is arm64
-        os: [ubuntu-20.04, ubuntu-latest, macos-13, macos-14, windows-latest]
+        os: [macos-14, windows-latest]
         python-version: ['3.10', '3.11', '3.12']
       fail-fast: false
     runs-on: ${{ matrix.os }}
