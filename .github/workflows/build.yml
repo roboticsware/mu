@@ -51,31 +51,3 @@ jobs:
           name: mu-editor-${{ runner.os }}-${{ github.sha }}
           path: upload
 
-  build-linux:
-    runs-on: ubuntu-latest
-    name: Build AppImage
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Linux AppImage
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            -e QT_QPA_PLATFORM=offscreen \
-            ghcr.io/mu-editor/mu-appimage:2022.05.01 \
-            sh -c "pip install .[tests] && make linux"
-      - name: Fix file permissions
-        run: |
-          sudo chown -R $USER:$USER ${{ github.workspace }}
-      # GitHub actions upload artifact breaks permissions, workaround using tar
-      # https://github.com/actions/upload-artifact/issues/38
-      - name: Tar AppImage to maintain permissions
-        run: |
-          cd dist/
-          tar -cvf Mu_Editor-AppImage-x86_64-${{ github.sha }}.tar *.AppImage
-          ls -la .
-      - name: Upload Mu AppImage
-        uses: actions/upload-artifact@v4
-        with:
-          name: mu-editor-${{ runner.os }}-${{ github.sha }}
-          path: dist/Mu_Editor-AppImage-x86_64-${{ github.sha }}.tar
