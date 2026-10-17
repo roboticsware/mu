@@ -22,15 +22,15 @@ import re
 import logging
 import os.path
 from collections import defaultdict
-from PyQt6.Qsci import (
+from mu.qt.Qsci import (
     QsciScintilla,
     QsciLexerPython,
     QsciLexerHTML,
     QsciAPIs,
     QsciLexerCSS,
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QThread, QObject
-from PyQt6.QtWidgets import QApplication
+from mu.qt.QtCore import Qt, pyqtSignal, QThread, QObject
+from mu.qt.QtWidgets import QApplication
 from mu.interface.themes import Font, DayTheme
 from mu.logic import NEWLINE
 from mu import config as mu_config

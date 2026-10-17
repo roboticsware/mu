@@ -4,8 +4,8 @@ MicroPython package manager widget.
 import os
 import shutil
 import tempfile
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtWidgets import (
+from mu.qt.QtCore import Qt, QThread, pyqtSignal
+from mu.qt.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
@@ -180,7 +180,7 @@ class MicroPythonPackagesWidget(QWidget):
         self.notice_label.setStyleSheet("color: #888; font-size: 10px; margin-bottom: 5px;")
         layout.addWidget(self.notice_label)
 
-        from PyQt6.QtWidgets import QProgressBar, QTextBrowser
+        from mu.qt.QtWidgets import QProgressBar, QTextBrowser
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 0)
         self.progress_bar.hide()

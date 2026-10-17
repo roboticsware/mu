@@ -20,7 +20,7 @@ import logging
 from mu.modes.base import MicroPythonMode, FileManager
 from mu.modes.api import ESP_APIS, SHARED_APIS
 from mu.interface.panes import CHARTS
-from PyQt6.QtCore import QThread
+from mu.qt.QtCore import QThread
 import os
 from mu.resources import load_icon
 

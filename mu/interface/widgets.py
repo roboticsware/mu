@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from PyQt6.QtCore import QSize, Qt, pyqtSignal
-from PyQt6.QtWidgets import (
+from mu.qt.QtCore import QSize, Qt, pyqtSignal
+from mu.qt.QtWidgets import (
     QHBoxLayout,
     QWidget,
     QLabel,

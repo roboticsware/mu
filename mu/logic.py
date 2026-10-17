@@ -30,9 +30,9 @@ import locale
 import shutil
 
 import platformdirs
-from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtCore import QObject, pyqtSignal
-from PyQt6 import QtCore
+from mu.qt.QtWidgets import QMessageBox
+from mu.qt.QtCore import QObject, pyqtSignal
+from mu.qt import QtCore
 from pyflakes.api import check
 from pycodestyle import StyleGuide, Checker
 
@@ -1588,8 +1588,8 @@ class Editor(QObject):
 
             active_mode = self.modes[self.mode]
             
-            from PyQt6.QtWidgets import QApplication, QMessageBox
-            from PyQt6.QtCore import Qt
+            from mu.qt.QtWidgets import QApplication, QMessageBox
+            from mu.qt.QtCore import Qt
             
             QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
             try:

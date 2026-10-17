@@ -15,7 +15,7 @@ try:
 except ImportError:
     pass
 
-from PyQt6.QtCore import (
+from mu.qt.QtCore import (
     QObject,
     QProcess,
     pyqtSignal,
@@ -93,8 +93,8 @@ class Process(QObject):
 
     eg::
         import sys
-        from PyQt6.QtCore import *
-        from PyQt6.QtWidgets import *
+        from mu.qt.QtCore import *
+        from mu.qt.QtWidgets import *
 
         class Example(QMainWindow):
 

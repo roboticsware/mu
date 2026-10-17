@@ -17,8 +17,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from PyQt6.QtGui import QPixmap, QIcon, QMovie
-from PyQt6.QtCore import QDir
+from mu.qt.QtGui import QPixmap, QIcon, QMovie
+from mu.qt.QtCore import QDir
 import os
 
 _RESOURCES_DIR = os.path.dirname(os.path.abspath(__file__))

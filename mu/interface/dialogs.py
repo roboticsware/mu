@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
 import logging
-from PyQt6.QtCore import QSize, QProcess, QTimer, Qt
+from mu.qt.QtCore import QSize, QProcess, QTimer, Qt
 
-from PyQt6.QtWidgets import (
+from mu.qt.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QGridLayout,
@@ -39,7 +39,7 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QComboBox,
 )
-from PyQt6.QtGui import QTextCursor
+from mu.qt.QtGui import QTextCursor
 from mu.resources import load_icon
 from mu.interface.widgets import DeviceSelector
 from ..virtual_environment import venv
@@ -638,14 +638,14 @@ class AdminDialog(QDialog):
 
     def accept(self):
         if getattr(self, "mip_packages_widget", None) and getattr(self.mip_packages_widget, "is_installing", False):
-            from PyQt6.QtWidgets import QMessageBox
+            from mu.qt.QtWidgets import QMessageBox
             QMessageBox.warning(self, _("Installing"), _("Please wait until the package installation is complete before closing."))
             return
         super().accept()
 
     def reject(self):
         if getattr(self, "mip_packages_widget", None) and getattr(self.mip_packages_widget, "is_installing", False):
-            from PyQt6.QtWidgets import QMessageBox
+            from mu.qt.QtWidgets import QMessageBox
             QMessageBox.warning(self, _("Installing"), _("Please wait until the package installation is complete before closing."))
             return
         super().reject()

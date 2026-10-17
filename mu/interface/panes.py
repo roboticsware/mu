@@ -28,7 +28,7 @@ import shutil
 import os.path
 import codecs
 
-from PyQt6.QtCore import (
+from mu.qt.QtCore import (
     Qt,
     QProcess,
     QProcessEnvironment,
@@ -38,7 +38,7 @@ from PyQt6.QtCore import (
     QEvent,
 )
 from collections import deque
-from PyQt6.QtWidgets import (
+from mu.qt.QtWidgets import (
     QMessageBox,
     QTextEdit,
     QFrame,
@@ -52,7 +52,7 @@ from PyQt6.QtWidgets import (
     QApplication,
     QAbstractItemView,
 )
-from PyQt6.QtGui import (
+from mu.qt.QtGui import (
     QKeySequence,
     QTextCursor,
     QCursor,
@@ -76,7 +76,7 @@ logger = logging.getLogger(__name__)
 
 CHARTS = True
 try:  # pragma: no cover
-    from PyQt6.QtCharts import QChart, QLineSeries, QChartView, QValueAxis
+    from mu.qt.QtCharts import QChart, QLineSeries, QChartView, QValueAxis
 except Exception:  # pragma: no cover
     logger.info("Unable to find QChart. Plotter button will not display.")
     QChartView = object

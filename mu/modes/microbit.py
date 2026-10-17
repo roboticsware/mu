@@ -23,7 +23,7 @@ import time
 from tokenize import TokenError
 
 import semver
-from PyQt6.QtCore import QThread, pyqtSignal
+from mu.qt.QtCore import QThread, pyqtSignal
 
 from mu.logic import sniff_newline_convention
 from mu.contrib import uflash, microfs

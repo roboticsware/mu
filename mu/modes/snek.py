@@ -20,8 +20,8 @@ import logging
 from .base import MicroPythonMode, REPLConnection
 from .api import SNEK_APIS
 from mu.interface.panes import CHARTS
-from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtCore import QTimer
+from mu.qt.QtWidgets import QMessageBox
+from mu.qt.QtCore import QTimer
 
 logger = logging.getLogger(__name__)
 

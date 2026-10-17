@@ -24,8 +24,8 @@ import time
 import logging
 import pkgutil
 from serial import Serial
-from PyQt6.QtSerialPort import QSerialPort, QSerialPortInfo
-from PyQt6.QtCore import QObject, pyqtSignal, QIODevice, QTimer
+from mu.qt.QtSerialPort import QSerialPort, QSerialPortInfo
+from mu.qt.QtCore import QObject, pyqtSignal, QIODevice, QTimer
 from mu.logic import Device
 from mu.contrib import microfs
 from .. import config, settings

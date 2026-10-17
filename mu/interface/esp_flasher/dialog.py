@@ -13,8 +13,8 @@ active mode is "esp".
 import logging
 import os
 
-from PyQt6.QtCore import QObject, QThread, pyqtSignal, Qt
-from PyQt6.QtWidgets import (
+from mu.qt.QtCore import QObject, QThread, pyqtSignal, Qt
+from mu.qt.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,

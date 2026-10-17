@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import logging
 import os.path
-from PyQt6.QtCore import QSize, Qt, pyqtSignal, QTimer, QThread
-from PyQt6.QtWidgets import (
+from mu.qt.QtCore import QSize, Qt, pyqtSignal, QTimer, QThread
+from mu.qt.QtWidgets import (
     QToolBar,
     QWidget,
     QVBoxLayout,
@@ -38,7 +38,7 @@ from PyQt6.QtWidgets import (
     QProgressDialog,
     QProgressBar,
 )
-from PyQt6.QtGui import (
+from mu.qt.QtGui import (
     QKeySequence,
     QStandardItemModel,
     QCursor,

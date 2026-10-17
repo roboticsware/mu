@@ -31,7 +31,7 @@ import urllib
 import webbrowser
 import base64
 
-from PyQt6.QtCore import (
+from mu.qt.QtCore import (
     Qt,
     QEventLoop,
     QThread,
@@ -39,7 +39,7 @@ from PyQt6.QtCore import (
     pyqtSignal,
     QSharedMemory,
 )
-from PyQt6.QtWidgets import QApplication, QSplashScreen
+from mu.qt.QtWidgets import QApplication, QSplashScreen
 
 from . import i18n
 from .virtual_environment import venv, logger as vlogger
