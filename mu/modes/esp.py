@@ -52,6 +52,7 @@ class ESPMode(MicroPythonMode):
     valid_boards = [
         # VID  , PID,    Manufacturer string, Device name
         (0x1A86, 0x7523, None, "HL-340"),
+        (0x1A86, 0x55D3, None, "CH343"),
         # Because the mode detection order is fixed by alphabetical ordering rule
         # there is no chance to get early device detection of Neopia Mode so that this line is commented.
         # (0x10C4, 0xEA60, None, "CP210x"),
