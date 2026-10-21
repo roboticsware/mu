@@ -974,6 +974,7 @@ class VirtualEnvironment(object):
                 logger.warning("No wheels found to install.")
                 return
             logger.info(f"Installing {len(all_wheels)} wheels at once using uv.")
+            uv_success = False
             try:
                 uv_path = self.get_internal_uv_path()
                 args = [
@@ -982,19 +983,38 @@ class VirtualEnvironment(object):
                     "--python", self.interpreter,
                     "--no-index",
                     "--find-links", unpacked_wheels_dirpath,
+                    "--link-mode", "copy",
                 ] + all_wheels 
                 env["VIRTUAL_ENV"] = os.path.dirname(os.path.dirname(self.interpreter))
                 ok, output = self.run_subprocess(*args, env=env)
                 if ok:
-                    logger.info("All wheel files were successfully installed.")
+                    logger.info("All wheel files were successfully installed using uv.")
+                    uv_success = True
                 else:
-                    raise VirtualEnvironmentCreateError(
-                        f"Failed to install wheels: {output}"
+                    logger.warning(
+                        "Failed to install wheels with uv: %s. Falling back to standard pip.",
+                        output,
                     )
-            except VirtualEnvironmentError:
-                raise
             except Exception as e:
-                raise VirtualEnvironmentCreateError(f"Failed to install wheels: {e}")
+                logger.warning(
+                    "Error executing uv: %s. Falling back to standard pip.", e
+                )
+
+            if not uv_success:
+                logger.info("Installing wheels using standard pip fallback.")
+                self.reset_pip()
+                try:
+                    self.pip.install(
+                        all_wheels,
+                        find_links=unpacked_wheels_dirpath,
+                        no_index=True,
+                    )
+                    logger.info("All wheel files were successfully installed via pip fallback.")
+                except Exception as pip_err:
+                    logger.error("Standard pip fallback also failed: %s", pip_err)
+                    raise VirtualEnvironmentCreateError(
+                        f"Failed to install wheels: {pip_err}"
+                    )
 
     def install_baseline_packages(self):
         """
