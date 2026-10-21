@@ -42,7 +42,9 @@ mode_packages = [
     ("flask", ("flask==2.0.3", "Werkzeug<3.0.0")),
     # The version of ipykernel here should match to the version used by
     # qtconsole at the version specified in setup.py
-    ("ipykernel", ("ipykernel>=6.0",)),
+    # ipykernel max ver added for macOS 10.13 compatibility, min taken
+    # from setup.py. This is version has to mirror the one from setup.py
+    ("ipykernel", ("ipykernel>=5.5.6,<6",)),
     # For Neopia mode. We group these together to help pip resolve the 
     # conflict between opencv-python and opencv-contrib-python.
     (
