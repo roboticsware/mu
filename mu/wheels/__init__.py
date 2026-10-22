@@ -35,7 +35,10 @@ ZIP_FILEPATH = os.path.join(WHEELS_DIRPATH, mu_version + ".zip")
 # The first element should be the importable name (so "serial" rather than "pyserial")
 # The second element is passed to `pip download|install`
 # Any additional elements are passed to `pip` for specific purposes
-#
+# Check if running in a 32-bit environment
+import struct
+is_32bit = struct.calcsize("P") * 8 == 32
+
 mode_packages = [
     ("pgzero", ("pgzero>=1.2.1", "pyinstaller")),
     # Lock Werkzeug to < 3.0.0: import flask fails, otherwise.
@@ -45,15 +48,29 @@ mode_packages = [
     # ipykernel max ver added for macOS 10.13 compatibility, min taken
     # from setup.py. This is version has to mirror the one from setup.py
     ("ipykernel", ("ipykernel>=5.5.6,<6",)),
-    # For Neopia mode. We group these together to help pip resolve the 
-    # conflict between opencv-python and opencv-contrib-python.
-    (
-        "neopia", 
-        ("neopia>=0.4.0", "mediapipe==0.10.11", "opencv-contrib-python<=4.10.0.84", "opencv-python<=4.10.0.84"),
-    ),
-    # For pgzero's extenstion
-    ("pgzhelper", ("pgzhelper_rw>=1.0.10",)),
 ]
+
+if is_32bit and sys.platform == "win32":
+    # MediaPipe is 64-bit only; for 32-bit Windows use legacy neopia <= 0.3.6 without mediapipe
+    mode_packages.append(
+        (
+            "neopia",
+            ("neopia<=0.3.6", "opencv-contrib-python<=4.10.0.84", "opencv-python<=4.10.0.84"),
+        )
+    )
+else:
+    # For Neopia mode on 64-bit / modern systems
+    mode_packages.append(
+        (
+            "neopia",
+            ("neopia>=0.4.0", "mediapipe==0.10.11", "opencv-contrib-python<=4.10.0.84", "opencv-python<=4.10.0.84"),
+        )
+    )
+
+mode_packages.append(
+    # For pgzero's extension
+    ("pgzhelper", ("pgzhelper_rw>=1.0.10",)),
+)
 
 
 def os_compatibility_flags():
