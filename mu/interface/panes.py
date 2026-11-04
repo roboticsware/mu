@@ -577,6 +577,13 @@ class MicroPythonREPLPane(QTextEdit):
                 self.device_cursor_position = tc.position() + 1
                 self.setTextCursor(tc)
                 self.insertPlainText(data[i])
+            elif data[i] == "\x04" or (
+                ord(data[i]) < 32
+                and data[i] not in ("\t", "\n", "\r", "\b", "\x1b")
+            ):
+                # Non-printable control characters (such as EOT \x04 from raw REPL)
+                # should not be inserted into the text widget as broken glyphs.
+                pass
             else:
                 # Char received, with VT100 that should be interpreted
                 # as overwrite the char in front of the cursor

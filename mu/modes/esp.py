@@ -40,6 +40,35 @@ class ESPMode(MicroPythonMode):
     icon = "esp"
     fs = None
     running = False
+    dtr = False
+    rts = False
+
+    def reset_board_to_normal(self, port):
+        """
+        Hard reset the ESP board out of download mode into normal MicroPython run mode
+        by pulsing RTS (EN=Low->High) while DTR=False (IO0=High). (Thonny style)
+        """
+        try:
+            from serial import Serial
+            import time
+            with Serial(port, 115200, rtscts=False, dsrdtr=False) as s:
+                s.dtr = False
+                s.rts = True
+                time.sleep(0.1)
+                s.rts = False
+                time.sleep(0.1)
+            logger.info("Pulsed RTS to reset ESP board on %s to normal mode.", port)
+        except Exception as ex:
+            logger.warning("Could not pulse reset on %s: %s", port, ex)
+
+    def add_repl(self):
+        """
+        Ensure board is out of bootloader mode before connecting REPL.
+        """
+        device = self.editor.current_device
+        if device and not self.connection:
+            self.reset_board_to_normal(device.port)
+        super().add_repl()
 
     # The below list defines the supported devices, however, many
     # devices are using the exact same FTDI USB-interface, with vendor
@@ -200,18 +229,27 @@ class ESPMode(MicroPythonMode):
             self.set_buttons(files=False)
             self.set_buttons(repl=False)
             python_script = tab.text().split("\n")
+            just_opened = False
             if not self.repl:
                 self.toggle_repl(None) # On
+                just_opened = True
             if self.repl and self.connection:
-                self.connection.send_commands(python_script)
+                if just_opened:
+                    # Allow ESP32 hardware to settle and finish rebooting after port open before sending code
+                    from mu.qt.QtCore import QTimer
+                    QTimer.singleShot(500, lambda: self.connection.send_commands(python_script) if self.connection else None)
+                else:
+                    self.connection.send_commands(python_script)
             self.running =  True
         else:
             run_slot.setIcon(load_icon("run"))
             run_slot.setText(_("Run"))
             self.set_buttons(files=True)
             self.set_buttons(repl=True)
-            self.toggle_repl(None) # Off
-            self.toggle_repl(None) # On - Reset
+            if self.repl:
+                self.toggle_repl(None) # Off
+            if self.editor.current_device:
+                self.reset_board_to_normal(self.editor.current_device.port)
             self.running = False
 
     def toggle_files(self, event):
@@ -290,8 +328,9 @@ class ESPMode(MicroPythonMode):
             )
             self.view.show_message(message, information)
             return
+        self.reset_board_to_normal(device.port)
         self.file_manager_thread = QThread(self)
-        self.file_manager = FileManager(device.port, boot_delay=1.5)
+        self.file_manager = FileManager(device.port, boot_delay=1.5, dtr=False, rts=False)
         self.file_manager.moveToThread(self.file_manager_thread)
         self.file_manager_thread.started.connect(self.file_manager.on_start)
 

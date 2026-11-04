@@ -36,6 +36,12 @@ class PicoMode(ESPMode):
     description = _("Write MicroPython directly on a Raspberry Pi Pico.")
     icon = "pico"
     fs = None
+    dtr = True
+    rts = False
+
+    def reset_board_to_normal(self, port):
+        """RP2040 does not use the ESP32 transistor auto-reset circuit."""
+        pass
 
     valid_boards = [
         # VID  , PID,    Manufacturer string, Device name

@@ -80,11 +80,13 @@ class REPLConnection(QObject):
     data_received = pyqtSignal(bytes)
     connection_error = pyqtSignal(str)
 
-    def __init__(self, port, baudrate=115200):
+    def __init__(self, port, baudrate=115200, dtr=True, rts=False):
         super().__init__()
         self.serial = QSerialPort()
         self._port = port
         self._baudrate = baudrate
+        self.dtr = dtr
+        self.rts = rts
         self.serial.setPortName(port)
         self.serial.setBaudRate(baudrate)
 
@@ -115,16 +117,19 @@ class REPLConnection(QObject):
             msg = _("Cannot connect to device on port {}").format(self.port)
             raise IOError(msg)
 
-        self.serial.setDataTerminalReady(True)
-        if not self.serial.isDataTerminalReady():
-            # Using pyserial as a 'hack' to open the port and set DTR
-            # as QtSerial does not seem to work on some Windows :(
-            # See issues #281 and #302 for details.
-            self.serial.close()
-            pyser = Serial(self.port)  # open serial port w/pyserial
-            pyser.dtr = True
-            pyser.close()
-            self.serial.open(QIODevice.ReadWrite)
+        if self.dtr is not None:
+            self.serial.setDataTerminalReady(self.dtr)
+            if self.dtr and not self.serial.isDataTerminalReady():
+                # Using pyserial as a 'hack' to open the port and set DTR
+                # as QtSerial does not seem to work on some Windows :(
+                # See issues #281 and #302 for details.
+                self.serial.close()
+                pyser = Serial(self.port)  # open serial port w/pyserial
+                pyser.dtr = True
+                pyser.close()
+                self.serial.open(QIODevice.ReadWrite)
+        if self.rts is not None:
+            self.serial.setRequestToSend(self.rts)
         self.serial.readyRead.connect(self._on_serial_read)
 
         logger.info("Connected to REPL on port: {}".format(self.port))
@@ -163,28 +168,24 @@ class REPLConnection(QObject):
             self.write(command)
             remainder = commands[1:]
             remaining_task = lambda commands=remainder: self.execute(commands)
-            QTimer.singleShot(2, remaining_task)
+            QTimer.singleShot(5, remaining_task)
 
     def send_commands(self, commands):
         """
         Send commands to the REPL via raw mode.
         """
-        # Sequence of commands to get into raw mode (From pyboard.py).
+        # Clean sequence to stop running loops and enter raw REPL
         raw_on = [
             KEYBOARD_INTERRUPT,
             KEYBOARD_INTERRUPT,
             ENTER_RAW_MODE,
-            SOFT_REBOOT,
-            KEYBOARD_INTERRUPT,
-            KEYBOARD_INTERRUPT,
         ]
 
-        newline = [b'print("\\n");']
-        commands = [c.encode("utf-8") + b"\r" for c in commands]
-        commands.append(b"\r")
-        commands.append(SOFT_REBOOT)
-        raw_off = [EXIT_RAW_MODE]
-        command_sequence = raw_on + newline + commands + raw_off
+        commands = [c.encode("utf-8") + b"\r\n" for c in commands]
+        commands.append(b"\r\n")
+        # In raw mode, Ctrl-D (EOT) compiles and starts execution of the commands
+        run_code = [SOFT_REBOOT]
+        command_sequence = raw_on + commands + run_code
         logger.info(command_sequence)
         self.execute(command_sequence)
 
@@ -401,6 +402,8 @@ class MicroPythonMode(BaseMode):
     connection = None
     baudrate = 115200
     builtins = ["const"]
+    dtr = True
+    rts = False
 
     def compatible_board(self, port):
         """
@@ -514,7 +517,7 @@ class MicroPythonMode(BaseMode):
             try:
                 if not self.connection:
                     self.connection = REPLConnection(
-                        device.port, self.baudrate
+                        device.port, self.baudrate, dtr=self.dtr, rts=self.rts
                     )
                     self.connection.open()
                     if self.force_interrupt:
@@ -694,13 +697,15 @@ class FileManager(QObject):
     # Emitted when a mkdir operation fails.
     on_mkdir_fail = pyqtSignal(str)    # dir_path
 
-    def __init__(self, port, boot_delay=0):
+    def __init__(self, port, boot_delay=0, dtr=None, rts=None):
         """
         Initialise with a port.
         """
         super().__init__()
         self.port = port
         self.boot_delay = boot_delay
+        self.dtr = dtr
+        self.rts = rts
 
     def on_start(self):
         """
@@ -714,7 +719,13 @@ class FileManager(QObject):
                 115200,
                 timeout=settings.settings.get("serial_timeout", 2),
                 parity="N",
+                rtscts=False,
+                dsrdtr=False,
             )
+            if self.dtr is not None:
+                self.serial.dtr = self.dtr
+            if self.rts is not None:
+                self.serial.rts = self.rts
             if self.boot_delay:
                 import time
                 time.sleep(self.boot_delay)

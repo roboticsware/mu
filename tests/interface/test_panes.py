@@ -788,6 +788,19 @@ def test_MicroPythonREPLPane_process_tty_data_printed_chars():
     assert rp.device_cursor_position == 13
 
 
+def test_MicroPythonREPLPane_process_tty_data_raw_repl_eot():
+    """
+    Ensure raw REPL EOT control characters (\x04) are ignored and not
+    inserted as visible/broken characters into the pane.
+    """
+    mock_repl_connection = mock.MagicMock()
+    rp = mu.interface.panes.MicroPythonREPLPane(mock_repl_connection)
+    rp.setPlainText("")
+    rp.process_tty_data(b"\x04\x04>")
+    assert rp.toPlainText() == ">"
+
+
+
 def test_MicroPythonREPLPane_process_tty_data_vt100_cursor_left():
     """
     Ensure left cursor movement of several steps works correctly

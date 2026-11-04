@@ -63,6 +63,11 @@ def __getattr__(name):
             )
         return _esp_led
     if name == "esp_temp_sensor":
+        if _esp_temp_sensor is None:
+            raise RuntimeError(
+                "[espzero] ERROR: 'esp_temp_sensor' is not initialized. "
+                "You must call espzero.begin() first."
+            )
         return _esp_temp_sensor
     raise AttributeError("module 'espzero' has no attribute '{}'".format(name))
 
@@ -142,6 +147,7 @@ from ._core import (
     ESPTemperatureSensor,
     DigitalOutputDevice, PWMOutputDevice,
     DigitalInputDevice, AnalogInputDevice,
+    I2cLcd, GpioLcd,
 )
 from ._wifi  import WiFi
 from ._touch import CapTouch

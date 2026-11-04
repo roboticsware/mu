@@ -330,7 +330,7 @@ def LED(pin, pwm=True, active_high=True, initial_value=False):
         return DigitalLED(pin=pin, active_high=active_high, initial_value=initial_value)
 
 
-class NeoPixelLED(OutputDevice):
+class NeoPixelLED(OutputDevice, PinMixin):
     """WS2812 single-pixel wrapper for boards with a built-in RGB LED.
     Automatically used when INTERNAL_LED_TYPE == 'neopixel'.
     """
@@ -339,10 +339,21 @@ class NeoPixelLED(OutputDevice):
         self._np = neopixel.NeoPixel(Pin(pin), 1)
         self._color = color
         self._pin_num = pin
+        self._state = False
         super().__init__(active_high, initial_value)
 
+    def _value_to_state(self, value):
+        return bool(self._active_state if value else self._inactive_state)
+
+    def _state_to_value(self, state):
+        return int(bool(state) == self._active_state)
+
+    def _read(self):
+        return self._state_to_value(self._state)
+
     def _write(self, value):
-        self._np[0] = self._color if self._value_to_state(value) else (0, 0, 0)
+        self._state = self._value_to_state(value)
+        self._np[0] = self._color if self._state else (0, 0, 0)
         self._np.write()
 
     def close(self):
@@ -766,13 +777,22 @@ class ESPTemperatureSensor:
     def temp(self):
         try:
             import esp32
-            return esp32.raw_temperature() / 100.0
+            if hasattr(esp32, "mcu_temperature"):
+                return float(esp32.mcu_temperature())
+            elif hasattr(esp32, "raw_temperature"):
+                raw = esp32.raw_temperature()
+                # On classic ESP32, raw_temperature returns Fahrenheit (~100..150)
+                # Convert F to C: (F - 32) * 5/9
+                if raw > 60:
+                    return round((raw - 32.0) * 5.0 / 9.0, 1)
+                return float(raw)
         except Exception:
-            return None
+            pass
+        return None
 
 
 class DistanceSensor(PinsMixin):
-    def __init__(self, echo, trigger, max_distance=1.0):
+    def __init__(self, echo, trigger, max_distance=400):
         self._pin_nums = (echo, trigger)
         self._max_distance = max_distance
         self._echo    = Pin(echo, mode=Pin.IN, pull=Pin.PULL_DOWN)
@@ -791,7 +811,8 @@ class DistanceSensor(PinsMixin):
                 echo_off = ticks_us()
         if echo_off is None:
             return None
-        dist = ((echo_off - echo_on) * 0.000343) / 2
+        # Use 0.0343 for centimeters (matches picozero 0.6.2)
+        dist = ((echo_off - echo_on) * 0.0343) / 2
         return min(dist, self._max_distance)
 
     @property
@@ -823,17 +844,33 @@ class Stepper(PinsMixin):
         self._steps_per_rotation = steps_per_rotation
         self._current_step = 0
         self._step_count = 0
+        if step_sequence not in self.STEP_SEQUENCES:
+            raise ValueError(f"Invalid step_sequence. Must be one of: {list(self.STEP_SEQUENCES.keys())}")
+        self._step_sequence = step_sequence
         self._sequence = self.STEP_SEQUENCES[step_sequence]
         self._set_step([0,0,0,0])
+
+    def _normalise_direction(self, direction):
+        if isinstance(direction, str):
+            direction_lower = direction.lower().strip()
+            if direction_lower in ("cw", "clockwise"): return 1
+            elif direction_lower in ("ccw", "counter-clockwise", "counterclockwise"): return -1
+            else: raise ValueError(f"Invalid direction string: '{direction}'.")
+        else:
+            return 1 if direction >= 0 else -1
 
     def _set_step(self, pattern):
         for pin, state in zip(self._pins, pattern):
             pin.value = state
 
     def _single_step(self, direction=1):
-        d = 1 if direction >= 0 else -1
-        self._current_step = (self._current_step + d) % len(self._sequence)
-        self._step_count += d
+        normalised_direction = self._normalise_direction(direction)
+        if normalised_direction > 0:
+            self._current_step = (self._current_step + 1) % len(self._sequence)
+            self._step_count += 1
+        else:
+            self._current_step = (self._current_step - 1) % len(self._sequence)
+            self._step_count -= 1
         self._set_step(self._sequence[self._current_step])
         sleep(self._step_delay)
 
@@ -841,8 +878,317 @@ class Stepper(PinsMixin):
         for _ in range(abs(int(steps))):
             self._single_step(direction)
 
+    def step_to(self, steps, direction):
+        target_steps = int(steps)
+        current_steps = self._step_count
+        normalised_dir = self._normalise_direction(direction)
+        if normalised_dir > 0:
+            distance = target_steps - current_steps
+            if distance > 0: self.step(distance, direction)
+            elif distance < 0: self.step(self._steps_per_rotation + distance, direction)
+        else:
+            if target_steps > 0: self.step(target_steps, direction)
+
+    def turn(self, angle, direction):
+        angle = abs(float(angle))
+        steps = int((angle / 360.0) * self._steps_per_rotation)
+        self.step(steps, direction)
+
+    def rotate(self, rotations, direction):
+        rotations = abs(float(rotations))
+        steps = int(rotations * self._steps_per_rotation)
+        self.step(steps, direction)
+
+    def turn_to(self, angle, direction):
+        target_angle = abs(float(angle)) % 360.0
+        current_angle = self.angle
+        if self._normalise_direction(direction) > 0:
+            if target_angle >= current_angle: rotation_angle = target_angle - current_angle
+            else: rotation_angle = 360.0 - current_angle + target_angle
+        else:
+            if target_angle <= current_angle: rotation_angle = current_angle - target_angle
+            else: rotation_angle = current_angle + (360.0 - target_angle)
+        steps = int((rotation_angle / 360.0) * self._steps_per_rotation)
+        if steps > 0: self.step(steps, direction)
+
+    def reset_position(self): self._step_count = 0
     def off(self): self._set_step([0,0,0,0])
+
+    def set_speed(self, rpm):
+        rpm = float(rpm)
+        if rpm <= 0: raise ValueError("RPM must be positive")
+        self._step_delay = 60.0 / (rpm * self._steps_per_rotation)
+
+    def run_continuous(self, seconds=None, direction=1):
+        if seconds is None:
+            try:
+                while True: self._single_step(direction)
+            except KeyboardInterrupt:
+                self.off()
+        else:
+            seconds = abs(float(seconds))
+            end_time = ticks_ms() + int(seconds * 1000)
+            while ticks_ms() < end_time: self._single_step(direction)
+            self.off()
+
+    @property
+    def step_delay(self): return self._step_delay
+    @step_delay.setter
+    def step_delay(self, value): self._step_delay = float(value)
+
+    @property
+    def step_count(self): return self._step_count
+
+    @property
+    def angle(self): return ((self._step_count / self._steps_per_rotation) * 360.0) % 360.0
+
+    @property
+    def steps_per_rotation(self): return self._steps_per_rotation
 
     def close(self):
         self.off()
         for p in self._pins: p.close()
+
+
+# --- LCD Display Classes ---
+
+MASK_RS = 0x01
+MASK_RW = 0x02
+MASK_E = 0x04
+SHIFT_BACKLIGHT = 3
+SHIFT_DATA = 4
+
+class LcdApi:
+    LCD_CLR = 0x01
+    LCD_HOME = 0x02
+    LCD_ENTRY_MODE = 0x04
+    LCD_ENTRY_INC = 0x02
+    LCD_ENTRY_SHIFT = 0x01
+    LCD_ON_CTRL = 0x08
+    LCD_ON_DISPLAY = 0x04
+    LCD_ON_CURSOR = 0x02
+    LCD_ON_BLINK = 0x01
+    LCD_MOVE = 0x10
+    LCD_MOVE_DISP = 0x08
+    LCD_MOVE_RIGHT = 0x04
+    LCD_FUNCTION = 0x20
+    LCD_FUNCTION_8BIT = 0x10
+    LCD_FUNCTION_2LINES = 0x08
+    LCD_FUNCTION_10DOTS = 0x04
+    LCD_FUNCTION_RESET = 0x30
+    LCD_CGRAM = 0x40
+    LCD_DDRAM = 0x80
+
+    def __init__(self, num_lines, num_columns):
+        self.num_lines = min(num_lines, 4)
+        self.num_columns = min(num_columns, 40)
+        self.cursor_x = 0
+        self.cursor_y = 0
+        self.implied_newline = False
+        self.backlight = True
+        self.display_off()
+        self.backlight_on()
+        self.clear()
+        self.hal_write_command(self.LCD_ENTRY_MODE | self.LCD_ENTRY_INC)
+        self.hide_cursor()
+        self.display_on()
+
+    def clear(self):
+        self.hal_write_command(self.LCD_CLR)
+        self.hal_write_command(self.LCD_HOME)
+        self.cursor_x = 0
+        self.cursor_y = 0
+
+    def show_cursor(self): self.hal_write_command(self.LCD_ON_CTRL | self.LCD_ON_DISPLAY | self.LCD_ON_CURSOR)
+    def hide_cursor(self): self.hal_write_command(self.LCD_ON_CTRL | self.LCD_ON_DISPLAY)
+    def blink_cursor_on(self): self.hal_write_command(self.LCD_ON_CTRL | self.LCD_ON_DISPLAY | self.LCD_ON_CURSOR | self.LCD_ON_BLINK)
+    def blink_cursor_off(self): self.hal_write_command(self.LCD_ON_CTRL | self.LCD_ON_DISPLAY | self.LCD_ON_CURSOR)
+    def display_on(self): self.hal_write_command(self.LCD_ON_CTRL | self.LCD_ON_DISPLAY)
+    def display_off(self): self.hal_write_command(self.LCD_ON_CTRL)
+
+    def backlight_on(self):
+        self.backlight = True
+        self.hal_backlight_on()
+
+    def backlight_off(self):
+        self.backlight = False
+        self.hal_backlight_off()
+
+    def move_to(self, cursor_x, cursor_y):
+        self.cursor_x = cursor_x
+        self.cursor_y = cursor_y
+        addr = cursor_x & 0x3f
+        if cursor_y & 1: addr += 0x40
+        if cursor_y & 2: addr += self.num_columns
+        self.hal_write_command(self.LCD_DDRAM | addr)
+
+    def putchar(self, char):
+        if char == '\n':
+            if not self.implied_newline:
+                self.cursor_x = self.num_columns
+        else:
+            self.hal_write_data(ord(char))
+            self.cursor_x += 1
+        if self.cursor_x >= self.num_columns:
+            self.cursor_x = 0
+            self.cursor_y += 1
+            self.implied_newline = (char != '\n')
+        if self.cursor_y >= self.num_lines:
+            self.cursor_y = 0
+        self.move_to(self.cursor_x, self.cursor_y)
+
+    def putstr(self, string):
+        for char in string: self.putchar(char)
+
+    def custom_char(self, location, charmap):
+        location &= 0x7
+        self.hal_write_command(self.LCD_CGRAM | (location << 3))
+        self.hal_sleep_us(40)
+        for i in range(8):
+            self.hal_write_data(charmap[i])
+            self.hal_sleep_us(40)
+        self.move_to(self.cursor_x, self.cursor_y)
+
+    def hal_backlight_on(self): pass
+    def hal_backlight_off(self): pass
+    def hal_write_command(self, cmd): raise NotImplementedError
+    def hal_write_data(self, data): raise NotImplementedError
+    def hal_sleep_us(self, usecs): sleep(usecs / 1000000.0)
+
+class I2cLcd(LcdApi):
+    def __init__(self, i2c_id, scl_pin, sda_pin, i2c_addr=0x27, num_lines=2, num_columns=16):
+        from machine import I2C
+        self.i2c = I2C(i2c_id, scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000)
+        self.i2c_addr = i2c_addr
+        self.i2c.writeto(self.i2c_addr, bytearray([0]))
+        sleep(0.02)
+        self.hal_write_init_nibble(self.LCD_FUNCTION_RESET)
+        sleep(0.005)
+        self.hal_write_init_nibble(self.LCD_FUNCTION_RESET)
+        sleep(0.001)
+        self.hal_write_init_nibble(self.LCD_FUNCTION_RESET)
+        sleep(0.001)
+        self.hal_write_init_nibble(self.LCD_FUNCTION)
+        sleep(0.001)
+        LcdApi.__init__(self, num_lines, num_columns)
+        cmd = self.LCD_FUNCTION
+        if num_lines > 1: cmd |= self.LCD_FUNCTION_2LINES
+        self.hal_write_command(cmd)
+
+    def hal_write_init_nibble(self, nibble):
+        byte = ((nibble >> 4) & 0x0f) << SHIFT_DATA
+        self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte]))
+
+    def hal_backlight_on(self): self.i2c.writeto(self.i2c_addr, bytearray([1 << SHIFT_BACKLIGHT]))
+    def hal_backlight_off(self): self.i2c.writeto(self.i2c_addr, bytearray([0]))
+
+    def hal_write_command(self, cmd):
+        byte = ((self.backlight << SHIFT_BACKLIGHT) | (((cmd >> 4) & 0x0f) << SHIFT_DATA))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte]))
+        byte = ((self.backlight << SHIFT_BACKLIGHT) | ((cmd & 0x0f) << SHIFT_DATA))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte]))
+        if cmd <= 3: sleep(0.005)
+
+    def hal_write_data(self, data):
+        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT) | (((data >> 4) & 0x0f) << SHIFT_DATA))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte]))
+        byte = (MASK_RS | (self.backlight << SHIFT_BACKLIGHT) | ((data & 0x0f) << SHIFT_DATA))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte | MASK_E]))
+        self.i2c.writeto(self.i2c_addr, bytearray([byte]))
+
+class GpioLcd(LcdApi):
+    def __init__(self, rs_pin, enable_pin, d0_pin=None, d1_pin=None, d2_pin=None, d3_pin=None,
+                 d4_pin=None, d5_pin=None, d6_pin=None, d7_pin=None, rw_pin=None, backlight_pin=None,
+                 num_lines=2, num_columns=16):
+        self.rs_pin = Pin(rs_pin, Pin.OUT) if rs_pin is not None else None
+        self.enable_pin = Pin(enable_pin, Pin.OUT) if enable_pin is not None else None
+        self.rw_pin = Pin(rw_pin, Pin.OUT) if rw_pin is not None else None
+        self.backlight_pin = Pin(backlight_pin, Pin.OUT) if backlight_pin is not None else None
+        self._4bit = True
+        if d4_pin and d5_pin and d6_pin and d7_pin:
+            self.d0_pin = Pin(d0_pin, Pin.OUT) if d0_pin is not None else None
+            self.d1_pin = Pin(d1_pin, Pin.OUT) if d1_pin is not None else None
+            self.d2_pin = Pin(d2_pin, Pin.OUT) if d2_pin is not None else None
+            self.d3_pin = Pin(d3_pin, Pin.OUT) if d3_pin is not None else None
+            self.d4_pin = Pin(d4_pin, Pin.OUT)
+            self.d5_pin = Pin(d5_pin, Pin.OUT)
+            self.d6_pin = Pin(d6_pin, Pin.OUT)
+            self.d7_pin = Pin(d7_pin, Pin.OUT)
+            if self.d0_pin and self.d1_pin and self.d2_pin and self.d3_pin:
+                self._4bit = False
+        else:
+            self.d0_pin = self.d1_pin = self.d2_pin = self.d3_pin = None
+            self.d4_pin = Pin(d0_pin, Pin.OUT)
+            self.d5_pin = Pin(d1_pin, Pin.OUT)
+            self.d6_pin = Pin(d2_pin, Pin.OUT)
+            self.d7_pin = Pin(d3_pin, Pin.OUT)
+        
+        self.rs_pin.value(0)
+        if self.rw_pin: self.rw_pin.value(0)
+        self.enable_pin.value(0)
+        self.d4_pin.value(0); self.d5_pin.value(0); self.d6_pin.value(0); self.d7_pin.value(0)
+        if not self._4bit:
+            self.d0_pin.value(0); self.d1_pin.value(0); self.d2_pin.value(0); self.d3_pin.value(0)
+        if self.backlight_pin: self.backlight_pin.value(0)
+
+        sleep(0.02)
+        self.hal_write_init_nibble(self.LCD_FUNCTION_RESET)
+        sleep(0.005)
+        self.hal_write_init_nibble(self.LCD_FUNCTION_RESET)
+        sleep(0.001)
+        self.hal_write_init_nibble(self.LCD_FUNCTION_RESET)
+        sleep(0.001)
+        cmd = self.LCD_FUNCTION
+        if not self._4bit: cmd |= self.LCD_FUNCTION_8BIT
+        self.hal_write_init_nibble(cmd)
+        sleep(0.001)
+        LcdApi.__init__(self, num_lines, num_columns)
+        if num_lines > 1: cmd |= self.LCD_FUNCTION_2LINES
+        self.hal_write_command(cmd)
+
+    def hal_pulse_enable(self):
+        self.enable_pin.value(0); sleep(0.000001)
+        self.enable_pin.value(1); sleep(0.000001)
+        self.enable_pin.value(0); sleep(0.0001)
+
+    def hal_write_init_nibble(self, nibble):
+        self.hal_write_4bits(nibble >> 4)
+
+    def hal_backlight_on(self):
+        if self.backlight_pin: self.backlight_pin.value(1)
+
+    def hal_backlight_off(self):
+        if self.backlight_pin: self.backlight_pin.value(0)
+
+    def hal_write_command(self, cmd):
+        self.rs_pin.value(0)
+        self.hal_write_8bits(cmd)
+        if cmd <= 3: sleep(0.005)
+
+    def hal_write_data(self, data):
+        self.rs_pin.value(1)
+        self.hal_write_8bits(data)
+
+    def hal_write_8bits(self, value):
+        if self.rw_pin: self.rw_pin.value(0)
+        if self._4bit:
+            self.hal_write_4bits(value >> 4)
+            self.hal_write_4bits(value)
+        else:
+            self.d3_pin.value(value & 0x08)
+            self.d2_pin.value(value & 0x04)
+            self.d1_pin.value(value & 0x02)
+            self.d0_pin.value(value & 0x01)
+            self.hal_write_4bits(value >> 4)
+
+    def hal_write_4bits(self, nibble):
+        self.d7_pin.value(nibble & 0x08)
+        self.d6_pin.value(nibble & 0x04)
+        self.d5_pin.value(nibble & 0x02)
+        self.d4_pin.value(nibble & 0x01)
+        self.hal_pulse_enable()
+

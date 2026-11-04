@@ -157,7 +157,7 @@ msgstr "파이썬 추가 패키지들"
 
 #: mu/interface/dialogs.py:606
 msgid "ESP Firmware flasher"
-msgstr "ESP 펌웨어 플래셔"
+msgstr "ESP 오프라인 플래셔"
 
 #: mu/interface/dialogs.py:615
 msgid "PythonAnywhere API"
