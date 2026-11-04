@@ -1032,9 +1032,16 @@ class VirtualEnvironment(object):
         #
         # TODO: Add semver check to ensure filepath is safe
         #
-        zipped_wheels_filepath = os.path.join(
-            wheels_dirpath, "%s.zip" % mu_version
-        )
+        # Use platform/bitness specific wheels zip filename, fallback to generic if exists
+        tag = getattr(wheels, "get_platform_tag", lambda: "any")()
+        platform_zip = os.path.join(wheels_dirpath, f"{mu_version}-{tag}.zip")
+        generic_zip = os.path.join(wheels_dirpath, f"{mu_version}.zip")
+        if os.path.exists(platform_zip):
+            zipped_wheels_filepath = platform_zip
+        elif os.path.exists(generic_zip):
+            zipped_wheels_filepath = generic_zip
+        else:
+            zipped_wheels_filepath = platform_zip
         logger.info("Expecting zipped wheels at %s", zipped_wheels_filepath)
         if not os.path.exists(zipped_wheels_filepath):
             logger.warning("No zipped wheels found; downloading...")

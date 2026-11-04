@@ -27,17 +27,32 @@ class WheelsBuildError(WheelsError):
 
 logger = logging.getLogger(__name__)
 
+import struct
+is_32bit = struct.calcsize("P") * 8 == 32
+
+def get_platform_tag():
+    """Return a platform/bitness tag for wheels zip to avoid collisions."""
+    if sys.platform == "win32":
+        return "win32" if is_32bit else "win64"
+    elif sys.platform == "darwin":
+        return "osx"
+    elif sys.platform.startswith("linux"):
+        return "linux32" if is_32bit else "linux64"
+    return "any"
+
+def get_zip_filename(version=mu_version):
+    """Return the platform-specific wheels zip filename."""
+    return f"{version}-{get_platform_tag()}.zip"
+
 WHEELS_DIRPATH = os.path.dirname(__file__)
-ZIP_FILEPATH = os.path.join(WHEELS_DIRPATH, mu_version + ".zip")
+ZIP_FILENAME = get_zip_filename()
+ZIP_FILEPATH = os.path.join(WHEELS_DIRPATH, ZIP_FILENAME)
 
 #
 # List of base packages to support modes
 # The first element should be the importable name (so "serial" rather than "pyserial")
 # The second element is passed to `pip download|install`
 # Any additional elements are passed to `pip` for specific purposes
-# Check if running in a 32-bit environment
-import struct
-is_32bit = struct.calcsize("P") * 8 == 32
 
 mode_packages = [
     ("pgzero", ("pgzero>=1.2.1", "pyinstaller")),
