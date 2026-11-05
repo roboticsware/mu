@@ -642,6 +642,38 @@ class VirtualEnvironment(object):
             logger.debug("About to reinstall user packages: %s", user_packages)
             self.install_user_packages(user_packages)
 
+        #
+        # Clean up any superseded/failed virtual environments now that the new
+        # environment is ready and user packages have been restored.
+        #
+        self.cleanup_old_venvs()
+
+    def cleanup_old_venvs(self):
+        """Remove any abandoned (.FAILED / .SUPERSEDED) or outdated virtual
+        environment directories left in DATA_DIR, preserving only the current active one.
+        """
+        data_dir = os.path.dirname(config.VENV_DIR)
+        current_name = os.path.basename(self.path)
+
+        if not os.path.isdir(data_dir):
+            return
+
+        for item in os.listdir(data_dir):
+            if not item.startswith("mu_venv-"):
+                continue
+            if item == current_name:
+                continue
+
+            target_path = os.path.join(data_dir, item)
+            if not os.path.isdir(target_path):
+                continue
+
+            try:
+                logger.info("Cleaning up old virtualenv directory: %s", target_path)
+                shutil.rmtree(target_path)
+            except Exception as e:
+                logger.warning("Could not remove old virtualenv %s: %s", target_path, e)
+
     def ensure_and_create(self, emitter=None):
         """Check whether we have a valid virtual environment in place and, if not,
         create a new one. Allow a couple of tries in case we have temporary glitches
@@ -702,6 +734,8 @@ class VirtualEnvironment(object):
                 # we're good to save settings and move on
                 #
                 self.settings.save()
+                # Clean up any orphaned .FAILED / .SUPERSEDED or outdated venvs
+                self.cleanup_old_venvs()
                 break
 
             except VirtualEnvironmentError as exc:
