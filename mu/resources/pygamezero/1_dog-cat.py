@@ -14,8 +14,20 @@ def draw():
     dog.draw()
     cat.draw()
 
-    dog.say_for_sec("Bow-wow", 2)
-    cat.say_for_sec("Meow", 2)
-    dog.say_for_sec("Good bye!", 2)
-    cat.say_for_sec("See you!", 2)
+def dog_talk1():
+    dog.say("Bow-wow")
+
+def cat_talk1():
+    cat.say("Meow")
+
+def dog_talk2():
+    dog.say("Good bye!")
+
+def cat_talk2():
+    cat.say("See you!")
+
+clock.schedule(dog_talk1, 1)
+clock.schedule(cat_talk1, 2)
+clock.schedule(dog_talk2, 4)
+clock.schedule(cat_talk2, 6)
 

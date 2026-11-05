@@ -84,7 +84,7 @@ else:
 
 mode_packages.append(
     # For pgzero's extension
-    ("pgzhelper", ("pgzhelper_rw>=1.0.10",)),
+    ("pgzhelper", ("pgzhelper_rw>=1.0.13",)),
 )
 
 

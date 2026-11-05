@@ -7,6 +7,7 @@ robot = Actor('cleaner', (WIDTH / 2, HEIGHT / 2))
 robot.scale = 0.3
 robot.angle = 90
 robot.brush_init((WIDTH, HEIGHT), 50, 'white')
+robot.brush_start()
 
 def draw():
     screen.blit('floor', (0, 0))
@@ -20,5 +21,3 @@ def update():
         or robot.bottom > HEIGHT or robot.left < 0:
         robot.move_back(10)
         robot.angle += 133
-
-
