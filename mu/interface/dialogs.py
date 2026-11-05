@@ -38,6 +38,9 @@ from mu.qt.QtWidgets import (
     QFileDialog,
     QGroupBox,
     QComboBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
 )
 from mu.qt.QtGui import QTextCursor
 from mu.resources import load_icon
@@ -206,28 +209,178 @@ class MicrobitSettingsWidget(QWidget):
 class PackagesWidget(QWidget):
     """
     Used for editing and displaying 3rd party packages installed via pip to be
-    used with Python 3 mode.
+    used with Python 3 mode. Supports individual package upgrading and removal via checkboxes.
     """
 
     def setup(self, packages):
+        self.packages_raw = packages
         widget_layout = QVBoxLayout()
         self.setLayout(widget_layout)
+
+        # Hidden text_area for backward compatibility with tests and callers
         self.text_area = QPlainTextEdit()
         self.text_area.setLineWrapMode(QPlainTextEdit.NoWrap)
+        self.text_area.setVisible(False)
+        self.text_area.setPlainText(packages)
+        widget_layout.addWidget(self.text_area)
+
         label = QLabel(
             _(
                 "The packages shown below will be available to "
-                "import in Python 3 mode. Delete a package from "
-                "the list to remove its availability.\n\n"
-                "Each separate package name should be on a new "
-                "line. Packages are installed from PyPI "
-                "(see: https://pypi.org/)."
+                "import in Python 3 mode. Check 'Upgrade' to update "
+                "to the latest version, or 'Remove' to uninstall. "
+                "Add new packages in the box below."
             )
         )
         label.setWordWrap(True)
         widget_layout.addWidget(label)
-        self.text_area.setPlainText(packages)
-        widget_layout.addWidget(self.text_area)
+
+        # Installed packages list
+        self.installed_packages = [
+            p.strip() for p in packages.splitlines() if p.strip()
+        ]
+
+        self.table_group = QGroupBox(_("Installed Packages"))
+        table_layout = QVBoxLayout()
+        self.table_group.setLayout(table_layout)
+
+        self.no_packages_label = QLabel(
+            _("No third party packages currently installed.")
+        )
+        self.no_packages_label.setAlignment(Qt.AlignCenter)
+        self.no_packages_label.setStyleSheet("color: #888888; font-style: italic; padding: 15px;")
+        table_layout.addWidget(self.no_packages_label)
+
+        self.table = QTableWidget()
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(
+            [_("Package Name"), _("Upgrade"), _("Remove")]
+        )
+        self.table.horizontalHeader().setSectionResizeMode(
+            0, QHeaderView.Stretch
+        )
+        self.table.horizontalHeader().setSectionResizeMode(
+            1, QHeaderView.ResizeToContents
+        )
+        self.table.horizontalHeader().setSectionResizeMode(
+            2, QHeaderView.ResizeToContents
+        )
+        self.table.verticalHeader().setVisible(False)
+        self.table.setSelectionMode(QTableWidget.NoSelection)
+        self.table.setAlternatingRowColors(True)
+        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        table_layout.addWidget(self.table)
+
+        # Add new packages section
+        self.add_group = QGroupBox(_("Install New Packages"))
+        add_layout = QVBoxLayout()
+        self.add_group.setLayout(add_layout)
+        self.new_packages_edit = QPlainTextEdit()
+        self.new_packages_edit.setLineWrapMode(QPlainTextEdit.NoWrap)
+        self.new_packages_edit.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.new_packages_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.new_packages_edit.setPlaceholderText(
+            _("One package per line (e.g. requests, pygame)...")
+        )
+        self.new_packages_edit.textChanged.connect(self._sync_to_text_area)
+        add_layout.addWidget(self.new_packages_edit)
+
+        # Balanced stretch: 3 for installed table, 2 for new packages edit
+        widget_layout.addWidget(self.table_group, stretch=3)
+        widget_layout.addWidget(self.add_group, stretch=2)
+
+        self.row_controls = []
+        self._populate_table()
+
+    def _create_checkbox_widget(self):
+        container = QWidget()
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setAlignment(Qt.AlignCenter)
+        cb = QCheckBox()
+        layout.addWidget(cb)
+        return container, cb
+
+    def _populate_table(self):
+        self.row_controls.clear()
+        if not self.installed_packages:
+            self.table.setVisible(False)
+            self.no_packages_label.setVisible(True)
+            return
+
+        self.table.setVisible(True)
+        self.no_packages_label.setVisible(False)
+        self.table.setRowCount(len(self.installed_packages))
+
+        for row, pkg in enumerate(self.installed_packages):
+            item = QTableWidgetItem(pkg)
+            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(row, 0, item)
+
+            up_widget, up_cb = self._create_checkbox_widget()
+            rm_widget, rm_cb = self._create_checkbox_widget()
+
+            def on_remove_toggled(checked, r_item=item, u_cb=up_cb):
+                font = r_item.font()
+                font.setStrikeOut(checked)
+                r_item.setFont(font)
+                if checked:
+                    u_cb.setChecked(False)
+                self._sync_to_text_area()
+
+            def on_upgrade_toggled(checked, r_item=item, r_cb=rm_cb):
+                if checked:
+                    r_cb.setChecked(False)
+                    font = r_item.font()
+                    font.setStrikeOut(False)
+                    r_item.setFont(font)
+                self._sync_to_text_area()
+
+            rm_cb.toggled.connect(on_remove_toggled)
+            up_cb.toggled.connect(on_upgrade_toggled)
+
+            self.table.setCellWidget(row, 1, up_widget)
+            self.table.setCellWidget(row, 2, rm_widget)
+
+            self.row_controls.append(
+                {
+                    "package": pkg,
+                    "item": item,
+                    "upgrade_cb": up_cb,
+                    "remove_cb": rm_cb,
+                }
+            )
+
+    def _sync_to_text_area(self):
+        active_packages = []
+        for ctrl in self.row_controls:
+            if not ctrl["remove_cb"].isChecked():
+                active_packages.append(ctrl["package"])
+        new_text = self.new_packages_edit.toPlainText().strip()
+        if new_text:
+            for p in new_text.splitlines():
+                p_clean = p.strip()
+                if p_clean and p_clean not in active_packages:
+                    active_packages.append(p_clean)
+        self.text_area.setPlainText("\n".join(active_packages))
+
+    def get_packages_to_upgrade(self):
+        to_upgrade = []
+        for ctrl in self.row_controls:
+            if (
+                ctrl["upgrade_cb"].isChecked()
+                and not ctrl["remove_cb"].isChecked()
+            ):
+                to_upgrade.append(ctrl["package"])
+        return to_upgrade
+
+    def get_packages_to_remove(self):
+        to_remove = []
+        for ctrl in self.row_controls:
+            if ctrl["remove_cb"].isChecked():
+                to_remove.append(ctrl["package"])
+        return to_remove
 
 
 class PythonAnywhereWidget(QWidget):
@@ -325,6 +478,7 @@ class LocaleWidget(QWidget):
         widget_layout = QVBoxLayout()
         self.setLayout(widget_layout)
         self.drop_down = QComboBox()
+        self.drop_down.setMaxVisibleItems(len(self.LANGUAGES))
         for k, v in self.LANGUAGES.items():
             self.drop_down.addItem(k, v)
         index = self.drop_down.findData(locale)
@@ -568,7 +722,7 @@ class AdminDialog(QDialog):
         self.envar_widget = None
         self.python_anywhere_widget = None
 
-    def setup(self, log, settings, packages, mode, device_list):
+    def setup(self, log, settings, packages, mode, device_list, default_tab=None):
         self.setMinimumSize(600, 400)
         self.setWindowTitle(_("Mu Administration"))
         widget_layout = QVBoxLayout()
@@ -634,7 +788,10 @@ class AdminDialog(QDialog):
         self.tabs.addTab(
             self.locale_widget, load_icon("language.svg"), _("Select Language")
         )
-        self.log_widget.log_text_area.setFocus()
+        if default_tab == "packages" and self.package_widget:
+            self.tabs.setCurrentWidget(self.package_widget)
+        else:
+            self.log_widget.log_text_area.setFocus()
 
     def accept(self):
         if getattr(self, "mip_packages_widget", None) and getattr(self.mip_packages_widget, "is_installing", False):
@@ -673,6 +830,12 @@ class AdminDialog(QDialog):
             ] = self.microbit_widget.runtime_path.text()
         if self.package_widget:
             settings["packages"] = self.package_widget.text_area.toPlainText()
+            settings["packages_to_upgrade"] = (
+                self.package_widget.get_packages_to_upgrade()
+            )
+            settings["packages_to_remove"] = (
+                self.package_widget.get_packages_to_remove()
+            )
         if self.python_anywhere_widget:
             settings[
                 "pa_username"

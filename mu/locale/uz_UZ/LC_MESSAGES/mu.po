@@ -2052,3 +2052,35 @@ msgstr "O'rnatilmoqda"
 #: mu/interface/dialogs.py:642 mu/interface/dialogs.py:649
 msgid "Please wait until the package installation is complete before closing."
 msgstr "Iltimos, paket o'rnatilishi tugaguncha kutib turing."
+
+#: mu/interface/dialogs.py:228
+msgid "The packages shown below will be available to import in Python 3 mode. Check 'Upgrade' to update to the latest version, or 'Remove' to uninstall. Add new packages in the box below."
+msgstr "Quyida ko'rsatilgan paketlarni Python 3 rejimida import qilish mumkin bo'ladi. Eng so'nggi versiyaga yangilash uchun 'Yangilash'ni, o'chirish uchun esa 'O'chirish'ni tanlang. Yangi paketlarni pastdagi maydonga kiriting."
+
+#: mu/interface/dialogs.py:243
+msgid "Installed Packages"
+msgstr "O'rnatilgan paketlar"
+
+#: mu/interface/dialogs.py:248
+msgid "No third party packages currently installed."
+msgstr "Hozirda o'rnatilgan qo'shimcha paketlar mavjud emas."
+
+#: mu/interface/dialogs.py:257
+msgid "Package Name"
+msgstr "Paket nomi"
+
+#: mu/interface/dialogs.py:257
+msgid "Upgrade"
+msgstr "Yangilash"
+
+#: mu/interface/dialogs.py:257
+msgid "Remove"
+msgstr "O'chirish"
+
+#: mu/interface/dialogs.py:276
+msgid "Install New Packages"
+msgstr "Yangi paketlarni o'rnatish"
+
+#: mu/interface/dialogs.py:284
+msgid "One package per line (e.g. requests, pygame)..."
+msgstr "Har bir qatorda bitta paket nomi (masalan: requests, pygame)..."

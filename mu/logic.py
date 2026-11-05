@@ -1816,7 +1816,7 @@ class Editor(QObject):
         logger.info("Quitting.\n\n")
         QtCore.QCoreApplication.exit(0)
 
-    def show_admin(self, event=None):
+    def show_admin(self, event=None, default_tab=None):
         """
         Cause the editor's admin dialog to be displayed to the user.
 
@@ -1847,6 +1847,7 @@ class Editor(QObject):
                 "\n".join(packages),
                 self.modes[self.mode],
                 self.connected_devices,
+                default_tab=default_tab,
             )
         if new_settings:
             if "envars" in new_settings:
@@ -1866,6 +1867,7 @@ class Editor(QObject):
                     self._view.show_message(message, information)
                 else:
                     self.microbit_runtime = runtime
+            packages_changed = False
             if "packages" in new_settings:
                 new_packages = [
                     p
@@ -1873,7 +1875,25 @@ class Editor(QObject):
                     if p.strip()
                 ]
                 old_packages = [p.lower() for p in user_packages]
-                self.sync_package_state(old_packages, new_packages)
+                packages_to_upgrade = [
+                    p.lower()
+                    for p in new_settings.get("packages_to_upgrade", [])
+                    if p.strip()
+                ]
+                packages_to_remove = [
+                    p.lower()
+                    for p in new_settings.get("packages_to_remove", [])
+                    if p.strip()
+                ]
+                if packages_to_upgrade or packages_to_remove:
+                    packages_changed = self.sync_package_state(
+                        old_packages,
+                        new_packages,
+                        packages_to_upgrade,
+                        packages_to_remove,
+                    )
+                else:
+                    packages_changed = self.sync_package_state(old_packages, new_packages)
             if "pa_username" in new_settings:
                 self.pa_username = new_settings["pa_username"].strip()
             if "pa_token" in new_settings:
@@ -1896,28 +1916,44 @@ class Editor(QObject):
 
             # Ensure mode UI is updated given settings.
             self.modes[self.mode].ensure_state()
+            if packages_changed:
+                QtCore.QTimer.singleShot(50, lambda: self.show_admin(default_tab="packages"))
         else:
             logger.info("No admin settings changed.")
 
-    def sync_package_state(self, old_packages, new_packages):
+    def sync_package_state(
+        self,
+        old_packages,
+        new_packages,
+        packages_to_upgrade=None,
+        packages_to_remove=None,
+    ):
         """
         Given the state of the old third party packages, compared to the new
         third party packages, ensure that pip uninstalls and installs the
         packages so the currently available third party packages reflects the
         new state.
         """
+        if packages_to_upgrade is None:
+            packages_to_upgrade = []
+        if packages_to_remove is None:
+            packages_to_remove = []
+
         old = set(old_packages)
         new = set(new_packages)
         logger.info("Synchronize package states...")
         logger.info("Old: {}".format(old))
         logger.info("New: {}".format(new))
-        to_remove = old.difference(new)
-        to_add = new.difference(old)
+        to_remove = old.difference(new).union(packages_to_remove)
+        to_add = new.difference(old).union(packages_to_upgrade)
+        to_add = to_add.difference(to_remove)
         if to_remove or to_add:
             logger.info("To add: {}".format(to_add))
             logger.info("To remove: {}".format(to_remove))
             logger.info("Virtualenv: {}".format(VENV_DIR))
             self._view.sync_packages(to_remove, to_add)
+            return True
+        return False
 
     def select_mode(self, event=None):
         """

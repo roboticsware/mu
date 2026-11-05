@@ -1935,3 +1935,35 @@ msgstr "설치 중"
 #: mu/interface/dialogs.py:642 mu/interface/dialogs.py:649
 msgid "Please wait until the package installation is complete before closing."
 msgstr "패키지 설치가 완료될 때까지 기다려 주세요."
+
+#: mu/interface/dialogs.py:228
+msgid "The packages shown below will be available to import in Python 3 mode. Check 'Upgrade' to update to the latest version, or 'Remove' to uninstall. Add new packages in the box below."
+msgstr "아래에 표시된 패키지는 Python 3 모드에서 사용할 수 있습니다. 최신 버전으로 갱신하려면 '업그레이드'를, 삭제하려면 '삭제'를 선택하세요. 새 패키지는 아래 입력란에 추가할 수 있습니다."
+
+#: mu/interface/dialogs.py:243
+msgid "Installed Packages"
+msgstr "설치된 패키지"
+
+#: mu/interface/dialogs.py:248
+msgid "No third party packages currently installed."
+msgstr "현재 설치된 외부 패키지가 없습니다."
+
+#: mu/interface/dialogs.py:257
+msgid "Package Name"
+msgstr "패키지 이름"
+
+#: mu/interface/dialogs.py:257
+msgid "Upgrade"
+msgstr "업그레이드"
+
+#: mu/interface/dialogs.py:257
+msgid "Remove"
+msgstr "삭제"
+
+#: mu/interface/dialogs.py:276
+msgid "Install New Packages"
+msgstr "새 패키지 설치"
+
+#: mu/interface/dialogs.py:284
+msgid "One package per line (e.g. requests, pygame)..."
+msgstr "한 줄에 하나씩 패키지 이름 입력 (예: requests, pygame)..."

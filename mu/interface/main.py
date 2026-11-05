@@ -1096,14 +1096,18 @@ class Window(QMainWindow):
 
         timer.start(500)
 
-    def show_admin(self, log, settings, packages, mode, device_list):
+    def show_admin(
+        self, log, settings, packages, mode, device_list, default_tab=None
+    ):
         """
         Display the administrative dialog with referenced content of the log
         and settings. Return a dictionary of the settings that may have been
         changed by the admin dialog.
         """
         admin_box = AdminDialog(self)
-        admin_box.setup(log, settings, packages, mode, device_list)
+        admin_box.setup(
+            log, settings, packages, mode, device_list, default_tab=default_tab
+        )
         result = admin_box.exec()
         if result:
             return admin_box.settings()
