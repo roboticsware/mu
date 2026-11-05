@@ -1028,156 +1028,87 @@ class Editor(QObject):
         example_pgz_path = os.path.join(wd, "examples/pygame_zero/")
         example_neopia_path = os.path.join(wd, "examples/neopia/")
         example_pico_path = os.path.join(wd, "examples/pico_basic/")
+
+        def _sync_files(source_subpath, file_list, target_directory):
+            """Sync files to target directory, creating it if needed and
+            always updating or adding files."""
+            os.makedirs(target_directory, exist_ok=True)
+            for item in file_list:
+                src = path(item, source_subpath)
+                dst = os.path.join(target_directory, item)
+                try:
+                    shutil.copy(src, dst)
+                except Exception as e:
+                    logger.warning("Failed to sync file %s to %s: %s", src, dst, e)
+
         # Images
-        if not os.path.exists(images_path):
-            logger.debug("Creating directory: {}".format(images_path))
-            os.makedirs(images_path)
-            for img in DEFAULT_IMAGES:
-                shutil.copy(
-                    path(img, "pygamezero/"), os.path.join(images_path, img)
-                )
-            for img in EXAMPLE_ENTRY_B_IMAGES:
-                shutil.copy(
-                    path(img, "pygamezero/"), os.path.join(images_path, img)
-                )
+        _sync_files("pygamezero/", DEFAULT_IMAGES, images_path)
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_B_IMAGES, images_path)
+
         # Fonts
-        if not os.path.exists(fonts_path):
-            logger.debug("Creating directory: {}".format(fonts_path))
-            os.makedirs(fonts_path)
-            for sfx in EXAMPLE_ENTRY_B_FONTS:
-                shutil.copy(
-                    path(sfx, "pygamezero/"), os.path.join(fonts_path, sfx)
-                )
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_B_FONTS, fonts_path)
+
         # Sounds
-        if not os.path.exists(sounds_path):
-            logger.debug("Creating directory: {}".format(sounds_path))
-            os.makedirs(sounds_path)
-            for sfx in DEFAULT_SOUNDS:
-                shutil.copy(
-                    path(sfx, "pygamezero/"), os.path.join(sounds_path, sfx)
-                )
-            for sfx in EXAMPLE_ENTRY_B_SOUNDS:
-                shutil.copy(
-                    path(sfx, "pygamezero/"), os.path.join(sounds_path, sfx)
-                )
+        _sync_files("pygamezero/", DEFAULT_SOUNDS, sounds_path)
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_B_SOUNDS, sounds_path)
+
         # Music
-        if not os.path.exists(music_path):
-            logger.debug("Creating directory: {}".format(music_path))
-            os.makedirs(music_path)
+        os.makedirs(music_path, exist_ok=True)
+
         # Pico_lib
-        if not os.path.exists(pico_lib_path):
-            logger.debug("Creating directory: {}".format(pico_lib_path))
-            os.makedirs(pico_lib_path)
-            for sfx in DEFAULT_PICO_LIB:
-                shutil.copy(
-                    path(sfx, "pico/"), os.path.join(pico_lib_path, sfx)
-                )
+        _sync_files("pico/", DEFAULT_PICO_LIB, pico_lib_path)
+
         # ESP32_lib (espzero)
         espzero_path = os.path.join(esp32_lib_path, "espzero")
         espzero_profiles_path = os.path.join(espzero_path, "profiles")
-        if not os.path.exists(espzero_path):
-            logger.debug("Creating directory: {}".format(espzero_path))
-            if not os.path.exists(esp32_lib_path):
-                os.makedirs(esp32_lib_path)
-            os.makedirs(espzero_path)
-            os.makedirs(espzero_profiles_path)
-            for sfx in DEFAULT_ESP32_LIB:
-                shutil.copy(
-                    path(sfx, "esp32/"), os.path.join(espzero_path, sfx)
-                )
-            # Copy profiles subdirectory
-            for sfx in ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"]:
-                shutil.copy(
-                    path(sfx, "esp32/profiles/"),
-                    os.path.join(espzero_profiles_path, sfx)
-                )
+        _sync_files("esp32/", DEFAULT_ESP32_LIB, espzero_path)
+        _sync_files(
+            "esp32/profiles/",
+            ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"],
+            espzero_profiles_path,
+        )
+
         # Examples
-        if not os.path.exists(examples_path):
-            logger.debug("Creating directory: {}".format(examples_path))
-            os.makedirs(examples_path)
-            # Entry basic examples
-            if not os.path.exists(example_entry_b_path):
-                logger.debug("Creating directory: {}".format(example_entry_b_path))
-                os.makedirs(example_entry_b_path)
-                for sfx in EXAMPLE_ENTRY_BASIC:
-                    shutil.copy(
-                        path(sfx, "pygamezero/"), os.path.join(example_entry_b_path, sfx)
-                    )
-                if not os.path.exists(example_entry_b_path + 'images'):
-                    logger.debug("Creating directory: {}".format('images'))
-                    os.makedirs(example_entry_b_path + 'images')
-                    for sfx in EXAMPLE_ENTRY_B_IMAGES:
-                        shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(example_entry_b_path + 'images', sfx)
-                        )
-                if not os.path.exists(example_entry_b_path + 'sounds'):
-                    logger.debug("Creating directory: {}".format('sounds'))
-                    os.makedirs(example_entry_b_path + 'sounds')
-                    for sfx in EXAMPLE_ENTRY_B_SOUNDS:
-                        shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(example_entry_b_path + 'sounds', sfx)
-                        )
-                if not os.path.exists(example_entry_b_path + 'fonts'):
-                    logger.debug("Creating directory: {}".format('fonts'))
-                    os.makedirs(example_entry_b_path + 'fonts')
-                    for sfx in EXAMPLE_ENTRY_B_FONTS:
-                        shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(example_entry_b_path + 'fonts', sfx)
-                        )
-            # Pygame zero examples
-            if not os.path.exists(example_pgz_path):
-                logger.debug("Creating directory: {}".format(example_pgz_path))
-                os.makedirs(example_pgz_path)
-                for sfx in EXAMPLE_PGZ:
-                    shutil.copy(
-                        path(sfx, "pygamezero/"), os.path.join(example_pgz_path, sfx)
-                    )
-                if not os.path.exists(example_pgz_path + 'images'):
-                    logger.debug("Creating directory: {}".format('images'))
-                    os.makedirs(example_pgz_path + 'images')
-                    for sfx in EXAMPLE_PGZ_IMAGES:
-                        shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'images', sfx)
-                        )  
-                if not os.path.exists(example_pgz_path + 'sounds'):
-                    logger.debug("Creating directory: {}".format('sounds'))
-                    os.makedirs(example_pgz_path + 'sounds')
-                    for sfx in EXAMPLE_PGZ_SOUNDS:
-                        shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'sounds', sfx)
-                        )
-                if not os.path.exists(example_pgz_path + 'music'):
-                    logger.debug("Creating directory: {}".format('music'))
-                    os.makedirs(example_pgz_path + 'music')
-                    for sfx in EXAMPLE_PGZ_MUSIC:
-                        shutil.copy(
-                            path(sfx, "pygamezero/"), os.path.join(example_pgz_path + 'music', sfx)
-                        )
-            # Neopia examples
-            if not os.path.exists(example_neopia_path):
-                logger.debug("Creating directory: {}".format(example_neopia_path))
-                os.makedirs(example_neopia_path)
-                for sfx in EXAMPLE_NEOPIA:
-                    shutil.copy(
-                        path(sfx, "neopia/"), os.path.join(example_neopia_path, sfx)
-                    )
-            # Pico examples
-            if not os.path.exists(example_pico_path):
-                logger.debug("Creating directory: {}".format(example_pico_path))
-                os.makedirs(example_pico_path)
-                for sfx in EXAMPLE_PICO_BASIC:
-                    shutil.copy(
-                        path(sfx, "pico/"), os.path.join(example_pico_path, sfx)
-                    )
+        os.makedirs(examples_path, exist_ok=True)
+
+        # Entry basic examples
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_BASIC, example_entry_b_path)
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_B_IMAGES, os.path.join(example_entry_b_path, "images"))
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_B_SOUNDS, os.path.join(example_entry_b_path, "sounds"))
+        _sync_files("pygamezero/", EXAMPLE_ENTRY_B_FONTS, os.path.join(example_entry_b_path, "fonts"))
+
+        # Pygame zero examples
+        _sync_files("pygamezero/", EXAMPLE_PGZ, example_pgz_path)
+        _sync_files("pygamezero/", EXAMPLE_PGZ_IMAGES, os.path.join(example_pgz_path, "images"))
+        _sync_files("pygamezero/", EXAMPLE_PGZ_SOUNDS, os.path.join(example_pgz_path, "sounds"))
+        _sync_files("pygamezero/", EXAMPLE_PGZ_MUSIC, os.path.join(example_pgz_path, "music"))
+
+        # Neopia examples
+        _sync_files("neopia/", EXAMPLE_NEOPIA, example_neopia_path)
+
+        # Pico examples
+        _sync_files("pico/", EXAMPLE_PICO_BASIC, example_pico_path)
+
         # Ensure Web based assets are copied over.
         template_path = os.path.join(wd, "templates")
         static_path = os.path.join(wd, "static")
         if not os.path.exists(template_path):
             logger.debug("Creating directory: {}".format(template_path))
             shutil.copytree(path("templates", "web/"), template_path)
+        else:
+            try:
+                shutil.copytree(path("templates", "web/"), template_path, dirs_exist_ok=True)
+            except Exception as e:
+                logger.warning("Failed to sync templates: %s", e)
+
         if not os.path.exists(static_path):
             logger.debug("Creating directory: {}".format(static_path))
             shutil.copytree(path("static", "web/"), static_path)
+        else:
+            try:
+                shutil.copytree(path("static", "web/"), static_path, dirs_exist_ok=True)
+            except Exception as e:
+                logger.warning("Failed to sync static: %s", e)
             # Copy all the static directories.
         # Start the timer to poll every second for an attached or removed
         # USB device.
