@@ -434,7 +434,7 @@ def _build_windows_msi(bitness=64):
                 "import os, glob; "
                 "site_pkgs = glob.glob('./venv-pup/lib/site-packages')[0]; "
                 "sc = os.path.join(site_pkgs, 'sitecustomize.py'); "
-                "open(sc, 'w').write('try:\\n import importlib, importlib_metadata, sys\\n importlib.metadata = importlib_metadata\\n sys.modules[\"importlib.metadata\"] = importlib_metadata\\nexcept Exception:\\n pass\\n')"
+                "open(sc, 'w').write('try:\\n import importlib, importlib_metadata, sys\\n if not hasattr(importlib_metadata.EntryPoints, \"get\"):\\n  importlib_metadata.EntryPoints.get = lambda self, key, default=(): tuple(self.select(group=key)) or default\\n importlib.metadata = importlib_metadata\\n sys.modules[\"importlib.metadata\"] = importlib_metadata\\nexcept Exception:\\n pass\\n')"
             ),
         ],
         ["./venv-pup/Scripts/pip.exe", "install", "."],
