@@ -55,7 +55,7 @@ How to make dev env. and build
 
 2. Create virtual environment
 
-    ``conda create -n mu python=3.8``
+    ``conda create -n mu python=3.10``
 
 3. Activate the created virtual env.
 
