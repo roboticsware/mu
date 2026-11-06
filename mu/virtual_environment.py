@@ -905,34 +905,63 @@ class VirtualEnvironment(object):
 
     def create_venv(self):
         """
-        Create a new virtualenv
+        Create a new virtualenv using uv if available, falling back to standard venv.
         """
         logger.info("Creating virtualenv: {}".format(self.path))
         logger.info("Virtualenv name: {}".format(self.name))
 
         env = dict(os.environ)
-        args = filter(
-            None,
-            (
-                safe_short_path(sys.executable),
-                "-I",
-                "-m",
-                "venv",
-                self.path,
-            ),
-        )
-        ok, output = self.run_subprocess(*args, env=env)
-        if ok:
-            logger.info(
-                "Created virtual environment using %s at %s",
-                safe_short_path(sys.executable),
-                self.path,
+        created_with_uv = False
+        try:
+            uv_path = self.get_internal_uv_path()
+            if os.path.exists(uv_path):
+                logger.info("Attempting to create virtual environment using uv: %s", uv_path)
+                uv_args = [uv_path, "venv", self.path, "--python", safe_short_path(sys.executable)]
+                ok, output = self.run_subprocess(*uv_args, env=env)
+                if ok:
+                    # Pre-install bundled pip & setuptools so pip is available if needed
+                    try:
+                        import ensurepip
+                        from importlib import resources
+                        bundled_pkgs = ensurepip._get_packages()
+                        whl_files = []
+                        for pkg in bundled_pkgs.values():
+                            if pkg.wheel_name:
+                                p = str(resources.files("ensurepip") / "_bundled" / pkg.wheel_name)
+                                if os.path.isfile(p):
+                                    whl_files.append(p)
+                        if whl_files:
+                            self.run_subprocess(uv_path, "pip", "install", "--python", self.interpreter, *whl_files, env=env)
+                    except Exception as e:
+                        logger.warning("Could not pre-install bundled pip with uv: %s", e)
+                    created_with_uv = True
+                    logger.info("Created virtual environment using uv at %s", self.path)
+        except Exception as exc:
+            logger.warning("Failed to create venv using uv: %s; falling back to python -m venv", exc)
+
+        if not created_with_uv:
+            args = filter(
+                None,
+                (
+                    safe_short_path(sys.executable),
+                    "-I",
+                    "-m",
+                    "venv",
+                    self.path,
+                ),
             )
-        else:
-            raise VirtualEnvironmentCreateError(
-                "Unable to create a virtual environment using %s at %s\n%s"
-                % (safe_short_path(sys.executable), self.path, compact(output))
-            )
+            ok, output = self.run_subprocess(*args, env=env)
+            if ok:
+                logger.info(
+                    "Created virtual environment using %s at %s",
+                    safe_short_path(sys.executable),
+                    self.path,
+                )
+            else:
+                raise VirtualEnvironmentCreateError(
+                    "Unable to create a virtual environment using %s at %s\n%s"
+                    % (safe_short_path(sys.executable), self.path, compact(output))
+                )
 
     def install_jupyter_kernel(self):
         """
