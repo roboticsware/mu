@@ -9,6 +9,7 @@ import tempfile
 import time
 import zipfile
 import stat
+import shutil
 
 try:
     import win32api
