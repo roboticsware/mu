@@ -12,6 +12,8 @@ backgrounds.append(background2)
 player = Actor("player", (400, 500))
 
 MAX_BULLETS = 3
+BULLET_DELAY = 10
+bullet_cooldown = 0
 bullets = []
 
 enemies = []
@@ -44,15 +46,19 @@ def move_player():
 
 
 def shoot_bullets():
-    if keyboard.space and len(bullets) < MAX_BULLETS:
+    global bullet_cooldown
+    if bullet_cooldown > 0:
+        bullet_cooldown -= 1
+
+    if keyboard.space and bullet_cooldown == 0 and len(bullets) < MAX_BULLETS:
         sounds.sfx_sounds_interaction25.play()
-        bullet_delay = 5
         bullet = Actor("player_bullet")
         bullet.pos = player.pos
         bullet.angle = 90
         bullets.append(bullet)
+        bullet_cooldown = BULLET_DELAY
 
-    for bullet in bullets:
+    for bullet in bullets[:]:
         bullet.move_forward(15)
         if bullet.y < 0:
             bullets.remove(bullet)
@@ -68,18 +74,19 @@ def create_enemies():
         enemy.direction = random.randint(-100, -80)
         enemies.append(enemy)
 
-    for enemy in enemies:
+    for enemy in enemies[:]:
         enemy.move_in_direction(4)
         enemy.animate()
         if enemy.top > HEIGHT:
             enemies.remove(enemy)
+            continue
         if random.randint(0, 1000) > 990:
             bullet = Actor("enemy_bullet")
             bullet.pos = enemy.pos
             bullet.angle = random.randint(0, 359)
             enemy_bullets.append(bullet)
 
-    for bullet in enemy_bullets:
+    for bullet in enemy_bullets[:]:
         bullet.move_forward(5)
         if bullet.x < 0 or bullet.x > WIDTH or bullet.y < 0 or bullet.y > HEIGHT:
             enemy_bullets.remove(bullet)
@@ -89,7 +96,7 @@ def create_enemies():
 def check_collision():
     global score, game_over
 
-    for bullet in bullets:
+    for bullet in bullets[:]:
         enemy_index = bullet.collidelist(enemies)
         if enemy_index != -1:
             bullets.remove(bullet)
@@ -100,10 +107,9 @@ def check_collision():
             explosion.duration = 15
             explosions.append(explosion)
             del enemies[enemy_index]
-#             enemies.remove(enemies[enemy_index])
             score += 1
 
-    for explosion in explosions:
+    for explosion in explosions[:]:
         explosion.animate()
         explosion.duration -= 1
         if explosion.duration == 0:

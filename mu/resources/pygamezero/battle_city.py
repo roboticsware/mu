@@ -95,7 +95,7 @@ def fire_bullets(player, bullets):
 def collide_bullets(bullets):
     global winner
 
-    for bullet in bullets:
+    for bullet in bullets[:]:
         if bullet.angle == 0:
             bullet.x += 5
         elif bullet.angle == 90:
@@ -110,11 +110,13 @@ def collide_bullets(bullets):
         if wall_index != -1:
             del walls[wall_index]
             bullets.remove(bullet)
-        
+            continue
+
         # Out of screen
-        if bullet.x < 0 or bullet.x > 800 \
-            or bullet.y < 0 or bullet.y > 600:
+        if bullet.x < 0 or bullet.x > WIDTH \
+            or bullet.y < 0 or bullet.y > HEIGHT:
             bullets.remove(bullet)
+            continue
 
         # Enemies
         if bullets != enemy_bullets:
@@ -135,7 +137,7 @@ def collide_bullets(bullets):
                 winner = "Enemy"
 
     # Animate explosion
-    for explosion in explosions:
+    for explosion in explosions[:]:
         explosion.animate()
         explosion.duration -= 1
         if explosion.duration == 0:
@@ -162,7 +164,7 @@ def draw():
 
 
 def update():
-    global bullet_delay_cnt, enemy_move_cnt
+    global bullet_delay_cnt
 
     # This part is for my tank
     if winner == '':

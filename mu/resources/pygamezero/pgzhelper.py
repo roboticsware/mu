@@ -4,7 +4,7 @@ This module is directly copied from
 
     https://github.com/roboticsware/pgzhelper
 
-at revision d1480edfb044d13a55ac0813fd69a1230984364c
+at revision 90cd49dcba1d05e633d321327ca27bfbbcffd6e8
 and used under CC0.
 
 """
@@ -1022,6 +1022,7 @@ class Actor(Actor):
     if isinstance(image,str):
       image_str = image      
     super().__init__(image_str, pos, anchor, **kwargs)
+    self._surfs.clear()
     if isinstance(image,pygame.Surface):
         self._orig_surf = image        
         self._update_pos()
@@ -1198,6 +1199,17 @@ class Actor(Actor):
     self._flip_y = flip_y
     self._transform_surf()
     self._transform_cnt+=1
+
+  @property
+  def anchor(self):
+    return super().anchor
+
+  @anchor.setter
+  def anchor(self, val):
+    self._anchor_value = val
+    self._calc_anchor()
+    self._transform_surf()
+    self._transform_cnt += 1
 
   @property
   def image(self):

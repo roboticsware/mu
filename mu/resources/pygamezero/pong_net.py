@@ -220,8 +220,8 @@ def handle_recv_messages():
     # Seperation of specific messages
     game_start = net.get_msg(peer_id, 'game_start')
     bar_pos = net.get_msg(peer_id, 'bar_pos', clear=False)
-    ball_pos = net.get_msg("Player1", 'ball_pos', clear=False)
-    who_win = net.get_msg("Player1", 'score')
+    ball_pos = net.get_msg(peer_id, 'ball_pos', clear=False)
+    who_win = net.get_msg(peer_id, 'score')
 
     # Game Start
     if game_start:
@@ -236,7 +236,7 @@ def handle_recv_messages():
     if bar_pos:
         if is_host:
             bar2.pos_update(bar_pos)
-        else:  # Plyer2
+        else:  # Player2
             bar1.pos_update(bar_pos)
 
     # Score
@@ -260,7 +260,7 @@ def update():
     for bar in bars:
         if is_host:
             bar.collide_ball()
-        else:  # Plyer2
+        else:  # Player2
             bar.collide_ball(sound_only=True)
 
     # Condition of Game Start
@@ -269,17 +269,17 @@ def update():
         if num_peers == MAX_PEERS and keyboard.space: 
             score.reset()
             ball.reset()
-            net.send_msg(peer_id, 'game_start', True)
+            net.send_msg(peer_id, 'game_start', True, queue=True)
     else:  # Ball
         if is_host:
             ball.move()
-            net.send_msg('Player2', 'ball_pos', {'center':ball.center, 'vel':(ball.vx, ball.vy)})
+            net.send_msg(peer_id, 'ball_pos', {'center':ball.center, 'vel':(ball.vx, ball.vy)})
             who_win = ball.collide_wall()
             if who_win:  # Score
                 score.add(who_win)
-                net.send_msg('Player2', 'score', who_win)
+                net.send_msg(peer_id, 'score', who_win, queue=True)
                 ball.reset()
-        else:  # Plyer2
+        else:  # Player2
             ball.move()
             ball.collide_wall(sound_only=True)
 
@@ -289,7 +289,7 @@ def update():
         if is_host:
             score.reinit()
             ball.reset()
-        else:  # Plyer2 
+        else:  # Player2 
             print("The host is disconnected.")
             exit()  # If the peer is host, exit the game
 

@@ -57,6 +57,7 @@ class Tank(Actor, CheckOutOfScreen):
         self.walls = walls
         self.bullets = []
         self.explosions = []
+        self.move_cnt = 0
 
 
     def is_out_of_screen(self):
@@ -92,20 +93,22 @@ class Tank(Actor, CheckOutOfScreen):
             sound_obj.play()
 
     def collidelist_bullets(self, tanks):
-        tank_index = -1
+        hit_tank_index = -1
 
-        for bullet in self.bullets:
+        for bullet in self.bullets[:]:
             bullet.move()
 
             # Check out of screen
             if bullet.is_out_of_screen():
                 self.bullets.remove(bullet)
+                continue
 
             # Check walls
             wall_index = bullet.collidelist(self.walls)
             if wall_index != -1:
                 del self.walls[wall_index]
                 self.bullets.remove(bullet)
+                continue
 
             # Check tanks
             tank_index = bullet.collidelist(tanks)
@@ -114,6 +117,7 @@ class Tank(Actor, CheckOutOfScreen):
                 explosion = Explosion(["explosion3", "explosion4"], \
                     tanks[tank_index].pos)
                 self.explosions.append(explosion)
+                hit_tank_index = tank_index
 
         # Animate explosion
         for explosion in self.explosions:
@@ -121,7 +125,7 @@ class Tank(Actor, CheckOutOfScreen):
             if explosion.duration == 0:
                 self.explosions.remove(explosion)
 
-        return tank_index
+        return hit_tank_index
 
     def draw(self):
         super().draw()
@@ -129,4 +133,3 @@ class Tank(Actor, CheckOutOfScreen):
             bullet.draw()
         for explosion in self.explosions:
             explosion.draw()
-            

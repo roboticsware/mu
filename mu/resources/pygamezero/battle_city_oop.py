@@ -7,7 +7,6 @@ HEIGHT = 600
 winner = ""
 
 # Delay of Enemy tank's moving
-enemy_move_cnt = 0
 ENEMY_MOVE_DELAY = 20
 
 # Delay of My tank's bullet re-loading
@@ -50,7 +49,7 @@ def draw():
         )
 
 def update():
-    global enemy_move_cnt, bullet_delay_cnt, winner
+    global bullet_delay_cnt, winner
 
     # My tank
     if winner == "":
@@ -83,11 +82,11 @@ def update():
     # Enemy tank
     for enemy in enemies:
         choice = random.randint(0, 3)
-        if enemy_move_cnt > 0:  # Move tank
-            enemy_move_cnt -= 1
+        if enemy.move_cnt > 0:  # Move tank
+            enemy.move_cnt -= 1
             enemy.move()
         elif choice == 0:  # Init movement delay
-            enemy_move_cnt = ENEMY_MOVE_DELAY
+            enemy.move_cnt = ENEMY_MOVE_DELAY
         elif choice == 1:  # Turn directions
             enemy.angle = random.randint(0, 3) * 90
         else:  # Fire canon shot
