@@ -2,9 +2,9 @@
 """
 Tests for the user interface elements of Mu.
 """
-from PyQt6.QtWidgets import QMessageBox, QLabel, QMenu
-from PyQt6.QtCore import Qt, QEvent, QPointF, QUrl
-from PyQt6.QtGui import QTextCursor, QMouseEvent
+from mu.qt.QtWidgets import QMessageBox, QLabel, QMenu
+from mu.qt.QtCore import Qt, QEvent, QPointF, QUrl
+from mu.qt.QtGui import QTextCursor, QMouseEvent
 from collections import deque
 from unittest import mock
 
@@ -822,10 +822,26 @@ def test_CameraPane_display_frame():
     """
     Ensure CameraPane handles frame display and updates FPS and resolution.
     """
+    from mu.qt.QtGui import QImage
+    from mu.qt.QtCore import QBuffer, QIODevice
+
     cp = mu.interface.panes.CameraPane()
-    fake_jpg = b"\xff\xd8\xff\xe0\x00\x10JFIF" + b"\x00" * 20 + b"\xff\xd9"
-    cp.display_frame(fake_jpg)
-    assert cp.frame_count == 1
+    img = QImage(320, 240, QImage.Format_RGB32)
+    img.fill(0xff0000)
+    buf = QBuffer()
+    buf.open(QIODevice.WriteOnly)
+    img.save(buf, "JPEG")
+    real_jpg = bytes(buf.data())
+
+    cp.display_frame(real_jpg)
+    assert cp.total_frames == 1
+    assert cp.lbl_resolution.text() == "320x240"
+
+    # Test flip toggle
+    cp.btn_flip.setChecked(True)
+    assert cp.flip_image is True
+    cp.display_frame(real_jpg)
+    assert cp.total_frames == 2 
 
 
 

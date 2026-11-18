@@ -237,6 +237,7 @@ DEFAULT_ESP32_LIB = [
     "_hal.py",
     "_wifi.py",
     "_touch.py",
+    "vision.py",
 ]
 
 EXAMPLE_PICO_BASIC = [

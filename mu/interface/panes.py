@@ -31,6 +31,7 @@ import time
 
 from mu.qt.QtCore import (
     Qt,
+    QThread,
     QProcess,
     QProcessEnvironment,
     pyqtSignal,
@@ -44,6 +45,8 @@ from mu.qt.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QSizePolicy,
+    QLineEdit,
+    QPushButton,
     QMessageBox,
     QTextEdit,
     QFrame,
@@ -71,6 +74,8 @@ from mu.qt.QtGui import (
     QAction,
     QSyntaxHighlighter,
     QTextCharFormat,
+    QPen,
+    QBrush,
 )
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from ..i18n import language_code
@@ -225,6 +230,7 @@ class MicroPythonREPLPane(QTextEdit):
     REPL = Read, Evaluate, Print, Loop.
 """
     camera_frame_received = pyqtSignal(bytes)
+    wifi_stream_detected = pyqtSignal(str)
     """
 
     This widget represents a REPL client connected to a device running
@@ -493,6 +499,17 @@ class MicroPythonREPLPane(QTextEdit):
         Updates the self.device_cursor_position to match that of the device
         for every input received.
         """
+        # Check for Wi-Fi camera stream announce from ESP32
+        if b"[Vision] Starting WiFi stream at " in data:
+            try:
+                text_peek = data.decode("latin1", "replace")
+                m = re.search(r"\[Vision\] Starting WiFi stream at (http://[^\s]+)", text_peek)
+                if m:
+                    stream_url = m.group(1).rstrip(".")
+                    self.wifi_stream_detected.emit(stream_url)
+            except Exception:
+                pass
+
         # Intercept camera video stream before feeding binary bytes to text decoder
         if not self.camera_streaming:
             if b"[Vision] Starting PC stream" in data or b"\xff\xd8\xff" in data:
@@ -517,7 +534,16 @@ class MicroPythonREPLPane(QTextEdit):
                     if soi > 0:
                         data += self._cam_buffer[:soi]
                         self._cam_buffer = self._cam_buffer[soi:]
+
+                    # Check for premature next SOI (corrupted/truncated frame from packet loss)
+                    next_soi = self._cam_buffer.find(b"\xff\xd8", 2)
                     eoi = self._cam_buffer.find(b"\xff\xd9", 2)
+
+                    if next_soi != -1 and (eoi == -1 or next_soi < eoi):
+                        # Frame was cut off mid-transmission. Discard partial frame and advance to next.
+                        self._cam_buffer = self._cam_buffer[next_soi:]
+                        continue
+
                     if eoi == -1:
                         break
                     jpg_frame = self._cam_buffer[: eoi + 2]
@@ -827,19 +853,98 @@ class SnekREPLPane(MicroPythonREPLPane):
         self.ensureCursorVisible()
 
 
+HAND_CONNECTIONS = [
+    (0, 1), (1, 2), (2, 3), (3, 4),        # Thumb
+    (0, 5), (5, 6), (6, 7), (7, 8),        # Index
+    (5, 9), (9, 10), (10, 11), (11, 12),   # Middle
+    (9, 13), (13, 14), (14, 15), (15, 16), # Ring
+    (13, 17), (17, 18), (18, 19), (19, 20),# Pinky
+    (0, 17)                                # Palm base
+]
+
+class WifiCameraWorker(QThread):
+    """
+    Background worker thread that receives MJPEG video stream over HTTP Wi-Fi.
+    Extracts JPEG frames and emits frame_received(bytes).
+    """
+    frame_received = pyqtSignal(bytes)
+    connection_status = pyqtSignal(bool, str)
+
+    def __init__(self, url):
+        super().__init__()
+        self.url = url.strip()
+        if not self.url.startswith("http://") and not self.url.startswith("https://"):
+            self.url = "http://" + self.url
+        self._running = True
+
+    def stop(self):
+        self._running = False
+        self.wait(1000)
+
+    def run(self):
+        import requests
+        try:
+            self.connection_status.emit(True, "Connecting…")
+            with requests.get(self.url, stream=True, timeout=8) as response:
+                if response.status_code != 200:
+                    self.connection_status.emit(False, f"HTTP Error {response.status_code}")
+                    return
+                self.connection_status.emit(True, "Connected")
+                buf = b""
+                for chunk in response.iter_content(chunk_size=4096):
+                    if not self._running:
+                        break
+                    if not chunk:
+                        continue
+                    buf += chunk
+                    while True:
+                        soi = buf.find(b"\xff\xd8")
+                        if soi == -1:
+                            if len(buf) > 4:
+                                buf = buf[-2:]
+                            break
+                        if soi > 0:
+                            buf = buf[soi:]
+                        eoi = buf.find(b"\xff\xd9", 2)
+                        if eoi == -1:
+                            break
+                        jpg = buf[: eoi + 2]
+                        buf = buf[eoi + 2 :]
+                        self.frame_received.emit(jpg)
+        except Exception as e:
+            if self._running:
+                self.connection_status.emit(False, str(e))
+
+
 class CameraPane(QWidget):
     """
-    Live Camera / AI Vision Docking Pane.
-    Displays live video feed streamed from an ESP32 camera board (e.g. OV2640 via espzero.vision).
-    Renders JPEG frames using native Qt QImage/QPixmap with FPS and resolution info.
+    Live Camera / AI Vision Docking Pane with built-in MediaPipe Hand Tracking.
+    1. Real-time JPEG video rendering (Qt native) over USB Serial OR Wi-Fi
+    2. MediaPipe hand skeleton & landmark overlay (QPainter)
+    3. Emits ai_feedback_ready signal with index fingertip coords for REPL injection.
+    4. Supports wireless Wi-Fi AI coordinate feedback directly to ESP32 HTTP endpoint.
     """
+    ai_feedback_ready = pyqtSignal(dict)
 
     def __init__(self, parent=None, theme="day"):
         super().__init__(parent)
         self.setObjectName("camerapane")
+        self.total_frames = 0
         self.frame_count = 0
         self.last_fps_time = time.time()
         self.current_fps = 0.0
+
+        # Wi-Fi streaming components
+        self.wifi_worker = None
+        self.wifi_url = None
+        self.flip_image = False
+
+        # MediaPipe Hands detector
+        self.hands_detector = None
+        self._init_mediapipe()
+
+        # Throttling AI feedback to serial to avoid UART congestion (max 15 times/sec)
+        self.last_feedback_time = 0.0
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(6, 6, 6, 6)
@@ -848,24 +953,74 @@ class CameraPane(QWidget):
         # Header status bar
         header = QHBoxLayout()
         header.setContentsMargins(0, 0, 0, 0)
-        self.lbl_status = QLabel(_("● LIVE"))
+        self.lbl_status = QLabel(_("● LIVE (USB) | AI ACTIVE"))
         self.lbl_status.setStyleSheet("font-weight: bold; color: #2e7d32; font-size: 11px;")
+        self.btn_flip = QPushButton(_("Flip 180°"))
+        self.btn_flip.setCheckable(True)
+        self.btn_flip.setStyleSheet("font-size: 11px; padding: 1px 6px;")
+        self.btn_flip.toggled.connect(self._toggle_flip)
+
+        self.btn_install_ai = QPushButton(_("Install AI Engine"))
+        self.btn_install_ai.setStyleSheet("font-size: 11px; padding: 1px 8px; font-weight: bold; background-color: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; border-radius: 3px;")
+        self.btn_install_ai.clicked.connect(self._install_ai_packages)
+        self.btn_install_ai.setVisible(self.hands_detector is None)
+
         self.lbl_resolution = QLabel("320x240")
         self.lbl_resolution.setStyleSheet("color: #777; font-size: 11px;")
+        self.lbl_ai_info = QLabel("")
+        self.lbl_ai_info.setStyleSheet("color: #d32f2f; font-weight: bold; font-size: 11px;")
         self.lbl_fps = QLabel("0.0 FPS")
         self.lbl_fps.setStyleSheet("font-weight: bold; color: #1976d2; font-size: 11px;")
 
         header.addWidget(self.lbl_status)
+        header.addSpacing(6)
+        header.addWidget(self.btn_flip)
+        header.addSpacing(6)
+        header.addWidget(self.btn_install_ai)
+        header.addSpacing(8)
+        header.addWidget(self.lbl_ai_info)
         header.addStretch()
         header.addWidget(self.lbl_resolution)
         header.addSpacing(8)
         header.addWidget(self.lbl_fps)
         layout.addLayout(header)
 
+        # Wi-Fi connection bar
+        wifi_bar = QHBoxLayout()
+        wifi_bar.setContentsMargins(0, 0, 0, 0)
+        wifi_bar.setSpacing(4)
+
+        lbl_wifi = QLabel(_("Wi-Fi:"))
+        lbl_wifi.setStyleSheet("font-size: 11px; font-weight: bold; color: #555;")
+        self.txt_wifi_url = QLineEdit()
+        self.txt_wifi_url.setPlaceholderText("http://192.168.x.x:8080/")
+        self.txt_wifi_url.setStyleSheet("font-size: 11px; padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px;")
+        self.txt_wifi_url.returnPressed.connect(self._toggle_wifi_connection)
+
+        self.btn_wifi_connect = QPushButton(_("Connect"))
+        self.btn_wifi_connect.setStyleSheet("font-size: 11px; padding: 2px 8px; font-weight: bold;")
+        self.btn_wifi_connect.clicked.connect(self._toggle_wifi_connection)
+
+        wifi_bar.addWidget(lbl_wifi)
+        wifi_bar.addWidget(self.txt_wifi_url)
+        wifi_bar.addWidget(self.btn_wifi_connect)
+        layout.addLayout(wifi_bar)
+
+        # Wi-Fi error message label (wrapped cleanly below Wi-Fi bar)
+        self.lbl_wifi_error = QLabel("")
+        self.lbl_wifi_error.setWordWrap(True)
+        self.lbl_wifi_error.setStyleSheet(
+            "color: #ef5350; font-size: 11px; padding: 3px 6px; "
+            "background: rgba(239, 83, 80, 0.12); border: 1px solid rgba(239, 83, 80, 0.3); border-radius: 3px;"
+        )
+        self.lbl_wifi_error.setVisible(False)
+        layout.addWidget(self.lbl_wifi_error)
+
         # Video viewport
         self.video_label = QLabel()
         self.video_label.setAlignment(Qt.AlignCenter)
         self.video_label.setMinimumSize(320, 240)
+        self.video_label.setWordWrap(True)
         self.video_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.video_label.setStyleSheet("background-color: #1a1a1a; border-radius: 4px;")
         self.video_label.setText(_("Waiting for camera stream…"))
@@ -873,31 +1028,266 @@ class CameraPane(QWidget):
 
         self.set_theme(theme)
 
+    def _toggle_flip(self, checked):
+        self.flip_image = checked
+
+    def _init_mediapipe(self):
+        try:
+            import numpy as np
+            import mediapipe as mp
+            self.hands_detector = mp.solutions.hands.Hands(
+                static_image_mode=False,
+                max_num_hands=1,
+                min_detection_confidence=0.35,
+                min_tracking_confidence=0.3
+            )
+            logger.info("MediaPipe Hands initialized in CameraPane.")
+            if hasattr(self, "lbl_status"):
+                self.lbl_status.setText(_("● LIVE (USB) | AI ACTIVE"))
+        except Exception as e:
+            logger.info("MediaPipe/numpy not available (%s). Operating in pure video viewer mode.", e)
+            self.hands_detector = None
+            if hasattr(self, "lbl_status"):
+                self.lbl_status.setText(_("● LIVE (USB) | VIEWER"))
+                self.lbl_status.setStyleSheet("font-weight: bold; color: #1565c0; font-size: 11px;")
+
+    def _install_ai_packages(self):
+        """Install vision/MediaPipe packages in background if missing."""
+        import subprocess
+        import sys
+        import threading
+        if hasattr(self, "btn_install_ai"):
+            self.btn_install_ai.setEnabled(False)
+            self.btn_install_ai.setText(_("Installing AI..."))
+
+        def worker():
+            try:
+                cmd = [sys.executable, "-m", "pip", "install", "numpy", "opencv-python", "mediapipe<=0.10.11"]
+                subprocess.check_call(cmd)
+                self._init_mediapipe()
+                if self.hands_detector and hasattr(self, "btn_install_ai"):
+                    self.btn_install_ai.setVisible(False)
+                elif hasattr(self, "btn_install_ai"):
+                    self.btn_install_ai.setText(_("Install Failed"))
+                    self.btn_install_ai.setEnabled(True)
+            except Exception as e:
+                logger.error("AI package install error: %s", e)
+                if hasattr(self, "btn_install_ai"):
+                    self.btn_install_ai.setText(_("Install Failed"))
+                    self.btn_install_ai.setEnabled(True)
+
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
+
     def display_frame(self, jpg_bytes):
         """
-        Decode and render a JPEG frame onto the video label.
+        Decode JPEG, run MediaPipe Hand Landmark detection if available,
+        draw skeleton overlay, and emit AI feedback coordinates for serial REPL injection.
         """
         image = QImage.fromData(jpg_bytes, "JPG")
-        if not image.isNull():
-            self.frame_count += 1
-            now = time.time()
-            dt = now - self.last_fps_time
-            if dt >= 1.0:
-                self.current_fps = self.frame_count / dt
-                self.lbl_fps.setText(f"{self.current_fps:.1f} FPS")
-                self.frame_count = 0
-                self.last_fps_time = now
+        if image.isNull():
+            return
 
-            w, h = image.width(), image.height()
-            self.lbl_resolution.setText(f"{w}x{h}")
+        if self.flip_image:
+            image = image.mirrored(True, True)
 
-            pixmap = QPixmap.fromImage(image)
-            lbl_size = self.video_label.size()
-            if lbl_size.width() > 10 and lbl_size.height() > 10:
-                scaled = pixmap.scaled(lbl_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                self.video_label.setPixmap(scaled)
+        w, h = image.width(), image.height()
+        self.total_frames += 1
+        self.frame_count += 1
+        now = time.time()
+        dt = now - self.last_fps_time
+        if dt >= 1.0:
+            self.current_fps = self.frame_count / dt
+            self.lbl_fps.setText(f"{self.current_fps:.1f} FPS")
+            self.frame_count = 0
+            self.last_fps_time = now
+
+        self.lbl_resolution.setText(f"{w}x{h}")
+
+        landmarks = None
+        if self.hands_detector:
+            try:
+                import numpy as np
+                try:
+                    import cv2
+                    nparr = np.frombuffer(jpg_bytes, np.uint8)
+                    img_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+                    if self.flip_image:
+                        img_rgb = cv2.flip(img_rgb, -1)
+                except Exception:
+                    rgb_img = image.convertToFormat(QImage.Format_RGB888)
+                    ptr = rgb_img.bits()
+                    ptr.setsize(rgb_img.byteCount())
+                    img_rgb = np.array(ptr, copy=True).reshape(h, w, 3)
+
+                results = self.hands_detector.process(img_rgb)
+                if results and results.multi_hand_landmarks:
+                    landmarks = results.multi_hand_landmarks[0]
+            except Exception as e:
+                logger.debug("MediaPipe detection error: %s", e)
+
+        # Draw skeleton overlay on QImage using QPainter if landmarks detected
+        if landmarks:
+            painter = QPainter(image)
+            painter.setRenderHint(QPainter.Antialiasing)
+
+            # Draw skeleton connection lines
+            pen_line = QPen(QColor(0, 255, 0), 2)
+            painter.setPen(pen_line)
+            pts = [(int(lm.x * w), int(lm.y * h)) for lm in landmarks.landmark]
+            for p1, p2 in HAND_CONNECTIONS:
+                if p1 < len(pts) and p2 < len(pts):
+                    painter.drawLine(pts[p1][0], pts[p1][1], pts[p2][0], pts[p2][1])
+
+            # Draw joint landmark circles
+            pen_dot = QPen(QColor(255, 0, 0), 1)
+            painter.setPen(pen_dot)
+            painter.setBrush(QColor(255, 255, 0))
+            for idx, (px, py) in enumerate(pts):
+                r = 4 if idx in (4, 8, 12, 16, 20) else 2
+                painter.drawEllipse(px - r, py - r, r * 2, r * 2)
+
+            # Highlight index fingertip (Landmark 8)
+            if len(pts) > 8:
+                ix, iy = pts[8]
+                painter.setPen(QPen(QColor(255, 0, 0), 2))
+                painter.setBrush(QColor(255, 50, 50))
+                painter.drawEllipse(ix - 5, iy - 5, 10, 10)
+                self.lbl_ai_info.setText(f"Hand: ({ix}, {iy})")
+
+                # Emit feedback to ESP32 (throttled to ~15Hz)
+                if now - self.last_feedback_time >= 0.066:
+                    self.last_feedback_time = now
+                    fb_payload = {
+                        "hand_x": ix,
+                        "hand_y": iy,
+                        "hand_detected": True
+                    }
+                    self.ai_feedback_ready.emit(fb_payload)
+                    if self.wifi_url:
+                        self._send_wifi_ai_feedback(fb_payload)
+            painter.end()
+        else:
+            self.lbl_ai_info.setText("")
+            if now - self.last_feedback_time >= 0.3:
+                self.last_feedback_time = now
+                fb_payload = {"hand_x": 0, "hand_y": 0, "hand_detected": False}
+                self.ai_feedback_ready.emit(fb_payload)
+                if self.wifi_url:
+                    self._send_wifi_ai_feedback(fb_payload)
+
+        pixmap = QPixmap.fromImage(image)
+        lbl_size = self.video_label.size()
+        if lbl_size.width() > 10 and lbl_size.height() > 10:
+            scaled = pixmap.scaled(lbl_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.video_label.setPixmap(scaled)
+        else:
+            self.video_label.setPixmap(pixmap)
+
+    def _toggle_wifi_connection(self):
+        if self.wifi_worker and self.wifi_worker.isRunning():
+            self.disconnect_wifi()
+        else:
+            url = self.txt_wifi_url.text().strip()
+            if url:
+                self.connect_wifi(url)
+
+    def connect_wifi(self, url):
+        """
+        Connects to an ESP32 MJPEG HTTP video stream over Wi-Fi.
+        """
+        self.disconnect_wifi()
+        self.wifi_url = url
+        self.txt_wifi_url.setText(url)
+        self.lbl_status.setText(_("● CONNECTING (Wi-Fi)…"))
+        self.lbl_status.setStyleSheet("font-weight: bold; color: #1565c0; font-size: 11px;")
+        self.lbl_status.setToolTip("")
+        if hasattr(self, "lbl_wifi_error"):
+            self.lbl_wifi_error.setVisible(False)
+        self.btn_wifi_connect.setText(_("Disconnect"))
+
+        self.wifi_worker = WifiCameraWorker(url)
+        self.wifi_worker.frame_received.connect(self.display_frame)
+        self.wifi_worker.connection_status.connect(self._on_wifi_status)
+        self.wifi_worker.start()
+
+    def disconnect_wifi(self):
+        """
+        Disconnects the Wi-Fi streaming thread.
+        """
+        if self.wifi_worker:
+            self.wifi_worker.stop()
+            self.wifi_worker = None
+        self.wifi_url = None
+        self.btn_wifi_connect.setText(_("Connect"))
+        self.lbl_status.setText(_("● LIVE (USB) | AI ACTIVE"))
+        self.lbl_status.setStyleSheet("font-weight: bold; color: #2e7d32; font-size: 11px;")
+        self.lbl_status.setToolTip("")
+        if hasattr(self, "lbl_wifi_error"):
+            self.lbl_wifi_error.setVisible(False)
+
+    def _on_wifi_status(self, connected, message):
+        if connected:
+            self.lbl_status.setText(_("● LIVE (Wi-Fi) | AI ACTIVE"))
+            self.lbl_status.setStyleSheet("font-weight: bold; color: #1b5e20; font-size: 11px;")
+            self.lbl_status.setToolTip("")
+            if hasattr(self, "lbl_wifi_error"):
+                self.lbl_wifi_error.setVisible(False)
+        else:
+            self.lbl_status.setText(_("● Wi-Fi: Disconnected"))
+            self.lbl_status.setStyleSheet("font-weight: bold; color: #c62828; font-size: 11px;")
+            self.lbl_status.setToolTip(str(message))
+            self.btn_wifi_connect.setText(_("Connect"))
+
+            # Human-friendly, nicely wrapped error message below the input bar
+            msg_str = str(message)
+            msg_lower = msg_str.lower()
+            if "timeout" in msg_lower or "timed out" in msg_lower:
+                human_err = "⚠️ " + _("Connection timed out: Check if start_wifi_stream() is running on the board and IP/port (8080) is correct.")
+            elif "refused" in msg_lower:
+                human_err = "⚠️ " + _("Connection refused: The camera streaming server has not started on the board yet.")
             else:
-                self.video_label.setPixmap(pixmap)
+                prefix = _("Wi-Fi connection error")
+                err_detail = msg_str[:120] + "…" if len(msg_str) > 120 else msg_str
+                human_err = f"⚠️ {prefix}: {err_detail}"
+
+            if hasattr(self, "lbl_wifi_error"):
+                self.lbl_wifi_error.setText(human_err)
+                self.lbl_wifi_error.setVisible(True)
+
+    def _send_wifi_ai_feedback(self, data):
+        """
+        Asynchronously sends MediaPipe AI coordinates over Wi-Fi to the ESP32 HTTP endpoint.
+        """
+        if not self.wifi_url:
+            return
+
+        def _worker():
+            try:
+                import requests
+                from urllib.parse import urlparse
+                parsed = urlparse(self.wifi_url)
+                base = f"{parsed.scheme}://{parsed.netloc}"
+                hx = data.get("hand_x", 0)
+                hy = data.get("hand_y", 0)
+                det = 1 if data.get("hand_detected", False) else 0
+                requests.get(f"{base}/ai?x={hx}&y={hy}&det={det}", timeout=0.3)
+            except Exception:
+                pass
+
+        import threading
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def closeEvent(self, event):
+        self.disconnect_wifi()
+        if self.hands_detector:
+            try:
+                self.hands_detector.close()
+            except Exception:
+                pass
+            self.hands_detector = None
+        super().closeEvent(event)
 
     def set_theme(self, theme):
         if theme == "night":

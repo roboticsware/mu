@@ -1,7 +1,12 @@
 from unittest import mock
+import builtins
+if "_" not in builtins.__dict__:
+    builtins.__dict__["_"] = lambda s: s
 
 import pytest
-from PyQt6.QtWidgets import QApplication
+from mu.qt.QtWidgets import QApplication
+import os
+import random
 
 from mu import settings
 

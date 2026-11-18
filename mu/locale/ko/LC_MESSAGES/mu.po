@@ -1,29 +1,28 @@
+
 msgid ""
 msgstr ""
-"Project-Id-Version: mu-editor-korean-translation\n"
+"Project-Id-Version:  mu-editor-korean-translation\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2024-01-18 23:35+0500\n"
-"PO-Revision-Date: 2024-02-07 05:40\n"
+"PO-Revision-Date: 2024-02-07 05:40+0000\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.13.1\n"
-"X-Crowdin-Project: mu-editor-korean-translation\n"
-"X-Crowdin-Project-ID: 641514\n"
-"X-Crowdin-Language: ko\n"
-"X-Crowdin-File: mu.po\n"
-"X-Crowdin-File-ID: 4\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: mu/debugger/client.py:118
-msgid "Connection timed out. Is your machine slow or busy? Free up some of the machine's resources and try again."
+msgid ""
+"Connection timed out. Is your machine slow or busy? Free up some of the "
+"machine's resources and try again."
 msgstr "연결실패. 컴퓨터가 느리거나 멈춰있나요? 컴퓨터의 리소스를 확보한 후 재시도 하세요."
 
 #: mu/debugger/client.py:132
-msgid "Could not find localhost.\n"
+msgid ""
+"Could not find localhost.\n"
 "Ensure you have '127.0.0.1 localhost' in your /etc/hosts file."
 msgstr "localhost를 찾을 수 없음. /etc/hosts 파일 안에 '127.0.0.1 localhost' 라고 적혀있는지 확인하세요."
 
@@ -32,22 +31,33 @@ msgid "Select Mode"
 msgstr "모드 선택"
 
 #: mu/interface/dialogs.py:79
-msgid "Please select the desired mode then click \"OK\". Otherwise, click \"Cancel\"."
+msgid ""
+"Please select the desired mode then click \"OK\". Otherwise, click "
+"\"Cancel\"."
 msgstr "원하는 모드를 선택 후 '예'를 누르세요. 그러나, 선택을 원하지 않으면 '취소'를 누르세요."
 
 #: mu/interface/dialogs.py:100
-msgid "Change mode at any time by clicking the \"Mode\" button containing Mu's logo."
+msgid ""
+"Change mode at any time by clicking the \"Mode\" button containing Mu's "
+"logo."
 msgstr "Mu 로고모양의 '모드선택' 버튼을 눌러 언제든 모드를 변경하세요."
 
 #: mu/interface/dialogs.py:139
-msgid "When reporting a bug, copy and paste the content of the following log file."
+msgid ""
+"When reporting a bug, copy and paste the content of the following log "
+"file."
 msgstr "버그를 리포팅 할 때, 다음의 로그 파일의 내용을 복사&붙혀넣기 하세요."
 
 #: mu/interface/dialogs.py:163
-msgid "The environment variables shown below will be set each time you run a Python 3 script.\n\n"
-"Each separate enviroment variable should be on a new line and of the form:\n"
+msgid ""
+"The environment variables shown below will be set each time you run a "
+"Python 3 script.\n"
+"\n"
+"Each separate enviroment variable should be on a new line and of the "
+"form:\n"
 "NAME=VALUE"
-msgstr "다음의 환경변수 값들을 Python 스크립트를 수행할 때마다 적용될 것입니다.\n"
+msgstr ""
+"다음의 환경변수 값들을 Python 스크립트를 수행할 때마다 적용될 것입니다.\n"
 "각 환경변수는 새로운 줄에 위치해야하며 형태는 다음과 같습니다:\n"
 "이름 = 값"
 
@@ -56,22 +66,39 @@ msgid "Minify Python code before flashing?"
 msgstr "파이썬 코드를 업로드 하기 전에 코드 최적화를 진행할까요?"
 
 #: mu/interface/dialogs.py:193
-msgid "Override the built-in MicroPython runtime with the following hex file (empty means use the default):"
+msgid ""
+"Override the built-in MicroPython runtime with the following hex file "
+"(empty means use the default):"
 msgstr "다음의 hex 파일로 내장된 MicroPython 의 런타임을 대치하세요 (만약, 비워두면 디폴트 값 사용을 의미합니다.)"
 
 #: mu/interface/dialogs.py:219
-msgid "The packages shown below will be available to import in Python 3 mode. Delete a package from the list to remove its availability.\n\n"
-"Each separate package name should be on a new line. Packages are installed from PyPI (see: https://pypi.org/)."
-msgstr "파이썬 모드에서 사용하고자 하는 Mu의 내장 패키지 외의 추가 패키지(package)들을 설치할 수 있습니다.  \n\n"
-"한 라인마다 한 패키지 이름만 적습니다. 사용이 필요 없을 경우, 해당 라인을 지우면 됩니다.\n\n"
+msgid ""
+"The packages shown below will be available to import in Python 3 mode. "
+"Delete a package from the list to remove its availability.\n"
+"\n"
+"Each separate package name should be on a new line. Packages are "
+"installed from PyPI (see: https://pypi.org/)."
+msgstr ""
+"파이썬 모드에서 사용하고자 하는 Mu의 내장 패키지 외의 추가 패키지(package)들을 설치할 수 있습니다.  \n"
+"\n"
+"한 라인마다 한 패키지 이름만 적습니다. 사용이 필요 없을 경우, 해당 라인을 지우면 됩니다.\n"
+"\n"
 "참고로 PyPI (https://pypi.org/) 패키지 디렉토리에서 설치가능한 파이썬 패키지들을 확인할 수 있습니다. "
 
 #: mu/interface/dialogs.py:250
-msgid "The folks at <a href='https://www.pythonanywhere.com/'>PythonAnywhere</a> make it easy for learners and educators to host simple web projects for free. You'll need to sign up for an account and provide the following details for Mu to deploy your web project."
-msgstr "<a href='https://www.pythonanywhere.com/'>PythonAnywhere</a>의 팀은 학습자와 교육자가 무료로 간단한 웹 프로젝트를 호스팅할 수 있도록 도와줍니다. 계정을 만들고 Mu가 웹 프로젝트를 배포할 수 있도록 다음 세부 정보를 제공해야 합니다."
+msgid ""
+"The folks at <a href='https://www.pythonanywhere.com/'>PythonAnywhere</a>"
+" make it easy for learners and educators to host simple web projects for "
+"free. You'll need to sign up for an account and provide the following "
+"details for Mu to deploy your web project."
+msgstr ""
+"<a href='https://www.pythonanywhere.com/'>PythonAnywhere</a>의 팀은 학습자와 "
+"교육자가 무료로 간단한 웹 프로젝트를 호스팅할 수 있도록 도와줍니다. 계정을 만들고 Mu가 웹 프로젝트를 배포할 수 있도록 다음 "
+"세부 정보를 제공해야 합니다."
 
 #: mu/interface/dialogs.py:263
-msgid "\n"
+msgid ""
+"\n"
 "Copy your username on PythonAnywhere into here:"
 msgstr "PythonAnywhere 상의 사용자 이름을 여기로 복사하세요:"
 
@@ -80,8 +107,14 @@ msgid "username"
 msgstr "사용자 이름"
 
 #: mu/interface/dialogs.py:272
-msgid "Copy your <a href='https://www.pythonanywhere.com/account/#api_token'>secret API token from PythonAnywhere</a> into here:"
-msgstr "<a href='https://www.pythonanywhere.com/account/#api_token'>PythonAnywhere의 비밀 API 토큰</a>을 여기에 복사하십시오:"
+msgid ""
+"Copy your <a "
+"href='https://www.pythonanywhere.com/account/#api_token'>secret API token"
+" from PythonAnywhere</a> into here:"
+msgstr ""
+"<a "
+"href='https://www.pythonanywhere.com/account/#api_token'>PythonAnywhere의 "
+"비밀 API 토큰</a>을 여기에 복사하십시오:"
 
 #: mu/interface/dialogs.py:281
 msgid "secret api token"
@@ -96,7 +129,10 @@ msgid "Automatically detect"
 msgstr "자동 감지"
 
 #: mu/interface/dialogs.py:334
-msgid "Please select the language for Mu's user interface from the choices listed below. <strong>Restart Mu for these changes to take effect.</strong>"
+msgid ""
+"Please select the language for Mu's user interface from the choices "
+"listed below. <strong>Restart Mu for these changes to take "
+"effect.</strong>"
 msgstr "사용자 인터페이스를 위한 언어를 선택해 주세요. <strong>단, Mu 에디터를 재시작 할 때 적용됩니다.</strong>"
 
 #: mu/interface/dialogs.py:365
@@ -104,8 +140,18 @@ msgid "How to flash MicroPython to your device"
 msgstr "장치에 MicroPython을 설치하는 방법"
 
 #: mu/interface/dialogs.py:372
-msgid "&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />&nbsp;2. Download firmware from the <a href=\"https://micropython.org/download\" style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3. Connect your device<br/>&nbsp;4. Load the .bin file below using the 'Browse' button<br/>&nbsp;5. Press 'Erase & write firmware'"
-msgstr "&nbsp;1. 장치 유형 결정 (ESP8266 또는 ESP32)<br />&nbsp;2. <a href=\"https://micropython.org/download\" style=\"color:#039be5;\">https://micropython.org/download</a>에서 펌웨어 다운로드<br/>&nbsp;3. 장치 연결<br/>&nbsp;4. '찾아보기' 버튼을 사용하여 아래의 .bin 파일 로드<br/>&nbsp;5. '지우기 및 펌웨어 쓰기' 누르기"
+msgid ""
+"&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />&nbsp;2. "
+"Download firmware from the <a href=\"https://micropython.org/download\" "
+"style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3."
+" Connect your device<br/>&nbsp;4. Load the .bin file below using the "
+"'Browse' button<br/>&nbsp;5. Press 'Erase & write firmware'"
+msgstr ""
+"&nbsp;1. 장치 유형 결정 (ESP8266 또는 ESP32)<br />&nbsp;2. <a "
+"href=\"https://micropython.org/download\" "
+"style=\"color:#039be5;\">https://micropython.org/download</a>에서 펌웨어 "
+"다운로드<br/>&nbsp;3. 장치 연결<br/>&nbsp;4. '찾아보기' 버튼을 사용하여 아래의 .bin 파일 "
+"로드<br/>&nbsp;5. '지우기 및 펌웨어 쓰기' 누르기"
 
 #: mu/interface/dialogs.py:395
 msgid "Device:"
@@ -284,6 +330,7 @@ msgid "Close file"
 msgstr "파일 닫기"
 
 #: mu/interface/main.py:316
+#, python-brace-format
 msgid "Mu {}"
 msgstr "Mu {}"
 
@@ -304,14 +351,17 @@ msgid "Python3 (Jupyter)"
 msgstr "Python3 (Jupyter)"
 
 #: mu/interface/main.py:698
+#, python-brace-format
 msgid "{} REPL"
 msgstr "{} REPL"
 
 #: mu/interface/main.py:717
+#, python-brace-format
 msgid "{} Plotter"
 msgstr "{} 플로터"
 
 #: mu/interface/main.py:767
+#, python-brace-format
 msgid "Running: {}"
 msgstr "실행 중: {}"
 
@@ -328,10 +378,12 @@ msgid "Value"
 msgstr "값"
 
 #: mu/interface/main.py:866
+#, python-brace-format
 msgid "(A list of {} items.)"
 msgstr "({}개의 항목이 포함된 리스트입니다.)"
 
 #: mu/interface/main.py:885
+#, python-brace-format
 msgid "(A dict of {} items.)"
 msgstr "({}개의 항목이 포함된 사전(dict)입니다.)"
 
@@ -340,32 +392,50 @@ msgid "Mu"
 msgstr "Mu"
 
 #: mu/interface/main.py:1375
-msgid "Uploading to PythonAnywhere.\n\n"
+msgid ""
+"Uploading to PythonAnywhere.\n"
+"\n"
 "This may take some time and pause at the end (as the website is started)."
-msgstr "PythonAnywhere로 업로드 중입니다.\n\n"
+msgstr ""
+"PythonAnywhere로 업로드 중입니다.\n"
+"\n"
 "이 작업은 시간이 다소 소요될 수 있으며 마지막에 잠시 멈출 수 있습니다 (웹사이트가 시작되는 동안)."
 
 #: mu/interface/main.py:1407
-msgid "<p>Your website was successfully deployed.</p><p>You can see it here:</p><a href='https://{domain}'>https://{domain}</a>"
-msgstr "<p>웹사이트가 성공적으로 배포되었습니다.</p><p>여기에서 확인할 수 있습니다:</p><a href='https://{domain}'>https://{domain}</a>"
+#, python-brace-format
+msgid ""
+"<p>Your website was successfully deployed.</p><p>You can see it "
+"here:</p><a href='https://{domain}'>https://{domain}</a>"
+msgstr ""
+"<p>웹사이트가 성공적으로 배포되었습니다.</p><p>여기에서 확인할 수 있습니다:</p><a "
+"href='https://{domain}'>https://{domain}</a>"
 
 #: mu/interface/main.py:1424
 msgid "There was a problem deploying to PythonAnywhere:<br/><br/>"
 msgstr "PythonAnywhere에 배포하는 중 문제가 발생했습니다:<br/><br/>"
 
 #: mu/interface/main.py:1431
-msgid "Please check your PythonAnywhere settings or connection and ensure you're using a recent version of Mu.<br/><br/>Alternatively, <a href='https://github.com/mu-editor/mu/issues/new/choose'>submit a bug report</a>."
-msgstr "PythonAnywhere 설정 또는 연결을 확인하고 최신 버전의 Mu를 사용하고 있는지 확인하십시오.<br/><br/>또는 <a href='https://github.com/mu-editor/mu/issues/new/choose'>버그 리포트를 제출</a>하십시오."
+msgid ""
+"Please check your PythonAnywhere settings or connection and ensure you're"
+" using a recent version of Mu.<br/><br/>Alternatively, <a "
+"href='https://github.com/mu-editor/mu/issues/new/choose'>submit a bug "
+"report</a>."
+msgstr ""
+"PythonAnywhere 설정 또는 연결을 확인하고 최신 버전의 Mu를 사용하고 있는지 확인하십시오.<br/><br/>또는 <a "
+"href='https://github.com/mu-editor/mu/issues/new/choose'>버그 리포트를 "
+"제출</a>하십시오."
 
 #: mu/interface/main.py:1454
 msgid "Mu's current mode of behaviour."
 msgstr "Mu의 현재 작동 모드."
 
 #: mu/interface/main.py:1509
+#, python-brace-format
 msgid "Detected new {} device: {}."
 msgstr "새로운 {} 장치를 감지했습니다: {}."
 
 #: mu/interface/main.py:1513 mu/logic.py:1678
+#, python-brace-format
 msgid "Detected new {} device."
 msgstr "새로운 {} 장치를 감지했습니다."
 
@@ -378,30 +448,37 @@ msgid "File already exists"
 msgstr "파일이 이미 존재함"
 
 #: mu/interface/panes.py:728
+#, python-brace-format
 msgid "Copying '{}' to device."
 msgstr "'{}'을(를) 장치로 복사 중."
 
 #: mu/interface/panes.py:737
+#, python-brace-format
 msgid "'{}' successfully copied to device."
 msgstr "'{}'이(가) 장치로 성공적으로 복사되었습니다."
 
-#: mu/interface/panes.py:746
+#: mu/interface/panes.py:746 mu/interface/panes.py:760
+#: mu/interface/panes.py:857
 msgid "Delete (cannot be undone)"
 msgstr "삭제 (되돌릴 수 없음)"
 
 #: mu/interface/panes.py:752
+#, python-brace-format
 msgid "Deleting '{}' from device."
 msgstr "장치에서 '{}'을(를) 삭제 중."
 
 #: mu/interface/panes.py:761
+#, python-brace-format
 msgid "'{}' successfully deleted from device."
 msgstr "'{}'이(가) 장치에서 성공적으로 삭제되었습니다."
 
 #: mu/interface/panes.py:794
+#, python-brace-format
 msgid "Getting '{}' from device. Copying to '{}'."
 msgstr "장치에서 '{}'을(를) 가져오는 중. '{}'으로 복사 중."
 
 #: mu/interface/panes.py:805
+#, python-brace-format
 msgid "Successfully copied '{}' from the device to your computer."
 msgstr "장치에서 컴퓨터로 '{}'을(를) 성공적으로 복사했습니다."
 
@@ -417,7 +494,8 @@ msgstr "장치의 main.py에 쓰기"
 msgid "Open"
 msgstr "열기"
 
-#: mu/interface/panes.py:834
+#: mu/interface/panes.py mu/interface/panes.py:834
+#, python-brace-format
 msgid "Opening '{}'"
 msgstr "'{}' 여는 중"
 
@@ -430,19 +508,33 @@ msgid "Files on your computer:"
 msgstr "컴퓨터의 파일:"
 
 #: mu/interface/panes.py:952
-msgid "There was a problem getting the list of files on the device. Please check Mu's logs for technical information. Alternatively, try unplugging/plugging-in your device and/or restarting Mu."
-msgstr "장치의 파일 목록을 가져오는 동안 문제가 발생했습니다. 기술적인 정보는 Mu의 로그를 확인하십시오. 또는 장치를 뺐다가 다시 연결하거나 Mu를 재시작해 보십시오."
+msgid ""
+"There was a problem getting the list of files on the device. Please check"
+" Mu's logs for technical information. Alternatively, try unplugging"
+"/plugging-in your device and/or restarting Mu."
+msgstr ""
+"장치의 파일 목록을 가져오는 동안 문제가 발생했습니다. 기술적인 정보는 Mu의 로그를 확인하십시오. 또는 장치를 뺐다가 다시 "
+"연결하거나 Mu를 재시작해 보십시오."
 
-#: mu/interface/panes.py:966
-msgid "There was a problem copying the file '{}' onto the device. Please check Mu's logs for more information."
+#: mu/interface/panes.py:966 mu/interface/panes.py:1054
+#, python-brace-format
+msgid ""
+"There was a problem copying the file '{}' onto the device. Please check "
+"Mu's logs for more information."
 msgstr "'{}' 파일을 장치로 복사하는 중에 문제가 발생했습니다. 자세한 정보는 Mu의 로그를 확인하십시오."
 
-#: mu/interface/panes.py:978
-msgid "There was a problem deleting '{}' from the device. Please check Mu's logs for more information."
+#: mu/interface/panes.py:978 mu/interface/panes.py:1067
+#, python-brace-format
+msgid ""
+"There was a problem deleting '{}' from the device. Please check Mu's logs"
+" for more information."
 msgstr "장치에서 '{}'을(를) 삭제하는 중에 문제가 발생했습니다. 자세한 정보는 Mu의 로그를 확인하십시오."
 
-#: mu/interface/panes.py:990
-msgid "There was a problem getting '{}' from the device. Please check Mu's logs for more information."
+#: mu/interface/panes.py:990 mu/interface/panes.py:1080
+#, python-brace-format
+msgid ""
+"There was a problem getting '{}' from the device. Please check Mu's logs "
+"for more information."
 msgstr "장치에서 '{}'을(를) 가져오는 중에 문제가 발생했습니다. 자세한 정보는 Mu의 로그를 확인하십시오."
 
 #: mu/interface/widgets.py:70 mu/interface/widgets.py:141
@@ -455,7 +547,9 @@ msgid "Hello, World!"
 msgstr "안녕하세요, 여러분!"
 
 #: mu/logic.py:98
-msgid "This editor is free software written in Python. You can modify it, add features or fix bugs if you like."
+msgid ""
+"This editor is free software written in Python. You can modify it, add "
+"features or fix bugs if you like."
 msgstr "이 에디터는 파이썬으로 작성된 자유 소프트웨어입니다. 원한다면 수정하거나 기능을 추가하거나 버그를 고칠 수 있습니다."
 
 #: mu/logic.py:102
@@ -467,12 +561,18 @@ msgid "Google, Facebook, NASA, Pixar, Disney and many more use Python."
 msgstr "구글, 페이스북, NASA, 픽사, 디즈니 등 많은 곳에서 파이썬을 사용합니다."
 
 #: mu/logic.py:104
-msgid "Programming is a form of magic. Learn to cast the right spells with code and you'll be a wizard."
+msgid ""
+"Programming is a form of magic. Learn to cast the right spells with code "
+"and you'll be a wizard."
 msgstr "프로그래밍은 마법의 일종입니다. 코드로 올바른 주문을 거는 법을 배우면 여러분도 마법사가 될 수 있습니다."
 
 #: mu/logic.py:108
-msgid "REPL stands for read, evaluate, print, loop. It's a fun way to talk to your computer! :-)"
-msgstr "REPL은 Read(읽고), Evaluate(계산하고), Print(출력하고), Loop(반복한다)의 약자입니다. 컴퓨터와 대화하는 즐거운 방법이죠! :-)"
+msgid ""
+"REPL stands for read, evaluate, print, loop. It's a fun way to talk to "
+"your computer! :-)"
+msgstr ""
+"REPL은 Read(읽고), Evaluate(계산하고), Print(출력하고), Loop(반복한다)의 약자입니다. 컴퓨터와 대화하는"
+" 즐거운 방법이죠! :-)"
 
 #: mu/logic.py:112
 msgid "Be brave, break things, learn and have fun!"
@@ -495,7 +595,9 @@ msgid "An open mind, spirit of adventure and respect for diversity are key."
 msgstr "열린 마음, 모험 정신, 다양성에 대한 존중이 핵심입니다."
 
 #: mu/logic.py:117
-msgid "Don't worry if it doesn't work. Learn the lesson, fix it and try again! :-)"
+msgid ""
+"Don't worry if it doesn't work. Learn the lesson, fix it and try again! "
+":-)"
 msgstr "잘 안 돼도 걱정 마세요. 교훈을 얻고, 고치고 다시 시도해 보세요! :-)"
 
 #: mu/logic.py:121
@@ -535,7 +637,9 @@ msgid "Put yourself in your users' shoes."
 msgstr "사용자의 입장이 되어 보세요."
 
 #: mu/logic.py:133
-msgid "Explaining a programming problem to a friend often reveals the solution. :-)"
+msgid ""
+"Explaining a programming problem to a friend often reveals the solution. "
+":-)"
 msgstr "친구에게 프로그래밍 문제를 설명하다 보면 종종 해결책이 보입니다. :-)"
 
 #: mu/logic.py:137
@@ -571,7 +675,9 @@ msgid "Readability counts."
 msgstr "가독성은 중요합니다."
 
 #: mu/logic.py:145
-msgid "Special cases aren't special enough to break the rules. Although practicality beats purity."
+msgid ""
+"Special cases aren't special enough to break the rules. Although "
+"practicality beats purity."
 msgstr "규칙을 깰 만큼 특별한 경우란 없습니다. 하지만 실용성이 순수성보다 중요할 때도 있습니다."
 
 #: mu/logic.py:149
@@ -611,7 +717,9 @@ msgid "To understand what recursion is, you must first understand recursion."
 msgstr "재귀가 무엇인지 이해하려면 먼저 재귀를 이해해야 합니다."
 
 #: mu/logic.py:161
-msgid "Algorithm: a word used by programmers when they don't want to explain what they did."
+msgid ""
+"Algorithm: a word used by programmers when they don't want to explain "
+"what they did."
 msgstr "알고리즘: 프로그래머들이 자신이 한 일을 설명하고 싶지 않을 때 사용하는 단어입니다."
 
 #: mu/logic.py:165
@@ -723,24 +831,37 @@ msgid " above this line"
 msgstr " 이 라인 위"
 
 #: mu/logic.py:536
-msgid "Syntax error. Python cannot understand this line. Check for missing characters!"
+msgid ""
+"Syntax error. Python cannot understand this line. Check for missing "
+"characters!"
 msgstr "문법에러: 파이썬이 이 문장을 이해할 수 없습니다. 빠진 글자가 있는지 확인하세요!"
 
 #: mu/logic.py:603
+#, python-brace-format
 msgid "{} compatible"
 msgstr "{} 호환"
 
 #: mu/logic.py:1037
-msgid "The file contains characters Mu expects to be encoded as {0} or as the computer's default encoding {1}, but which are encoded in some other way.\n\n"
-"If this file was saved in another application, re-save the file via the 'Save as' option and set the encoding to {0}"
-msgstr "이 파일에는 Mu가 {0} 또는 컴퓨터의 기본 인코딩 {1}로 예상한 것과 다른 방식으로 인코딩된 문자가 포함되어 있습니다.\n\n"
+#, python-brace-format
+msgid ""
+"The file contains characters Mu expects to be encoded as {0} or as the "
+"computer's default encoding {1}, but which are encoded in some other way."
+"\n"
+"\n"
+"If this file was saved in another application, re-save the file via the "
+"'Save as' option and set the encoding to {0}"
+msgstr ""
+"이 파일에는 Mu가 {0} 또는 컴퓨터의 기본 인코딩 {1}로 예상한 것과 다른 방식으로 인코딩된 문자가 포함되어 있습니다.\n"
+"\n"
 "이 파일을 다른 애플리케이션에서 저장했다면, '다른 이름으로 저장' 옵션을 통해 파일을 다시 저장하고 인코딩을 {0}로 설정하십시오."
 
 #: mu/logic.py:1065
+#, python-brace-format
 msgid "The file \"{}\" is already open."
 msgstr "\"{}\" 파일이 이미 열려 있습니다."
 
 #: mu/logic.py:1077
+#, python-brace-format
 msgid "Mu cannot read the characters in {}"
 msgstr "Mu가 {}의 문자를 읽을 수 없습니다."
 
@@ -749,29 +870,42 @@ msgid "Mu was not able to open this file"
 msgstr "Mu가 이 파일을 열 수 없습니다."
 
 #: mu/logic.py:1104
-msgid "Currently Mu only works with Python source files or hex files created with embedded MicroPython code."
+msgid ""
+"Currently Mu only works with Python source files or hex files created "
+"with embedded MicroPython code."
 msgstr "현재 Mu는 파이썬 소스 파일 또는 임베디드 MicroPython 코드로 만들어진 hex 파일만 지원합니다."
 
 #: mu/logic.py:1112
+#, python-brace-format
 msgid "Could not load {}"
 msgstr "{}을(를) 로드할 수 없습니다."
 
 #: mu/logic.py:1114
-msgid "Does this file exist?\n"
-"If it does, do you have permission to read it?\n\n"
+msgid ""
+"Does this file exist?\n"
+"If it does, do you have permission to read it?\n"
+"\n"
 "Please check and try again."
-msgstr "이 파일이 존재합니까?\n"
-"존재한다면, 읽기 권한이 있습니까?\n\n"
+msgstr ""
+"이 파일이 존재합니까?\n"
+"존재한다면, 읽기 권한이 있습니까?\n"
+"\n"
 "확인 후 다시 시도하십시오."
 
 #: mu/logic.py:1122
+#, python-brace-format
 msgid "Is this a {} file?"
 msgstr "이것이 {} 파일입니까?"
 
 #: mu/logic.py:1123
-msgid "It looks like this could be a {} file.\n\n"
+#, python-brace-format
+msgid ""
+"It looks like this could be a {} file.\n"
+"\n"
 "Would you like to change Mu to the {}mode?"
-msgstr "이것은 {} 파일인 것 같습니다.\n\n"
+msgstr ""
+"이것은 {} 파일인 것 같습니다.\n"
+"\n"
 "Mu를 {} 모드로 변경하시겠습니까?"
 
 #: mu/logic.py:1250
@@ -779,7 +913,9 @@ msgid "Could not save file (disk problem)"
 msgstr "파일을 저장할 수 없습니다 (디스크 문제)"
 
 #: mu/logic.py:1251
-msgid "Error saving file to disk. Ensure you have permission to write the file and sufficient disk space."
+msgid ""
+"Error saving file to disk. Ensure you have permission to write the file "
+"and sufficient disk space."
 msgstr "파일을 디스크에 저장하는 중 오류가 발생했습니다. 파일 쓰기 권한이 있고 디스크 공간이 충분한지 확인하십시오."
 
 #: mu/logic.py:1257
@@ -787,20 +923,29 @@ msgid "Could not save file (encoding problem)"
 msgstr "파일을 저장할 수 없습니다 (인코딩 문제)"
 
 #: mu/logic.py:1259
-msgid "Unable to convert all the characters. If you have an encoding line at the top of the file, remove it and try again."
+msgid ""
+"Unable to convert all the characters. If you have an encoding line at the"
+" top of the file, remove it and try again."
 msgstr "모든 문자를 변환할 수 없습니다. 파일 상단에 인코딩 라인이 있다면 제거하고 다시 시도하십시오."
 
 #: mu/logic.py:1270
+#, python-brace-format
 msgid "Saved file: {}"
 msgstr "파일 저장됨: {}"
 
 #: mu/logic.py:1302 mu/logic.py:1737
+#, python-brace-format
 msgid "You cannot use the filename \"{}\""
 msgstr "\"{}\"라는 파일 이름을 사용할 수 없습니다."
 
 #: mu/logic.py:1305
-msgid "This name is already used by another part of Python. If you use this name, things are likely to break. Please try again with a different filename."
-msgstr "이 이름은 이미 파이썬의 다른 부분에서 사용되고 있습니다. 이 이름을 사용하면 오류가 발생할 가능성이 큽니다. 다른 파일 이름으로 다시 시도하십시오."
+msgid ""
+"This name is already used by another part of Python. If you use this "
+"name, things are likely to break. Please try again with a different "
+"filename."
+msgstr ""
+"이 이름은 이미 파이썬의 다른 부분에서 사용되고 있습니다. 이 이름을 사용하면 오류가 발생할 가능성이 큽니다. 다른 파일 이름으로 "
+"다시 시도하십시오."
 
 #: mu/logic.py:1382
 msgid "Good job! No problems found."
@@ -831,18 +976,24 @@ msgid "Could not find MicroPython runtime."
 msgstr "MicroPython 런타임을 찾을 수 없습니다."
 
 #: mu/logic.py:1496
-msgid "The micro:bit runtime you specified ('{}') does not exist. Please try again."
+#, python-brace-format
+msgid ""
+"The micro:bit runtime you specified ('{}') does not exist. Please try "
+"again."
 msgstr "지정한 micro:bit 런타임('{}')이 존재하지 않습니다. 다시 시도하십시오."
 
 #: mu/logic.py:1631
+#, python-brace-format
 msgid "Changed to {} mode."
 msgstr "{} 모드로 변경되었습니다."
 
 #: mu/logic.py:1661
+#, python-brace-format
 msgid "Would you like to change Mu to the {} mode?"
 msgstr "Mu를 {} 모드로 변경하시겠습니까?"
 
 #: mu/logic.py:1680
+#, python-brace-format
 msgid "Device changed to {}."
 msgstr "장치가 {}로 변경되었습니다."
 
@@ -851,12 +1002,19 @@ msgid "Cannot Set Breakpoint."
 msgstr "중단점을 설정할 수 없습니다."
 
 #: mu/logic.py:1717
-msgid "Lines that are comments or some multi-line statements cannot have breakpoints."
+msgid ""
+"Lines that are comments or some multi-line statements cannot have "
+"breakpoints."
 msgstr "주석이거나 일부 여러 줄 문장인 라인에는 중단점을 설정할 수 없습니다."
 
 #: mu/logic.py:1740
-msgid "This name is already used by another part of Python. If you use that name, things are likely to break. Please try again with a different filename."
-msgstr "이 이름은 이미 파이썬의 다른 부분에서 사용되고 있습니다. 이 이름을 사용하면 오류가 발생할 가능성이 큽니다. 다른 파일 이름으로 다시 시도하십시오."
+msgid ""
+"This name is already used by another part of Python. If you use that "
+"name, things are likely to break. Please try again with a different "
+"filename."
+msgstr ""
+"이 이름은 이미 파이썬의 다른 부분에서 사용되고 있습니다. 이 이름을 사용하면 오류가 발생할 가능성이 큽니다. 다른 파일 이름으로 "
+"다시 시도하십시오."
 
 #: mu/logic.py:1762
 msgid "Could not rename file."
@@ -867,18 +1025,22 @@ msgid "A file of that name is already open in Mu."
 msgstr "해당 이름의 파일이 이미 Mu에서 열려 있습니다."
 
 #: mu/logic.py:1795
+#, python-brace-format
 msgid "Replaced \"{}\" with \"{}\"."
 msgstr "\"{}\"을(를) \"{}\"(으)로 바꿨습니다."
 
 #: mu/logic.py:1800
+#, python-brace-format
 msgid "Replaced {} matches of \"{}\" with \"{}\"."
 msgstr "\"{}\"의 {}개 일치 항목을 \"{}\"(으)로 바꿨습니다."
 
 #: mu/logic.py:1805 mu/logic.py:1812 mu/logic.py:1831
+#, python-brace-format
 msgid "Could not find \"{}\"."
 msgstr "\"{}\"을(를) 찾을 수 없습니다."
 
 #: mu/logic.py:1810 mu/logic.py:1829
+#, python-brace-format
 msgid "Highlighting matches for \"{}\"."
 msgstr "\"{}\"의 일치 항목을 강조 표시하는 중."
 
@@ -899,10 +1061,13 @@ msgid "Your code contains problems."
 msgstr "당신에 코드에 문제가 있어요."
 
 #: mu/logic.py:1886
-msgid "These must be fixed before tidying will work. Please use the 'Check' button to highlight these problems."
+msgid ""
+"These must be fixed before tidying will work. Please use the 'Check' "
+"button to highlight these problems."
 msgstr "이 문제들이 먼저 수정되어야만 코드정리를 수행할 수 있습니다. 코드검사를 눌러 문제들을 확인하세요."
 
 #: mu/modes/base.py:115
+#, python-brace-format
 msgid "Cannot connect to device on port {}"
 msgstr "포트 {}의 장치에 연결할 수 없습니다."
 
@@ -915,11 +1080,20 @@ msgid "Data Flood Detected!"
 msgstr "데이터 폭주 감지!"
 
 #: mu/modes/base.py:333
-msgid "The plotter is flooded with data which will make Mu unresponsive and freeze. As a safeguard, the plotter has been stopped.\n\n"
-"Flooding is when chunks of data of more than 1024 bytes are repeatedly sent to the plotter.\n\n"
-"To fix this, make sure your code prints small tuples of data between calls to 'sleep' for a very short period of time."
-msgstr "플로터에 데이터가 너무 많이 전송되어 Mu가 응답하지 않거나 멈출 수 있습니다. 이를 방지하기 위해 플로터가 중지되었습니다.\n\n"
-"데이터 폭주는 1024바이트 이상의 데이터 덩어리가 플로터로 반복적으로 전송될 때 발생합니다.\n\n"
+msgid ""
+"The plotter is flooded with data which will make Mu unresponsive and "
+"freeze. As a safeguard, the plotter has been stopped.\n"
+"\n"
+"Flooding is when chunks of data of more than 1024 bytes are repeatedly "
+"sent to the plotter.\n"
+"\n"
+"To fix this, make sure your code prints small tuples of data between "
+"calls to 'sleep' for a very short period of time."
+msgstr ""
+"플로터에 데이터가 너무 많이 전송되어 Mu가 응답하지 않거나 멈출 수 있습니다. 이를 방지하기 위해 플로터가 중지되었습니다.\n"
+"\n"
+"데이터 폭주는 1024바이트 이상의 데이터 덩어리가 플로터로 반복적으로 전송될 때 발생합니다.\n"
+"\n"
 "이를 해결하려면 코드에서 짧은 간격으로 'sleep'을 호출하면서 작은 데이터 튜플을 출력하도록 하십시오."
 
 #: mu/modes/base.py:515 mu/modes/base.py:565 mu/modes/snek.py:518
@@ -931,19 +1105,35 @@ msgid "Could not find an attached device."
 msgstr "연결된 장치를 찾을 수 없습니다."
 
 #: mu/modes/base.py:524
-msgid "Please make sure the device is plugged into this computer.\n\n"
-"It must have a version of MicroPython (or CircuitPython) flashed onto it before the REPL will work.\n\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
-msgstr "장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n\n"
-"REPL이 작동하려면 MicroPython(또는 CircuitPython) 버전이 장치에 설치되어 있어야 합니다.\n\n"
+msgid ""
+"Please make sure the device is plugged into this computer.\n"
+"\n"
+"It must have a version of MicroPython (or CircuitPython) flashed onto it "
+"before the REPL will work.\n"
+"\n"
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
+msgstr ""
+"장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n"
+"\n"
+"REPL이 작동하려면 MicroPython(또는 CircuitPython) 버전이 장치에 설치되어 있어야 합니다.\n"
+"\n"
 "마지막으로, 장치의 리셋 버튼을 누르고 몇 초 기다린 후 다시 시도하십시오."
 
 #: mu/modes/base.py:574
-msgid "Please make sure the device is plugged into this computer.\n\n"
-"It must have a version of MicroPython (or CircuitPython) flashed onto it before the Plotter will work.\n\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
-msgstr "장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n\n"
-"플로터가 작동하려면 MicroPython(또는 CircuitPython) 버전이 장치에 설치되어 있어야 합니다.\n\n"
+msgid ""
+"Please make sure the device is plugged into this computer.\n"
+"\n"
+"It must have a version of MicroPython (or CircuitPython) flashed onto it "
+"before the Plotter will work.\n"
+"\n"
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
+msgstr ""
+"장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n"
+"\n"
+"플로터가 작동하려면 MicroPython(또는 CircuitPython) 버전이 장치에 설치되어 있어야 합니다.\n"
+"\n"
 "마지막으로, 장치의 리셋 버튼을 누르고 몇 초 기다린 후 다시 시도하십시오."
 
 #: mu/modes/circuitpython.py:37
@@ -978,23 +1168,40 @@ msgid "Permission error running mount command"
 msgstr "마운트 명령 실행 중 권한 오류 발생"
 
 #: mu/modes/circuitpython.py:190
-msgid "The mount command (\"{}\") returned an error: {}. Mu will continue as if a device isn't plugged in."
+#, python-brace-format
+msgid ""
+"The mount command (\"{}\") returned an error: {}. Mu will continue as if "
+"a device isn't plugged in."
 msgstr "마운트 명령(\"{}\")이 오류를 반환했습니다: {}. Mu는 장치가 연결되지 않은 것처럼 계속 진행합니다."
 
 #: mu/modes/circuitpython.py:208
-msgid "If your Circuit Python device is plugged in, you need to \"Share with Linux\" on the CIRCUITPY drive in the \"Files\" app then restart Mu."
-msgstr "CircuitPython 장치가 연결되어 있다면, \"파일\" 앱의 CIRCUITPY 드라이브에서 \"Linux와 공유\"를 선택한 다음 Mu를 재시작해야 합니다."
+msgid ""
+"If your Circuit Python device is plugged in, you need to \"Share with "
+"Linux\" on the CIRCUITPY drive in the \"Files\" app then restart Mu."
+msgstr ""
+"CircuitPython 장치가 연결되어 있다면, \"파일\" 앱의 CIRCUITPY 드라이브에서 \"Linux와 공유\"를 선택한"
+" 다음 Mu를 재시작해야 합니다."
 
 #: mu/modes/circuitpython.py:269
 msgid "Could not find an attached CircuitPython device."
 msgstr "연결된 CircuitPython 장치를 찾을 수 없습니다."
 
 #: mu/modes/circuitpython.py:270
-msgid "Python files for CircuitPython devices are stored on the device. Therefore, to edit these files you need to have the device plugged in. Until you plug in a device, Mu will use the directory found here:\n\n"
-" {}\n\n"
+#, python-brace-format
+msgid ""
+"Python files for CircuitPython devices are stored on the device. "
+"Therefore, to edit these files you need to have the device plugged in. "
+"Until you plug in a device, Mu will use the directory found here:\n"
+"\n"
+" {}\n"
+"\n"
 "...to store your code."
-msgstr "CircuitPython 장치용 파이썬 파일은 장치에 저장됩니다. 따라서 이 파일을 편집하려면 장치가 연결되어 있어야 합니다. 장치를 연결할 때까지 Mu는 코드를 저장하기 위해 이 디렉토리를 사용합니다:\n\n"
-" {}\n\n"
+msgstr ""
+"CircuitPython 장치용 파이썬 파일은 장치에 저장됩니다. 따라서 이 파일을 편집하려면 장치가 연결되어 있어야 합니다. "
+"장치를 연결할 때까지 Mu는 코드를 저장하기 위해 이 디렉토리를 사용합니다:\n"
+"\n"
+" {}\n"
+"\n"
 "...to store your code."
 
 #: mu/modes/debugger.py:39
@@ -1051,18 +1258,25 @@ msgid "Your script has finished running."
 msgstr "스크립트 실행이 완료되었습니다."
 
 #: mu/modes/debugger.py:266
-msgid "Unable to connect to the Python debugger.\n\n"
-msgstr "파이썬 디버거에 연결할 수 없습니다.\n\n"
+msgid ""
+"Unable to connect to the Python debugger.\n"
+"\n"
+msgstr ""
+"파이썬 디버거에 연결할 수 없습니다.\n"
+"\n"
 
 #: mu/modes/debugger.py:355
+#, python-brace-format
 msgid "Debugger info: {}"
 msgstr "디버거 정보: {}"
 
 #: mu/modes/debugger.py:362
+#, python-brace-format
 msgid "Debugger warning: {}"
 msgstr "디버거 경고: {}"
 
 #: mu/modes/debugger.py:370
+#, python-brace-format
 msgid "Debugger error: {}"
 msgstr "디버거 오류: {}"
 
@@ -1081,6 +1295,7 @@ msgid "Run"
 msgstr "실행하기"
 
 #: mu/modes/esp.py:80
+#, python-brace-format
 msgid "Run your code directly on the {board_name} via the REPL."
 msgstr "REPL을 통해 {board_name}에서 직접 코드를 실행합니다."
 
@@ -1089,6 +1304,7 @@ msgid "Files"
 msgstr "파일"
 
 #: mu/modes/esp.py:90
+#, python-brace-format
 msgid "Access the file system on {board_name}."
 msgstr "{board_name}의 파일 시스템에 액세스합니다."
 
@@ -1098,6 +1314,7 @@ msgid "REPL"
 msgstr "REPL"
 
 #: mu/modes/esp.py:99
+#, python-brace-format
 msgid "Use the REPL to live-code on the {board_name}."
 msgstr "REPL을 사용하여 {board_name}에서 라이브 코딩을 합니다."
 
@@ -1106,23 +1323,33 @@ msgid "REPL and file system cannot work at the same time."
 msgstr "REPL과 파일 시스템은 동시에 작동할 수 없습니다."
 
 #: mu/modes/esp.py:138 mu/modes/microbit.py:520
-msgid "The REPL and file system both use the same USB serial connection. Only one can be active at any time. Toggle the file system off and try again."
-msgstr "REPL과 파일 시스템은 모두 동일한 USB 시리얼 연결을 사용합니다. 한 번에 하나만 활성화할 수 있습니다. 파일 시스템을 끄고 다시 시도하십시오."
+msgid ""
+"The REPL and file system both use the same USB serial connection. Only "
+"one can be active at any time. Toggle the file system off and try again."
+msgstr ""
+"REPL과 파일 시스템은 모두 동일한 USB 시리얼 연결을 사용합니다. 한 번에 하나만 활성화할 수 있습니다. 파일 시스템을 끄고 "
+"다시 시도하십시오."
 
 #: mu/modes/esp.py:157 mu/modes/microbit.py:539
 msgid "The plotter and file system cannot work at the same time."
 msgstr "플로터와 파일 시스템은 동시에 작동할 수 없습니다."
 
 #: mu/modes/esp.py:160 mu/modes/microbit.py:542
-msgid "The plotter and file system both use the same USB serial connection. Only one can be active at any time. Toggle the file system off and try again."
-msgstr "플로터와 파일 시스템은 모두 동일한 USB 시리얼 연결을 사용합니다. 한 번에 하나만 활성화할 수 있습니다. 파일 시스템을 끄고 다시 시도하십시오."
+msgid ""
+"The plotter and file system both use the same USB serial connection. Only"
+" one can be active at any time. Toggle the file system off and try again."
+msgstr ""
+"플로터와 파일 시스템은 모두 동일한 USB 시리얼 연결을 사용합니다. 한 번에 하나만 활성화할 수 있습니다. 파일 시스템을 끄고 "
+"다시 시도하십시오."
 
 #: mu/modes/esp.py:188 mu/modes/snek.py:417
 msgid "Cannot run anything without any active editor tabs."
 msgstr "활성 에디터 탭이 없으면 아무것도 실행할 수 없습니다."
 
 #: mu/modes/esp.py:189 mu/modes/snek.py:418
-msgid "Running transfers the content of the current tab onto the device. It seems like you don't have  any tabs open."
+msgid ""
+"Running transfers the content of the current tab onto the device. It "
+"seems like you don't have  any tabs open."
 msgstr "실행하면 현재 탭의 내용을 장치로 전송합니다. 열려 있는 탭이 없는 것 같습니다."
 
 #: mu/modes/esp.py:208 mu/modes/microbit.py:556
@@ -1130,22 +1357,34 @@ msgid "File system cannot work at the same time as the REPL or plotter."
 msgstr "파일 시스템은 REPL 또는 플로터와 동시에 작동할 수 없습니다."
 
 #: mu/modes/esp.py:212 mu/modes/microbit.py:560
-msgid "The file system and the REPL and plotter use the same USB serial connection. Toggle the REPL and plotter off and try again."
+msgid ""
+"The file system and the REPL and plotter use the same USB serial "
+"connection. Toggle the REPL and plotter off and try again."
 msgstr "파일 시스템과 REPL 및 플로터는 동일한 USB 시리얼 연결을 사용합니다. REPL과 플로터를 끄고 다시 시도하십시오."
 
 #: mu/modes/esp.py:239
+#, python-brace-format
 msgid "Could not find an attached {board_name}"
 msgstr "연결된 {board_name}을(를) 찾을 수 없습니다."
 
 #: mu/modes/esp.py:242 mu/modes/microbit.py:585
-msgid "Please make sure the device is plugged into this computer.\n\n"
-"The device must have MicroPython flashed onto it before the file system will work.\n\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
-msgstr "장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n\n"
-"파일 시스템이 작동하려면 장치에 MicroPython이 설치되어 있어야 합니다.\n\n"
+msgid ""
+"Please make sure the device is plugged into this computer.\n"
+"\n"
+"The device must have MicroPython flashed onto it before the file system "
+"will work.\n"
+"\n"
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
+msgstr ""
+"장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n"
+"\n"
+"파일 시스템이 작동하려면 장치에 MicroPython이 설치되어 있어야 합니다.\n"
+"\n"
 "마지막으로, 장치의 리셋 버튼을 누르고 몇 초 기다린 후 다시 시도하십시오."
 
 #: mu/modes/esp.py:267
+#, python-brace-format
 msgid "{board_name} board"
 msgstr "{board_name} 보드"
 
@@ -1198,6 +1437,7 @@ msgid "Our minifier tried but your script is too long!"
 msgstr "코드 축소를 시도했지만 스크립트가 여전히 너무 깁니다!"
 
 #: mu/modes/microbit.py:286
+#, python-brace-format
 msgid "Unable to flash \"{}\""
 msgstr "\"{}\"을(를) 플래시할 수 없습니다."
 
@@ -1206,15 +1446,23 @@ msgid "Could not find an attached BBC micro:bit."
 msgstr "연결된 BBC micro:bit을 찾을 수 없습니다."
 
 #: mu/modes/microbit.py:308
-msgid "Please ensure you leave enough time for the BBC micro:bit to be attached and configured correctly by your computer. This may take several seconds. Alternatively, try removing and re-attaching the device or saving your work and restarting Mu if the device remains unfound."
-msgstr "컴퓨터가 BBC micro:bit을 인식하고 올바르게 구성할 수 있도록 충분한 시간을 주십시오. 몇 초 정도 걸릴 수 있습니다. 또는 장치를 뺐다가 다시 연결하거나, 장치를 계속 찾을 수 없는 경우 작업을 저장하고 Mu를 재시작해 보십시오."
+msgid ""
+"Please ensure you leave enough time for the BBC micro:bit to be attached "
+"and configured correctly by your computer. This may take several seconds."
+" Alternatively, try removing and re-attaching the device or saving your "
+"work and restarting Mu if the device remains unfound."
+msgstr ""
+"컴퓨터가 BBC micro:bit을 인식하고 올바르게 구성할 수 있도록 충분한 시간을 주십시오. 몇 초 정도 걸릴 수 있습니다. "
+"또는 장치를 뺐다가 다시 연결하거나, 장치를 계속 찾을 수 없는 경우 작업을 저장하고 Mu를 재시작해 보십시오."
 
 #: mu/modes/microbit.py:326
 msgid "Cannot save a custom hex file to a local directory."
 msgstr "사용자 정의 hex 파일을 로컬 디렉토리에 저장할 수 없습니다."
 
 #: mu/modes/microbit.py:327
-msgid "When a custom hex file is configured in the settings a local directory cannot be used to save the final hex file."
+msgid ""
+"When a custom hex file is configured in the settings a local directory "
+"cannot be used to save the final hex file."
 msgstr "설정에서 사용자 정의 hex 파일이 구성된 경우 로컬 디렉토리를 사용하여 최종 hex 파일을 저장할 수 없습니다."
 
 #: mu/modes/microbit.py:336
@@ -1222,17 +1470,27 @@ msgid "Cannot use a custom hex file without micro:bit port."
 msgstr "micro:bit 포트 없이는 사용자 정의 hex 파일을 사용할 수 없습니다."
 
 #: mu/modes/microbit.py:337
-msgid "Mu was unable to detect the micro:bit serial port. Normally this is okay, as Mu can inject the Python code into the hex to flash. However, this cannot be done with a custom hex file."
-msgstr "Mu가 micro:bit 시리얼 포트를 감지하지 못했습니다. 보통은 Mu가 파이썬 코드를 hex에 주입하여 플래시할 수 있으므로 괜찮습니다. 하지만 사용자 정의 hex 파일로는 이 작업을 수행할 수 없습니다."
+msgid ""
+"Mu was unable to detect the micro:bit serial port. Normally this is okay,"
+" as Mu can inject the Python code into the hex to flash. However, this "
+"cannot be done with a custom hex file."
+msgstr ""
+"Mu가 micro:bit 시리얼 포트를 감지하지 못했습니다. 보통은 Mu가 파이썬 코드를 hex에 주입하여 플래시할 수 있으므로 "
+"괜찮습니다. 하지만 사용자 정의 hex 파일로는 이 작업을 수행할 수 없습니다."
 
 #: mu/modes/microbit.py:390
 msgid "Unsupported BBC micro:bit."
 msgstr "지원되지 않는 BBC micro:bit입니다."
 
 #: mu/modes/microbit.py:391
-msgid "Your device is newer than this version of Mu. Please update Mu to the latest version to support this device.\n\n"
+msgid ""
+"Your device is newer than this version of Mu. Please update Mu to the "
+"latest version to support this device.\n"
+"\n"
 "https://codewith.mu/"
-msgstr "사용 중인 장치가 현재 Mu 버전보다 최신입니다. 이 장치를 지원하려면 Mu를 최신 버전으로 업데이트하십시오.\n\n"
+msgstr ""
+"사용 중인 장치가 현재 Mu 버전보다 최신입니다. 이 장치를 지원하려면 Mu를 최신 버전으로 업데이트하십시오.\n"
+"\n"
 "https://codewith.mu/"
 
 #: mu/modes/microbit.py:425 mu/modes/microbit.py:446
@@ -1256,7 +1514,9 @@ msgid "There was a problem flashing the micro:bit."
 msgstr "micro:bit를 플래싱하는 중 문제가 발생했습니다."
 
 #: mu/modes/microbit.py:499
-msgid "Please do not disconnect the device until flashing has completed. Please check the logs for more information."
+msgid ""
+"Please do not disconnect the device until flashing has completed. Please "
+"check the logs for more information."
 msgstr "플래싱이 완료될 때까지 장치의 연결을 끊지 마십시오. 자세한 정보는 로그를 확인하십시오."
 
 #: mu/modes/microbit.py:601
@@ -1329,11 +1589,21 @@ msgid "Could not find an attached PyBoard device."
 msgstr "연결된 PyBoard 장치를 찾을 수 없습니다."
 
 #: mu/modes/pyboard.py:178
-msgid "Python files for PyBoard MicroPython devices are stored on the device. Therefore, to edit these files you need to have the device plugged in. Until you plug in a device, Mu will use the directory found here:\n\n"
-" {}\n\n"
+#, python-brace-format
+msgid ""
+"Python files for PyBoard MicroPython devices are stored on the device. "
+"Therefore, to edit these files you need to have the device plugged in. "
+"Until you plug in a device, Mu will use the directory found here:\n"
+"\n"
+" {}\n"
+"\n"
 "...to store your code."
-msgstr "PyBoard MicroPython 장치용 파이썬 파일은 장치에 저장됩니다. 따라서 이 파일을 편집하려면 장치가 연결되어 있어야 합니다. 장치를 연결할 때까지 Mu는 코드를 저장하기 위해 이 디렉토리를 사용합니다:\n\n"
-" {}\n\n"
+msgstr ""
+"PyBoard MicroPython 장치용 파이썬 파일은 장치에 저장됩니다. 따라서 이 파일을 편집하려면 장치가 연결되어 있어야 "
+"합니다. 장치를 연결할 때까지 Mu는 코드를 저장하기 위해 이 디렉토리를 사용합니다:\n"
+"\n"
+" {}\n"
+"\n"
 "...to store your code."
 
 #: mu/modes/pygamezero.py:35
@@ -1425,11 +1695,19 @@ msgid "There is un-saved work, 'get' will cause you to lose it."
 msgstr "저장되지 않은 작업이 있습니다. '가져오기'를 하면 작업 내용을 잃게 됩니다."
 
 #: mu/modes/snek.py:527
-msgid "Please make sure the device is plugged into this computer.\n\n"
-"It must have a version of Snek flashed onto it before the REPL will work.\n\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
-msgstr "장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n\n"
-"REPL이 작동하려면 Snek 버전이 장치에 설치되어 있어야 합니다.\n\n"
+msgid ""
+"Please make sure the device is plugged into this computer.\n"
+"\n"
+"It must have a version of Snek flashed onto it before the REPL will work."
+"\n"
+"\n"
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
+msgstr ""
+"장치가 이 컴퓨터에 연결되어 있는지 확인하십시오.\n"
+"\n"
+"REPL이 작동하려면 Snek 버전이 장치에 설치되어 있어야 합니다.\n"
+"\n"
 "마지막으로, 장치의 리셋 버튼을 누르고 몇 초 기다린 후 다시 시도하십시오."
 
 #: mu/modes/web.py:65
@@ -1485,7 +1763,9 @@ msgid "This is not a Python file!"
 msgstr "파이썬 파일이 아닙니다!"
 
 #: mu/modes/web.py:211
-msgid "Mu is only able to serve a Python file. Please make sure the current tab in Mu is the one for your web application and then try again."
+msgid ""
+"Mu is only able to serve a Python file. Please make sure the current tab "
+"in Mu is the one for your web application and then try again."
 msgstr "Mu는 파이썬 파일만 서비스할 수 있습니다. Mu의 현재 탭이 웹 애플리케이션용 탭인지 확인하고 다시 시도하십시오."
 
 #: mu/modes/web.py:228 mu/modes/web.py:388
@@ -1493,8 +1773,14 @@ msgid "Cannot find template directory!"
 msgstr "템플릿 디렉토리를 찾을 수 없습니다!"
 
 #: mu/modes/web.py:229
-msgid "To serve your web application, there needs to be a 'templates' directory in the same place as your web application's Python code. Please fix this and try again. (Hint: Mu was expecting the `templates` directory to be here: )"
-msgstr "웹 애플리케이션을 서비스하려면 웹 애플리케이션의 파이썬 코드와 같은 위치에 'templates' 디렉토리가 있어야 합니다. 이 문제를 해결하고 다시 시도하십시오. (힌트: Mu는 `templates` 디렉토리가 여기에 있을 것으로 예상했습니다: )"
+msgid ""
+"To serve your web application, there needs to be a 'templates' directory "
+"in the same place as your web application's Python code. Please fix this "
+"and try again. (Hint: Mu was expecting the `templates` directory to be "
+"here: )"
+msgstr ""
+"웹 애플리케이션을 서비스하려면 웹 애플리케이션의 파이썬 코드와 같은 위치에 'templates' 디렉토리가 있어야 합니다. 이 "
+"문제를 해결하고 다시 시도하십시오. (힌트: Mu는 `templates` 디렉토리가 여기에 있을 것으로 예상했습니다: )"
 
 #: mu/modes/web.py:285
 msgid "Too many web apps."
@@ -1509,26 +1795,37 @@ msgid "Cannot Open Website - Server not Running."
 msgstr "웹사이트를 열 수 없음 - 서버가 실행 중이 아닙니다."
 
 #: mu/modes/web.py:348
-msgid "You must have the local web server running in order to view your website in a browser. Click on the 'Run' button to start the server and then try again."
+msgid ""
+"You must have the local web server running in order to view your website "
+"in a browser. Click on the 'Run' button to start the server and then try "
+"again."
 msgstr "브라우저에서 웹사이트를 보려면 로컬 웹 서버가 실행 중이어야 합니다. '실행' 버튼을 클릭하여 서버를 시작한 후 다시 시도하십시오."
 
 #: mu/modes/web.py:372
-msgid "Mu is only able to deploy a Python file. Please make sure the current tab in Mu is the one for your web application and then try again."
+msgid ""
+"Mu is only able to deploy a Python file. Please make sure the current tab"
+" in Mu is the one for your web application and then try again."
 msgstr "Mu는 파이썬 파일만 배포할 수 있습니다. Mu의 현재 탭이 웹 애플리케이션용 탭인지 확인하고 다시 시도하십시오."
 
 #: mu/modes/web.py:389
-msgid "To deploy your web application, there needs to be a 'templates' directory in the same place as your web application's Python code. Please fix this and try again. (Hint: Mu was expecting the `templates` directory to be here: )"
-msgstr "웹 애플리케이션을 배포하려면 웹 애플리케이션의 파이썬 코드와 같은 위치에 'templates' 디렉토리가 있어야 합니다. 이 문제를 해결하고 다시 시도하십시오. (힌트: Mu는 `templates` 디렉토리가 여기에 있을 것으로 예상했습니다: )"
+msgid ""
+"To deploy your web application, there needs to be a 'templates' directory"
+" in the same place as your web application's Python code. Please fix this"
+" and try again. (Hint: Mu was expecting the `templates` directory to be "
+"here: )"
+msgstr ""
+"웹 애플리케이션을 배포하려면 웹 애플리케이션의 파이썬 코드와 같은 위치에 'templates' 디렉토리가 있어야 합니다. 이 문제를"
+" 해결하고 다시 시도하십시오. (힌트: Mu는 `templates` 디렉토리가 여기에 있을 것으로 예상했습니다: )"
 
-#: #: mu/modes/neopia.py:137
+#: mu/modes/neopia.py:137
 msgid "Write Python code on Neobot devices. Currently NeoSoco only."
 msgstr "네오봇을 위한 파이썬 코딩을 할 수 있습니다. 현재는 네오쏘코 제품만 가능합니다."
 
-#: #: mu/modes/pygamezero.py:101
+#: mu/modes/pygamezero.py:101
 msgid "Package"
 msgstr "패키징"
 
-#: #: mu/modes/pygamezero.py:102
+#: mu/modes/pygamezero.py:102
 msgid "Package the game to one-file for distribution."
 msgstr "배포를 위해 게임을 1개의 실행파일 형태로 만듭니다."
 
@@ -1536,8 +1833,8 @@ msgstr "배포를 위해 게임을 1개의 실행파일 형태로 만듭니다."
 msgid "Stop packaging your Pygame Zero game."
 msgstr "게임 패키징을 중단시킵니다."
 
-
 #: mu/interface/editor.py:330
+#, python-brace-format
 msgid "[Device] {}"
 msgstr "[장치] {}"
 
@@ -1558,6 +1855,7 @@ msgid "Rename"
 msgstr "이름 변경"
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "New name for '{}':"
 msgstr "'{}'의 새 이름:"
 
@@ -1570,74 +1868,73 @@ msgid "Directory name:"
 msgstr "디렉토리 이름:"
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "Renaming '{}' to '{}'."
 msgstr "'{}'의 이름을 '{}'(으)로 변경 중."
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "Creating directory '{}'."
 msgstr "'{}' 디렉토리 생성 중."
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "'{}' successfully renamed."
 msgstr "'{}'의 이름이 성공적으로 변경되었습니다."
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "Directory '{}' created."
 msgstr "'{}' 디렉토리가 생성되었습니다."
 
 #: mu/interface/panes.py
-msgid "There was a problem renaming '{}' on the device. Please check Mu's logs for more information."
+#, python-brace-format
+msgid ""
+"There was a problem renaming '{}' on the device. Please check Mu's logs "
+"for more information."
 msgstr "장치에서 '{}'의 이름을 변경하는 중 문제가 발생했습니다. 자세한 정보는 Mu 로그를 확인하십시오."
 
 #: mu/interface/panes.py
-msgid "There was a problem creating directory '{}' on the device. Please check Mu's logs for more information."
+#, python-brace-format
+msgid ""
+"There was a problem creating directory '{}' on the device. Please check "
+"Mu's logs for more information."
 msgstr "장치에서 '{}' 디렉토리를 생성하는 중 문제가 발생했습니다. 자세한 정보는 Mu 로그를 확인하십시오."
 
 #: mu/interface/panes.py:1045
 msgid "The file open in device file system, Currently not supported."
 msgstr "장치 파일 시스템에서 파일을 여는 것은 현재 지원되지 않습니다."
 
-#: mu/interface/panes.py:1054
-#, python-brace-format
-msgid "There was a problem copying the file '{}' onto the device. Please check Mu's logs for more information."
-msgstr "장치로 '{}' 파일을 복사하는 중 문제가 발생했습니다. 자세한 정보는 Mu 로그를 확인하십시오."
-
-#: mu/interface/panes.py:1067
-#, python-brace-format
-msgid "There was a problem deleting '{}' from the device. Please check Mu's logs for more information."
-msgstr "장치에서 '{}'을(를) 삭제하는 중 문제가 발생했습니다. 자세한 정보는 Mu 로그를 확인하십시오."
-
-#: mu/interface/panes.py:1080
-#, python-brace-format
-msgid "There was a problem getting '{}' from the device. Please check Mu's logs for more information."
-msgstr "장치에서 '{}'을(를) 가져오는 중 문제가 발생했습니다. 자세한 정보는 Mu 로그를 확인하십시오."
-
-#: mu/interface/panes.py:760 mu/interface/panes.py:857
-msgid "Delete (cannot be undone)"
-msgstr "삭제 (되돌릴 수 없음)"
-
 #: mu/debugger/runner.py:214
+#, python-brace-format
 msgid "Unhandled error with command \"{}\": {}"
 msgstr "\"{}\" 명령에서 처리되지 않은 오류 발생: {}"
 
 #: mu/debugger/runner.py:220
+#, python-brace-format
 msgid "Unknown command: {}"
 msgstr "알 수 없는 명령: {}"
 
 #: mu/debugger/runner.py:338
+#, python-brace-format
 msgid "{}:{} is not executable"
 msgstr "{}:{}은(는) 실행 가능한 파일이 아닙니다."
 
-#: mu/debugger/runner.py:348 mu/debugger/runner.py:362 mu/debugger/runner.py:380
+#: mu/debugger/runner.py:348 mu/debugger/runner.py:362
+#: mu/debugger/runner.py:380
+#, python-brace-format
 msgid "No breakpoint numbered {}"
 msgstr "{}번 중단점이 없습니다."
 
 #: mu/debugger/runner.py:396
+#, python-format
 msgid "No breakpoint numbered %s"
 msgstr "%s번 중단점이 없습니다."
 
 #: mu/debugger/runner.py:537
-msgid "Running in debug mode. Use the Stop, Continue, and Step toolbar buttons to debug the script"
+msgid ""
+"Running in debug mode. Use the Stop, Continue, and Step toolbar buttons "
+"to debug the script"
 msgstr "디버그 모드에서 실행 중입니다. 스크립트를 디버깅하려면 도구 모음의 정지, 계속, 단계 버튼을 사용하십시오."
 
 #: mu/mu_debug.py:33
@@ -1654,23 +1951,22 @@ msgstr "Pico에 MicroPython을 설치(플래시)하는 방법"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid ""
-"1. Hold the <b>BOOTSEL</b> button on your Pico and plug it "
-"into USB — it will appear as a drive called "
-"<b>RPI-RP2</b> (or RP2350 for Pico 2).<br>"
-"2. Click <b>Refresh Drive</b> until the drive is detected.<br>"
-"3. Click <b>Fetch Versions</b> to load available firmware.<br>"
-"4. Select a version and click <b>Download &amp; Flash</b>."
+"1. Hold the <b>BOOTSEL</b> button on your Pico and plug it into USB — it "
+"will appear as a drive called <b>RPI-RP2</b> (or RP2350 for Pico "
+"2).<br>2. Click <b>Refresh Drive</b> until the drive is detected.<br>3. "
+"Click <b>Fetch Versions</b> to load available firmware.<br>4. Select a "
+"version and click <b>Download &amp; Flash</b>."
 msgstr ""
-"1. Pico의 <b>BOOTSEL</b> 버튼을 누른 채로 USB를 연결합니다. 그러면 <b>RPI-RP2</b> (Pico 2의 경우 RP2350)라는 이름의 드라이브로 나타납니다.<br>"
-"2. 드라이브가 감지될 때까지 <b>드라이브 새로고침</b>을 클릭합니다.<br>"
-"3. <b>버전 가져오기</b>를 클릭하여 사용 가능한 펌웨어를 로드합니다.<br>"
-"4. 버전을 선택하고 <b>다운로드 및 플래시</b>를 클릭합니다."
+"1. Pico의 <b>BOOTSEL</b> 버튼을 누른 채로 USB를 연결합니다. 그러면 <b>RPI-RP2</b> (Pico 2의"
+" 경우 RP2350)라는 이름의 드라이브로 나타납니다.<br>2. 드라이브가 감지될 때까지 <b>드라이브 새로고침</b>을 "
+"클릭합니다.<br>3. <b>버전 가져오기</b>를 클릭하여 사용 가능한 펌웨어를 로드합니다.<br>4. 버전을 선택하고 "
+"<b>다운로드 및 플래시</b>를 클릭합니다."
 
 #: mu/interface/pico_flasher/dialog.py
 msgid "Firmware version:"
 msgstr "펌웨어 버전:"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 msgid "Fetch Versions"
 msgstr "버전 가져오기"
 
@@ -1694,7 +1990,7 @@ msgstr "다운로드 및 플래시"
 msgid "Fetching firmware list from Thonny…"
 msgstr "Thonny에서 펌웨어 목록을 가져오는 중…"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 msgid "No compatible firmware found."
 msgstr "호환되는 펌웨어를 찾을 수 없습니다."
 
@@ -1703,7 +1999,7 @@ msgstr "호환되는 펌웨어를 찾을 수 없습니다."
 msgid "Loaded {} firmware versions."
 msgstr "{}개의 펌웨어 버전을 로드했습니다."
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 #, python-brace-format
 msgid "Error fetching versions: {}"
 msgstr "버전을 가져오는 중 오류 발생: {}"
@@ -1718,7 +2014,7 @@ msgstr "BOOTSEL 드라이브가 감지됨: {}"
 msgid "Starting download: {} {}"
 msgstr "다운로드 시작: {} {}"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 msgid "Downloading firmware…"
 msgstr "펌웨어 다운로드 중…"
 
@@ -1730,12 +2026,12 @@ msgstr "다운로드 완료. 플래싱 중…"
 msgid "Flash complete! Pico is rebooting with the new firmware."
 msgstr "플래시 완료! Pico가 새 펌웨어로 재부팅됩니다."
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 #, python-brace-format
 msgid "Flash failed: {}"
 msgstr "플래시 실패: {}"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 #, python-brace-format
 msgid "Download error: {}"
 msgstr "다운로드 오류: {}"
@@ -1747,13 +2043,10 @@ msgstr "'{}'을(를) '{}'(으)로 이동했습니다."
 
 #: mu/interface/panes.py
 #, python-brace-format
-msgid "There was a problem moving '{}'. Please check Mu's logs for more information."
+msgid ""
+"There was a problem moving '{}'. Please check Mu's logs for more "
+"information."
 msgstr "'{}'을(를) 이동하는 중 문제가 발생했습니다. 자세한 정보는 Mu 로그를 확인하십시오."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "Opening '{}'"
-msgstr "'{}'을(를) 여는 중"
 
 #: mu/modes/pygamezero.py:234
 msgid "package"
@@ -1788,16 +2081,22 @@ msgid "How to flash MicroPython to your ESP board"
 msgstr "ESP 보드에 MicroPython을 설치하는 방법"
 
 #: mu/interface/esp_flasher/dialog.py
-msgid "1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to load available firmware.<br>3. Select your <b>Board</b> and <b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be erased and the new firmware written automatically.<br><i>Note: hold the BOOT button on your board if the device does not enter programming mode automatically.</i>"
-msgstr "1. ESP 보드를 USB로 연결합니다.<br>2. <b>버전 가져오기</b>를 클릭하여 사용 가능한 펌웨어를 로드합니다.<br>3. <b>보드</b>와 <b>버전</b>을 선택합니다.<br>4. <b>지우기 및 플래시</b>를 클릭합니다 — 장치가 지워지고 새 펌웨어가 자동으로 기록됩니다.<br><i>참고: 장치가 자동으로 프로그래밍 모드에 진입하지 않으면 보드의 BOOT 버튼을 누르십시오.</i>"
+msgid ""
+"1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to "
+"load available firmware.<br>3. Select your <b>Board</b> and "
+"<b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be"
+" erased and the new firmware written automatically.<br><i>Note: hold the "
+"BOOT button on your board if the device does not enter programming mode "
+"automatically.</i>"
+msgstr ""
+"1. ESP 보드를 USB로 연결합니다.<br>2. <b>버전 가져오기</b>를 클릭하여 사용 가능한 펌웨어를 "
+"로드합니다.<br>3. <b>보드</b>와 <b>버전</b>을 선택합니다.<br>4. <b>지우기 및 플래시</b>를 클릭합니다 —"
+" 장치가 지워지고 새 펌웨어가 자동으로 기록됩니다.<br><i>참고: 장치가 자동으로 프로그래밍 모드에 진입하지 않으면 보드의 "
+"BOOT 버튼을 누르십시오.</i>"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "Board:"
 msgstr "보드:"
-
-#: mu/interface/esp_flasher/dialog.py
-msgid "Fetch Versions"
-msgstr "버전 가져오기"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "Version:"
@@ -1812,10 +2111,6 @@ msgid "Erase && Flash"
 msgstr "지우기 && 플래시"
 
 #: mu/interface/esp_flasher/dialog.py
-msgid "Downloading firmware…"
-msgstr "펌웨어 다운로드 중…"
-
-#: mu/interface/esp_flasher/dialog.py
 msgid "Download complete. Erasing flash…"
 msgstr "다운로드 완료. 플래시 지우는 중…"
 
@@ -1828,32 +2123,13 @@ msgid "Flash complete! Device is rebooting with the new firmware."
 msgstr "플래시 완료! 장치가 새 펌웨어로 재부팅됩니다."
 
 #: mu/interface/esp_flasher/dialog.py
-#, python-brace-format
-msgid "Flash failed: {}"
-msgstr "플래시 실패: {}"
-
-#: mu/interface/esp_flasher/dialog.py
-#, python-brace-format
-msgid "Download error: {}"
-msgstr "다운로드 오류: {}"
-
-#: mu/interface/esp_flasher/dialog.py
 msgid "Fetching firmware list…"
 msgstr "펌웨어 목록을 가져오는 중…"
-
-#: mu/interface/esp_flasher/dialog.py
-msgid "No compatible firmware found."
-msgstr "호환되는 펌웨어를 찾을 수 없습니다."
 
 #: mu/interface/esp_flasher/dialog.py
 #, python-brace-format
 msgid "Loaded firmware for {} boards."
 msgstr "{}개의 보드용 펌웨어를 로드했습니다."
-
-#: mu/interface/esp_flasher/dialog.py
-#, python-brace-format
-msgid "Error fetching versions: {}"
-msgstr "버전을 가져오는 중 오류 발생: {}"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "No port selected."
@@ -1924,7 +2200,8 @@ msgstr "연결된 장치가 없습니다. 먼저 장치를 연결해 주세요."
 msgid "Installing..."
 msgstr "설치 중..."
 
-#: mu/interface/mip_packages/widget.py:317 mu/interface/mip_packages/widget.py:330
+#: mu/interface/mip_packages/widget.py:317
+#: mu/interface/mip_packages/widget.py:330
 msgid "Install"
 msgstr "설치"
 
@@ -1937,8 +2214,13 @@ msgid "Please wait until the package installation is complete before closing."
 msgstr "패키지 설치가 완료될 때까지 기다려 주세요."
 
 #: mu/interface/dialogs.py:228
-msgid "The packages shown below will be available to import in Python 3 mode. Check 'Upgrade' to update to the latest version, or 'Remove' to uninstall. Add new packages in the box below."
-msgstr "아래에 표시된 패키지는 Python 3 모드에서 사용할 수 있습니다. 최신 버전으로 갱신하려면 '업그레이드'를, 삭제하려면 '삭제'를 선택하세요. 새 패키지는 아래 입력란에 추가할 수 있습니다."
+msgid ""
+"The packages shown below will be available to import in Python 3 mode. "
+"Check 'Upgrade' to update to the latest version, or 'Remove' to "
+"uninstall. Add new packages in the box below."
+msgstr ""
+"아래에 표시된 패키지는 Python 3 모드에서 사용할 수 있습니다. 최신 버전으로 갱신하려면 '업그레이드'를, 삭제하려면 "
+"'삭제'를 선택하세요. 새 패키지는 아래 입력란에 추가할 수 있습니다."
 
 #: mu/interface/dialogs.py:243
 msgid "Installed Packages"
@@ -1967,3 +2249,62 @@ msgstr "새 패키지 설치"
 #: mu/interface/dialogs.py:284
 msgid "One package per line (e.g. requests, pygame)..."
 msgstr "한 줄에 하나씩 패키지 이름 입력 (예: requests, pygame)..."
+
+msgid "Camera / AI Vision"
+msgstr "카메라 / AI 비전"
+
+msgid "Camera / AI Vision (Wi-Fi)"
+msgstr "카메라 / AI 비전 (Wi-Fi)"
+
+msgid "● LIVE (USB) | AI ACTIVE"
+msgstr "● 라이브 (USB) | AI 활성"
+
+msgid "● LIVE (USB) | VIEWER"
+msgstr "● 라이브 (USB) | 뷰어"
+
+msgid "● LIVE (Wi-Fi) | AI ACTIVE"
+msgstr "● 라이브 (Wi-Fi) | AI 활성"
+
+msgid "● CONNECTING (Wi-Fi)…"
+msgstr "● 연결 중 (Wi-Fi)…"
+
+msgid "● Wi-Fi: Disconnected"
+msgstr "● Wi-Fi: 연결 끊김"
+
+msgid "Flip 180°"
+msgstr "180° 회전"
+
+msgid "Install AI Engine"
+msgstr "AI 엔진 설치"
+
+msgid "Installing AI..."
+msgstr "AI 설치 중..."
+
+msgid "Install Failed"
+msgstr "설치 실패"
+
+msgid "Waiting for camera stream…"
+msgstr "카메라 스트림 대기 중…"
+
+msgid "Wi-Fi:"
+msgstr "Wi-Fi:"
+
+msgid "Connect"
+msgstr "연결"
+
+msgid "Disconnect"
+msgstr "연결 해제"
+
+msgid ""
+"Connection timed out: Check if start_wifi_stream() is running on the "
+"board and IP/port (8080) is correct."
+msgstr "접속 시간 초과: 보드에서 start_wifi_stream()이 실행 중인지, IP/포트(8080)가 맞는지 확인하세요."
+
+msgid ""
+"Connection refused: The camera streaming server has not started on the "
+"board yet."
+msgstr "연결 거부: 보드에서 카메라 스트리밍 서버가 아직 시작되지 않았습니다."
+
+msgid "Wi-Fi connection error"
+msgstr "Wi-Fi 연결 오류"
+

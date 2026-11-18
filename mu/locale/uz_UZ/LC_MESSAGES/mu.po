@@ -16,11 +16,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: mu/debugger/client.py:119
-msgid "Connection timed out. Is your machine slow or busy? Free up some of the machine's resources and try again."
-msgstr "Ulanish vaqti tugadi. Mashinangiz sekinmi yoki to'xtab qoldimi? Mashina resurslarining bir qismini bo'shating va qayta urinib ko'ring."
+msgid ""
+"Connection timed out. Is your machine slow or busy? Free up some of the "
+"machine's resources and try again."
+msgstr ""
+"Ulanish vaqti tugadi. Mashinangiz sekinmi yoki to'xtab qoldimi? Mashina "
+"resurslarining bir qismini bo'shating va qayta urinib ko'ring."
 
 #: mu/debugger/client.py:133
 msgid ""
@@ -28,34 +32,51 @@ msgid ""
 "Ensure you have '127.0.0.1 localhost' in your /etc/hosts file."
 msgstr ""
 "localhost topilmadi.\n"
-"/etc/hosts faylingizda \"127.0.0.1 localhost\" mavjudligiga ishonch hosil qiling."
+"/etc/hosts faylingizda \"127.0.0.1 localhost\" mavjudligiga ishonch hosil"
+" qiling."
 
 #: mu/interface/dialogs.py:76
 msgid "Select Mode"
 msgstr "Rejim tanlash"
 
 #: mu/interface/dialogs.py:80
-msgid "Please select the desired mode then click \"OK\". Otherwise, click \"Cancel\"."
-msgstr "Iltimos, kerakli rejimni tanlang va \"OK\" tugmasini bosing. Aks holda, \"Bekor qilish\" tugmasini bosing."
+msgid ""
+"Please select the desired mode then click \"OK\". Otherwise, click "
+"\"Cancel\"."
+msgstr ""
+"Iltimos, kerakli rejimni tanlang va \"OK\" tugmasini bosing. Aks holda, "
+"\"Bekor qilish\" tugmasini bosing."
 
 #: mu/interface/dialogs.py:101
-msgid "Change mode at any time by clicking the \"Mode\" button containing Mu's logo."
-msgstr "Mu logotipini o'z ichiga olgan \"Rejim\" tugmasini bosish orqali istalgan vaqtda rejimni o'zgartiring."
+msgid ""
+"Change mode at any time by clicking the \"Mode\" button containing Mu's "
+"logo."
+msgstr ""
+"Mu logotipini o'z ichiga olgan \"Rejim\" tugmasini bosish orqali istalgan"
+" vaqtda rejimni o'zgartiring."
 
 #: mu/interface/dialogs.py:140
-msgid "When reporting a bug, copy and paste the content of the following log file."
-msgstr "Xato haqida xabar berganingizda, quyidagi jurnal faylining mazmunini nusxalang va joylashtiring."
+msgid ""
+"When reporting a bug, copy and paste the content of the following log "
+"file."
+msgstr ""
+"Xato haqida xabar berganingizda, quyidagi jurnal faylining mazmunini "
+"nusxalang va joylashtiring."
 
 #: mu/interface/dialogs.py:164
 msgid ""
-"The environment variables shown below will be set each time you run a Python 3 script.\n"
+"The environment variables shown below will be set each time you run a "
+"Python 3 script.\n"
 "\n"
-"Each separate enviroment variable should be on a new line and of the form:\n"
+"Each separate enviroment variable should be on a new line and of the "
+"form:\n"
 "NAME=VALUE"
 msgstr ""
-"Quyida ko'rsatilgan muhit o'zgaruvchilari har safar Python 3 skriptini ishga tushirganingizda o'rnatiladi.\n"
+"Quyida ko'rsatilgan muhit o'zgaruvchilari har safar Python 3 skriptini "
+"ishga tushirganingizda o'rnatiladi.\n"
 "\n"
-"Har bir alohida muhit o'zgaruvchisi yangi qatorda va quyidagi shaklda bo'lishi kerak:\n"
+"Har bir alohida muhit o'zgaruvchisi yangi qatorda va quyidagi shaklda "
+"bo'lishi kerak:\n"
 "NAME=VALUE"
 
 #: mu/interface/dialogs.py:189
@@ -63,22 +84,39 @@ msgid "Minify Python code before flashing?"
 msgstr "Miltillashdan oldin Python kodini kichiklashtirasizmi?"
 
 #: mu/interface/dialogs.py:194
-msgid "Override the built-in MicroPython runtime with the following hex file (empty means use the default):"
-msgstr "Quyidagi hex fayl bilan o'rnatilgan MicroPython mikrodasturini qoplaydi. (bo'sh ma'nolar sukut bo'yicha ishlatiladi):"
+msgid ""
+"Override the built-in MicroPython runtime with the following hex file "
+"(empty means use the default):"
+msgstr ""
+"Quyidagi hex fayl bilan o'rnatilgan MicroPython mikrodasturini qoplaydi. "
+"(bo'sh ma'nolar sukut bo'yicha ishlatiladi):"
 
 #: mu/interface/dialogs.py:220
 msgid ""
-"The packages shown below will be available to import in Python 3 mode. Delete a package from the list to remove its availability.\n"
+"The packages shown below will be available to import in Python 3 mode. "
+"Delete a package from the list to remove its availability.\n"
 "\n"
-"Each separate package name should be on a new line. Packages are installed from PyPI (see: https://pypi.org/)."
+"Each separate package name should be on a new line. Packages are "
+"installed from PyPI (see: https://pypi.org/)."
 msgstr ""
-"Quyida ko'rsatilgan paketlarni Python 3 rejimida import qilish mumkin bo'ladi. Mavjudligini o'chirish uchun paketni ro'yxatdan o'chiring.\n"
+"Quyida ko'rsatilgan paketlarni Python 3 rejimida import qilish mumkin "
+"bo'ladi. Mavjudligini o'chirish uchun paketni ro'yxatdan o'chiring.\n"
 "\n"
-"Har bir alohida paket nomi yangi qatorda bo'lishi kerak. Paketlar PyPI (https://pypi.org/) dan o'rnatiladi."
+"Har bir alohida paket nomi yangi qatorda bo'lishi kerak. Paketlar PyPI "
+"(https://pypi.org/) dan o'rnatiladi."
 
 #: mu/interface/dialogs.py:251
-msgid "The folks at <a href='https://www.pythonanywhere.com/'>PythonAnywhere</a> make it easy for learners and educators to host simple web projects for free. You'll need to sign up for an account and provide the following details for Mu to deploy your web project."
-msgstr "<a href=‘https://www.pythonanywhere.com/‘>PythonAnywhere</a> foydalanuvchilari o’quvchilar va o’qituvchilarga oddiy veb-loyihalarni bepul joylashtirishni osonlashtiradi. Veb-loyihangizni ishga tushirish uchun hisob qaydnomangiz uchun roʻyxatdan oʻtishingiz va Mu uchun quyidagi maʼlumotlarni taqdim etishingiz kerak boʻladi."
+msgid ""
+"The folks at <a href='https://www.pythonanywhere.com/'>PythonAnywhere</a>"
+" make it easy for learners and educators to host simple web projects for "
+"free. You'll need to sign up for an account and provide the following "
+"details for Mu to deploy your web project."
+msgstr ""
+"<a href=‘https://www.pythonanywhere.com/‘>PythonAnywhere</a> "
+"foydalanuvchilari o’quvchilar va o’qituvchilarga oddiy veb-loyihalarni "
+"bepul joylashtirishni osonlashtiradi. Veb-loyihangizni ishga tushirish "
+"uchun hisob qaydnomangiz uchun roʻyxatdan oʻtishingiz va Mu uchun "
+"quyidagi maʼlumotlarni taqdim etishingiz kerak boʻladi."
 
 #: mu/interface/dialogs.py:263
 msgid ""
@@ -93,8 +131,13 @@ msgid "username"
 msgstr "foydalanuvchi nomi"
 
 #: mu/interface/dialogs.py:273
-msgid "Copy your <a href='https://www.pythonanywhere.com/account/#api_token'>secret API token from PythonAnywhere</a> into here:"
-msgstr "Sizning <a href='https://www.pythonanywhere.com/account/#api_token'>PythonAnywhere-dan maxfiy API tokeni</a>ni bu yerga nusxalang:"
+msgid ""
+"Copy your <a "
+"href='https://www.pythonanywhere.com/account/#api_token'>secret API token"
+" from PythonAnywhere</a> into here:"
+msgstr ""
+"Sizning <a href='https://www.pythonanywhere.com/account/#api_token"
+"'>PythonAnywhere-dan maxfiy API tokeni</a>ni bu yerga nusxalang:"
 
 #: mu/interface/dialogs.py:281
 msgid "secret api token"
@@ -109,16 +152,33 @@ msgid "Automatically detect"
 msgstr "Avtomatik aniqlash"
 
 #: mu/interface/dialogs.py:336
-msgid "Please select the language for Mu's user interface from the choices listed below. <strong>Restart Mu for these changes to take effect.</strong>"
-msgstr "Quyida keltirilgan variantlardan Mu foydalanuvchi interfeysi uchun tilni tanlang. <strong>Ushbu o'zgarishlar kuchga kirishi uchun Muni qayta ishga tushiring.</strong>"
+msgid ""
+"Please select the language for Mu's user interface from the choices "
+"listed below. <strong>Restart Mu for these changes to take "
+"effect.</strong>"
+msgstr ""
+"Quyida keltirilgan variantlardan Mu foydalanuvchi interfeysi uchun tilni "
+"tanlang. <strong>Ushbu o'zgarishlar kuchga kirishi uchun Muni qayta ishga"
+" tushiring.</strong>"
 
 #: mu/interface/dialogs.py:366
 msgid "How to flash MicroPython to your device"
 msgstr "MicroPython-ni qurilmangizga qanday yoqish mumkin"
 
 #: mu/interface/dialogs.py:374
-msgid "&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />&nbsp;2. Download firmware from the <a href=\"https://micropython.org/download\" style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3. Connect your device<br/>&nbsp;4. Load the .bin file below using the 'Browse' button<br/>&nbsp;5. Press 'Erase & write firmware'"
-msgstr "&nbsp;1. Qurilma turini aniqlang (ESP8266 yoki ESP32)<br />&nbsp;2. Mikrodasturni <a href=\"https://micropython.org/download\" style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3 dan yuklab oling. Qurilmangizni ulang<br/>&nbsp;4. Quyidagi .bin faylini “Yuklash” tugmasi yordamida yuklang<br/>&nbsp;5. \"Mikrodasturni o'chirish va yozish\" tugmasini bosing"
+msgid ""
+"&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />&nbsp;2. "
+"Download firmware from the <a href=\"https://micropython.org/download\" "
+"style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3."
+" Connect your device<br/>&nbsp;4. Load the .bin file below using the "
+"'Browse' button<br/>&nbsp;5. Press 'Erase & write firmware'"
+msgstr ""
+"&nbsp;1. Qurilma turini aniqlang (ESP8266 yoki ESP32)<br />&nbsp;2. "
+"Mikrodasturni <a href=\"https://micropython.org/download\" "
+"style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3"
+" dan yuklab oling. Qurilmangizni ulang<br/>&nbsp;4. Quyidagi .bin faylini"
+" “Yuklash” tugmasi yordamida yuklang<br/>&nbsp;5. \"Mikrodasturni "
+"o'chirish va yozish\" tugmasini bosing"
 
 #: mu/interface/dialogs.py:396
 msgid "Device:"
@@ -205,6 +265,7 @@ msgid "untitled"
 msgstr "nomsiz"
 
 #: mu/interface/editor.py:330
+#, python-brace-format
 msgid "[Device] {}"
 msgstr "[Qurilma] {}"
 
@@ -225,6 +286,7 @@ msgid "Rename"
 msgstr "Nomini o'zgartirish"
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "New name for '{}':"
 msgstr "'{}' uchun yangi nom:"
 
@@ -237,28 +299,42 @@ msgid "Directory name:"
 msgstr "Papka nomi:"
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "Renaming '{}' to '{}'."
 msgstr "'{}' nomini '{}' ga o'zgartirmoqda."
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "Creating directory '{}'."
 msgstr "'{}' papkasi yaratilmoqda."
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "'{}' successfully renamed."
 msgstr "'{}' muvaffaqiyatli nomini o'zgartirdi."
 
 #: mu/interface/panes.py
+#, python-brace-format
 msgid "Directory '{}' created."
 msgstr "'{}' papkasi yaratildi."
 
 #: mu/interface/panes.py
-msgid "There was a problem renaming '{}' on the device. Please check Mu's logs for more information."
-msgstr "'{}' faylini qurilmada nomini o'zgartirishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu jurnallarini tekshiring."
+#, python-brace-format
+msgid ""
+"There was a problem renaming '{}' on the device. Please check Mu's logs "
+"for more information."
+msgstr ""
+"'{}' faylini qurilmada nomini o'zgartirishda muammo yuz berdi. Qo'shimcha"
+" ma'lumot uchun Mu jurnallarini tekshiring."
 
 #: mu/interface/panes.py
-msgid "There was a problem creating directory '{}' on the device. Please check Mu's logs for more information."
-msgstr "'{}' papkasini qurilmada yaratishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu jurnallarini tekshiring."
+#, python-brace-format
+msgid ""
+"There was a problem creating directory '{}' on the device. Please check "
+"Mu's logs for more information."
+msgstr ""
+"'{}' papkasini qurilmada yaratishda muammo yuz berdi. Qo'shimcha ma'lumot"
+" uchun Mu jurnallarini tekshiring."
 
 #: mu/interface/main.py:105
 msgid "Mode"
@@ -426,20 +502,33 @@ msgid ""
 msgstr ""
 "PythonAnywhere-ga yuklash.\n"
 "\n"
-"Bu biroz vaqt talab qilishi va oxirida pauza qilishi mumkin (veb-sayt ishga tushirilganda)."
+"Bu biroz vaqt talab qilishi va oxirida pauza qilishi mumkin (veb-sayt "
+"ishga tushirilganda)."
 
 #: mu/interface/main.py:1470
 #, python-brace-format
-msgid "<p>Your website was successfully deployed.</p><p>You can see it here:</p><a href='https://{domain}'>https://{domain}</a>"
-msgstr "<p>Veb-saytingiz muvaffaqiyatli joylashtirildi.</p><p>Uni bu yerda koʻrishingiz mumkin:</p><a href='https://{domain}'>https://{domain}</a >"
+msgid ""
+"<p>Your website was successfully deployed.</p><p>You can see it "
+"here:</p><a href='https://{domain}'>https://{domain}</a>"
+msgstr ""
+"<p>Veb-saytingiz muvaffaqiyatli joylashtirildi.</p><p>Uni bu yerda "
+"koʻrishingiz mumkin:</p><a href='https://{domain}'>https://{domain}</a >"
 
 #: mu/interface/main.py:1486
 msgid "There was a problem deploying to PythonAnywhere:<br/><br/>"
 msgstr "PythonAnywhere ga joylashtirishda muammo yuz berdi:<br/><br/>"
 
 #: mu/interface/main.py:1494
-msgid "Please check your PythonAnywhere settings or connection and ensure you're using a recent version of Mu.<br/><br/>Alternatively, <a href='https://github.com/mu-editor/mu/issues/new/choose'>submit a bug report</a>."
-msgstr "Iltimos, PythonAnywhere sozlamalari yoki ulanishingizni tekshiring va Muning so‘nggi versiyasidan foydalanayotganingizga ishonch hosil qiling.<br/><br/>Bo‘lmasa, <a href='https://github.com/mu-editor/mu/issues/new/choose'>xatolik hisobotini yuborish</a>."
+msgid ""
+"Please check your PythonAnywhere settings or connection and ensure you're"
+" using a recent version of Mu.<br/><br/>Alternatively, <a "
+"href='https://github.com/mu-editor/mu/issues/new/choose'>submit a bug "
+"report</a>."
+msgstr ""
+"Iltimos, PythonAnywhere sozlamalari yoki ulanishingizni tekshiring va "
+"Muning so‘nggi versiyasidan foydalanayotganingizga ishonch hosil "
+"qiling.<br/><br/>Bo‘lmasa, <a href='https://github.com/mu-"
+"editor/mu/issues/new/choose'>xatolik hisobotini yuborish</a>."
 
 #: mu/interface/main.py:1521
 msgid "Mu's current mode of behaviour."
@@ -463,12 +552,12 @@ msgstr "Fayl allaqachon mavjud; ustiga yozilsinmi?"
 msgid "File already exists"
 msgstr "Fayl allaqachon mavjud"
 
-#: mu/interface/panes.py:737
+#: mu/interface/panes.py mu/interface/panes.py:737
 #, python-brace-format
 msgid "Copying '{}' to device."
 msgstr "“{}” qurilmaga nusxalanmoqda."
 
-#: mu/interface/panes.py:746
+#: mu/interface/panes.py mu/interface/panes.py:746
 #, python-brace-format
 msgid "'{}' successfully copied to device."
 msgstr "\"{}\" qurilmaga muvaffaqiyatli nusxalandi."
@@ -477,22 +566,22 @@ msgstr "\"{}\" qurilmaga muvaffaqiyatli nusxalandi."
 msgid "Delete (cannot be undone)"
 msgstr "Oʻchirish (qaytarib boʻlmaydi)"
 
-#: mu/interface/panes.py:766 mu/interface/panes.py:872
+#: mu/interface/panes.py mu/interface/panes.py:766 mu/interface/panes.py:872
 #, python-brace-format
 msgid "Deleting '{}' from device."
 msgstr "“{}” qurilmadan oʻchirilmoqda."
 
-#: mu/interface/panes.py:775 mu/interface/panes.py:890
+#: mu/interface/panes.py mu/interface/panes.py:775 mu/interface/panes.py:890
 #, python-brace-format
 msgid "'{}' successfully deleted from device."
 msgstr "'{}' qurilmadan muvaffaqiyatli o'chirildi."
 
-#: mu/interface/panes.py:821
+#: mu/interface/panes.py mu/interface/panes.py:821
 #, python-brace-format
 msgid "Getting '{}' from device. Copying to '{}'."
 msgstr "Qurilmadan “{}” olinib “{}” ga nusxalanmoqda."
 
-#: mu/interface/panes.py:832
+#: mu/interface/panes.py mu/interface/panes.py:832
 #, python-brace-format
 msgid "Successfully copied '{}' from the device to your computer."
 msgstr "“{}” qurilmadan kompyuteringizga muvaffaqiyatli nusxalandi."
@@ -509,7 +598,7 @@ msgstr "Qurilmadagi main.py ga yozish"
 msgid "Open"
 msgstr "Boshqa editorda ochish"
 
-#: mu/interface/panes.py:863
+#: mu/interface/panes.py mu/interface/panes.py:863
 #, python-brace-format
 msgid "Opening '{}'"
 msgstr "“{}” ochilmoqda"
@@ -523,8 +612,14 @@ msgid "Files on your computer:"
 msgstr "Kompyuteringizdagi fayllar:"
 
 #: mu/interface/panes.py:1032
-msgid "There was a problem getting the list of files on the device. Please check Mu's logs for technical information. Alternatively, try unplugging/plugging-in your device and/or restarting Mu."
-msgstr "Qurilmadagi fayllar roʻyxatini olishda muammo yuz berdi. Iltimos, texnik ma'lumot uchun Mu jurnalini tekshiring. Shu bilan bir qatorda, qurilmangizni uzib/ulang va/yoki Muni qayta ishga tushiring."
+msgid ""
+"There was a problem getting the list of files on the device. Please check"
+" Mu's logs for technical information. Alternatively, try unplugging"
+"/plugging-in your device and/or restarting Mu."
+msgstr ""
+"Qurilmadagi fayllar roʻyxatini olishda muammo yuz berdi. Iltimos, texnik "
+"ma'lumot uchun Mu jurnalini tekshiring. Shu bilan bir qatorda, "
+"qurilmangizni uzib/ulang va/yoki Muni qayta ishga tushiring."
 
 #: mu/interface/panes.py:1045
 msgid "The file open in device file system, Currently not supported."
@@ -532,18 +627,32 @@ msgstr "Qurilmada fayl ochilmoqda, hozirda qo'llab-quvvatlash qilinmaydi."
 
 #: mu/interface/panes.py:1054
 #, python-brace-format
-msgid "There was a problem copying the file '{}' onto the device. Please check Mu's logs for more information."
-msgstr "“{}” faylini qurilmaga nusxalashda muammo yuz berdi. Folderni nusxalash urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
+msgid ""
+"There was a problem copying the file '{}' onto the device. Please check "
+"Mu's logs for more information."
+msgstr ""
+"“{}” faylini qurilmaga nusxalashda muammo yuz berdi. Folderni nusxalash "
+"urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish "
+"uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/panes.py:1067
 #, python-brace-format
-msgid "There was a problem deleting '{}' from the device. Please check Mu's logs for more information."
-msgstr "“{}” faylini qurilmaga o'chirishda muammo yuz berdi. Qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
+msgid ""
+"There was a problem deleting '{}' from the device. Please check Mu's logs"
+" for more information."
+msgstr ""
+"“{}” faylini qurilmaga o'chirishda muammo yuz berdi. Qo'shimcha ma'lumot "
+"olish uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/panes.py:1080
 #, python-brace-format
-msgid "There was a problem getting '{}' from the device. Please check Mu's logs for more information."
-msgstr "“{}” faylini qurilmaga olishda muammo yuz berdi. Folderni nusxalash urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish uchun Muning jurnallarini tekshiring."
+msgid ""
+"There was a problem getting '{}' from the device. Please check Mu's logs "
+"for more information."
+msgstr ""
+"“{}” faylini qurilmaga olishda muammo yuz berdi. Folderni nusxalash "
+"urinishi emas, aniq faylligini tekshiring. Va qo'shimcha ma'lumot olish "
+"uchun Muning jurnallarini tekshiring."
 
 #: mu/interface/widgets.py:70 mu/interface/widgets.py:141
 #: mu/interface/widgets.py:154
@@ -555,8 +664,13 @@ msgid "Hello, World!"
 msgstr "Salom, Dunyo!"
 
 #: mu/logic.py:238
-msgid "This editor is free software written in Python. You can modify it, add features or fix bugs if you like."
-msgstr "Ushbu editor Python tilida yozilgan bepul dastur hisoblanadi. Agar xohlasangiz, uni o'zgartirishingiz, funksiyalar qo'shishingiz yoki xatolarni tuzatishingiz mumkin."
+msgid ""
+"This editor is free software written in Python. You can modify it, add "
+"features or fix bugs if you like."
+msgstr ""
+"Ushbu editor Python tilida yozilgan bepul dastur hisoblanadi. Agar "
+"xohlasangiz, uni o'zgartirishingiz, funksiyalar qo'shishingiz yoki "
+"xatolarni tuzatishingiz mumkin."
 
 #: mu/logic.py:241
 msgid "This editor is called Mu (you say it 'mew' or 'moo')."
@@ -567,12 +681,21 @@ msgid "Google, Facebook, NASA, Pixar, Disney and many more use Python."
 msgstr "Google, Facebook, NASA, Pixar, Disney va boshqalar Pythondan foydalanadi."
 
 #: mu/logic.py:244
-msgid "Programming is a form of magic. Learn to cast the right spells with code and you'll be a wizard."
-msgstr "Dasturlash sehrning bir shaklidir. Kod yordamida to'g'ri afsun qilishni o'rganing va siz sehrgar bo'lasiz."
+msgid ""
+"Programming is a form of magic. Learn to cast the right spells with code "
+"and you'll be a wizard."
+msgstr ""
+"Dasturlash sehrning bir shaklidir. Kod yordamida to'g'ri afsun qilishni "
+"o'rganing va siz sehrgar bo'lasiz."
 
 #: mu/logic.py:248
-msgid "REPL stands for read, evaluate, print, loop. It's a fun way to talk to your computer! :-)"
-msgstr "REPL qisqartmasi o'qish, baholash, chop etish, aylanish degan ma'noni anglatadi. Bu sizning kompyuteringiz bilan suhbatlashishning qiziqarli usuli! :-)"
+msgid ""
+"REPL stands for read, evaluate, print, loop. It's a fun way to talk to "
+"your computer! :-)"
+msgstr ""
+"REPL qisqartmasi o'qish, baholash, chop etish, aylanish degan ma'noni "
+"anglatadi. Bu sizning kompyuteringiz bilan suhbatlashishning qiziqarli "
+"usuli! :-)"
 
 #: mu/logic.py:251
 msgid "Be brave, break things, learn and have fun!"
@@ -580,7 +703,9 @@ msgstr "Jasoratli bo'ling, narsalarni buzing, o'rganing va zavqlaning!"
 
 #: mu/logic.py:252
 msgid "Make your software both useful AND fun. Empower your users."
-msgstr "Dasturingizni foydali va qiziqarli qiling. Foydalanuvchilaringizni quvvatlang."
+msgstr ""
+"Dasturingizni foydali va qiziqarli qiling. Foydalanuvchilaringizni "
+"quvvatlang."
 
 #: mu/logic.py:253
 msgid "For the Zen of Python: import this"
@@ -592,11 +717,17 @@ msgstr "Turli xillik ijodkorlikni rivojlantiradi."
 
 #: mu/logic.py:255
 msgid "An open mind, spirit of adventure and respect for diversity are key."
-msgstr "Ochiq fikr, sarguzasht ruhi va xilma-xillikni hurmat qilish muhim ahamiyatga ega."
+msgstr ""
+"Ochiq fikr, sarguzasht ruhi va xilma-xillikni hurmat qilish muhim "
+"ahamiyatga ega."
 
 #: mu/logic.py:257
-msgid "Don't worry if it doesn't work. Learn the lesson, fix it and try again! :-)"
-msgstr "Agar u ishlamasa, tashvishlanmang. Dars oling, tuzating va qayta urinib ko'ring! :-)"
+msgid ""
+"Don't worry if it doesn't work. Learn the lesson, fix it and try again! "
+":-)"
+msgstr ""
+"Agar u ishlamasa, tashvishlanmang. Dars oling, tuzating va qayta urinib "
+"ko'ring! :-)"
 
 #: mu/logic.py:260
 msgid "Coding is collaboration."
@@ -612,7 +743,9 @@ msgstr "Nazariy jihatdan nazariya va amaliyot bir xil. Amalda, ular yo'q. ;-)"
 
 #: mu/logic.py:266
 msgid "Debugging is twice as hard as writing the code in the first place."
-msgstr "Xatolarni topib tuzatish (Debug) birinchi navbatda kod yozishdan ikki baravar qiyin."
+msgstr ""
+"Xatolarni topib tuzatish (Debug) birinchi navbatda kod yozishdan ikki "
+"baravar qiyin."
 
 #: mu/logic.py:267
 msgid "It's fun to program."
@@ -620,7 +753,9 @@ msgstr "Dasturlash zavqli."
 
 #: mu/logic.py:268
 msgid "Programming has more to do with problem solving than writing code."
-msgstr "Dasturlash kod yozishdan ko'ra ko'proq muammolarni hal qilish bilan bog'liq."
+msgstr ""
+"Dasturlash kod yozishdan ko'ra ko'proq muammolarni hal qilish bilan "
+"bog'liq."
 
 #: mu/logic.py:269
 msgid "Start with your users' needs."
@@ -635,12 +770,18 @@ msgid "Put yourself in your users' shoes."
 msgstr "O'zingizni foydalanuvchilaringiz o'rniga qo'ying."
 
 #: mu/logic.py:273
-msgid "Explaining a programming problem to a friend often reveals the solution. :-)"
-msgstr "Dasturlash muammosini do'stingizga tushuntirish ko'pincha yechimni ochib beradi. :-)"
+msgid ""
+"Explaining a programming problem to a friend often reveals the solution. "
+":-)"
+msgstr ""
+"Dasturlash muammosini do'stingizga tushuntirish ko'pincha yechimni ochib "
+"beradi. :-)"
 
 #: mu/logic.py:276
 msgid "If you don't know, ask. Nobody to ask? Just look it up."
-msgstr "Agar bilmasangiz, so'rang. So'raydigan hech kim yo'qmi? Shunchaki qidirib ko'ring."
+msgstr ""
+"Agar bilmasangiz, so'rang. So'raydigan hech kim yo'qmi? Shunchaki qidirib"
+" ko'ring."
 
 #: mu/logic.py:277
 msgid "Complexity is the enemy. KISS - keep it simple, stupid!"
@@ -656,7 +797,9 @@ msgstr "Aniq noaniqdan yaxshiroqdir."
 
 #: mu/logic.py:280
 msgid "Simple is better than complex. Complex is better than complicated."
-msgstr "Oddiy murakkabdan yaxshiroqdir. Murakkab chalkashib ketgandan yaxshiroqdir."
+msgstr ""
+"Oddiy murakkabdan yaxshiroqdir. Murakkab chalkashib ketgandan "
+"yaxshiroqdir."
 
 #: mu/logic.py:281
 msgid "Flat is better than nested."
@@ -671,12 +814,18 @@ msgid "Readability counts."
 msgstr "O'qilishi muhim."
 
 #: mu/logic.py:285
-msgid "Special cases aren't special enough to break the rules. Although practicality beats purity."
-msgstr "Maxsus holatlar qoidalarni buzish uchun yetarlicha maxsus emas. Lekin ba'zida amaliylik soflikdan ustundir."
+msgid ""
+"Special cases aren't special enough to break the rules. Although "
+"practicality beats purity."
+msgstr ""
+"Maxsus holatlar qoidalarni buzish uchun yetarlicha maxsus emas. Lekin "
+"ba'zida amaliylik soflikdan ustundir."
 
 #: mu/logic.py:288
 msgid "Errors should never pass silently. Unless explicitly silenced."
-msgstr "Xatolar hech qachon e'tiborsiz qolmasligi kerak. Agar ataylab yashirilgan bo'lmasa."
+msgstr ""
+"Xatolar hech qachon e'tiborsiz qolmasligi kerak. Agar ataylab yashirilgan"
+" bo'lmasa."
 
 #: mu/logic.py:289
 msgid "In the face of ambiguity, refuse the temptation to guess."
@@ -684,11 +833,16 @@ msgstr "Noaniqlik qarshisida taxmin qilish vasvasasidan voz keching."
 
 #: mu/logic.py:290
 msgid "There should be one-- and preferably only one --obvious way to do it."
-msgstr "Buni qilishning bitta -- va afzalroq faqat bitta -- aniq yo'li bo'lishi kerak."
+msgstr ""
+"Buni qilishning bitta -- va afzalroq faqat bitta -- aniq yo'li bo'lishi "
+"kerak."
 
 #: mu/logic.py:292
 msgid "Now is better than never. Although never is often better than *right* now."
-msgstr "Hozir qilish hech narsa qilmaslikdan yaxshiroq. Lekin hech narsa qilmaslik ko'pincha *ayni* hozir qilishdan yaxshiroq bo'lgan holatlar ham mavjud."
+msgstr ""
+"Hozir qilish hech narsa qilmaslikdan yaxshiroq. Lekin hech narsa "
+"qilmaslik ko'pincha *ayni* hozir qilishdan yaxshiroq bo'lgan holatlar ham"
+" mavjud."
 
 #: mu/logic.py:295
 msgid "If the implementation is hard to explain, it's a bad idea."
@@ -696,11 +850,15 @@ msgstr "Agar amalga oshirishni tushuntirish qiyin bo'lsa, bu yomon g'oya."
 
 #: mu/logic.py:296
 msgid "If the implementation is easy to explain, it may be a good idea."
-msgstr "Agar amalga oshirishni tushuntirish oson bo'lsa, bu yaxshi g'oya bo'lishi mumkin."
+msgstr ""
+"Agar amalga oshirishni tushuntirish oson bo'lsa, bu yaxshi g'oya bo'lishi"
+" mumkin."
 
 #: mu/logic.py:297
 msgid "Namespaces are one honking great idea -- let's do more of those!"
-msgstr "Namespaces (Nomlar makoni) juda ajoyib g'oya -- keling, ulardan ko'proq foydalanamiz!"
+msgstr ""
+"Namespaces (Nomlar makoni) juda ajoyib g'oya -- keling, ulardan ko'proq "
+"foydalanamiz!"
 
 #: mu/logic.py:298
 msgid "Mu was created by Nicholas H.Tollervey."
@@ -708,11 +866,17 @@ msgstr "Mu ning asosiy yaratuvchisi Nicholas H.Tollervey dir."
 
 #: mu/logic.py:299
 msgid "To understand what recursion is, you must first understand recursion."
-msgstr "Rekursiya nimaligini tushunish uchun avval rekursiyani tushunishingiz kerak."
+msgstr ""
+"Rekursiya nimaligini tushunish uchun avval rekursiyani tushunishingiz "
+"kerak."
 
 #: mu/logic.py:301
-msgid "Algorithm: a word used by programmers when they don't want to explain what they did."
-msgstr "Algoritm: dasturchilar nima qilganini tushuntirishni xohlamaganlarida ishlatadigan so'z."
+msgid ""
+"Algorithm: a word used by programmers when they don't want to explain "
+"what they did."
+msgstr ""
+"Algoritm: dasturchilar nima qilganini tushuntirishni xohlamaganlarida "
+"ishlatadigan so'z."
 
 #: mu/logic.py:304
 msgid "Programmers count from zero."
@@ -764,7 +928,9 @@ msgstr "Hech narsa bilmasligini biladiganlar eng donodir."
 
 #: mu/logic.py:317
 msgid "Computers aren’t the thing. They’re the thing that gets us to the thing."
-msgstr "Kompyuterlar asosiy narsa emas. Ular bizni asosiy narsaga olib boradigan vositadir."
+msgstr ""
+"Kompyuterlar asosiy narsa emas. Ular bizni asosiy narsaga olib boradigan "
+"vositadir."
 
 #: mu/logic.py:319
 msgid "Don't stare at a blank screen - try something out."
@@ -823,8 +989,12 @@ msgid " above this line"
 msgstr "bu qatorning ustida"
 
 #: mu/logic.py:676
-msgid "Syntax error. Python cannot understand this line. Check for missing characters!"
-msgstr "Sintaksis xato. Python bu qatorni tushuna olmaydi. Qoldirib ketilgan xarflarni tekshiring!"
+msgid ""
+"Syntax error. Python cannot understand this line. Check for missing "
+"characters!"
+msgstr ""
+"Sintaksis xato. Python bu qatorni tushuna olmaydi. Qoldirib ketilgan "
+"xarflarni tekshiring!"
 
 #: mu/logic.py:742
 #, python-brace-format
@@ -881,18 +1051,25 @@ msgstr "Raspberry Pi Pico uchun MicroPython orqali kod yozish mumkin."
 
 #: mu/logic.py:1251 mu/modes/neopia.py:137
 msgid "Write Python code on Neobot devices. Currently NeoSoco only."
-msgstr "Neobot qurilmalar uchun Python orqali kod yozish mumkin. Hozircha faqatgina NeoSocoda ishlaydi."
+msgstr ""
+"Neobot qurilmalar uchun Python orqali kod yozish mumkin. Hozircha "
+"faqatgina NeoSocoda ishlaydi."
 
 #: mu/logic.py:1311
 #, python-brace-format
 msgid ""
-"The file contains characters Mu expects to be encoded as {0} or as the computer's default encoding {1}, but which are encoded in some other way.\n"
+"The file contains characters Mu expects to be encoded as {0} or as the "
+"computer's default encoding {1}, but which are encoded in some other way."
 "\n"
-"If this file was saved in another application, re-save the file via the 'Save as' option and set the encoding to {0}"
+"\n"
+"If this file was saved in another application, re-save the file via the "
+"'Save as' option and set the encoding to {0}"
 msgstr ""
-"Faylda Mu {0} yoki kompyuterning standart kodlashi {1} sifatida kodlanishi kutilgan, ammo boshqa usulda kodlangan belgilar mavjud.\n"
+"Faylda Mu {0} yoki kompyuterning standart kodlashi {1} sifatida "
+"kodlanishi kutilgan, ammo boshqa usulda kodlangan belgilar mavjud.\n"
 "\n"
-"Agar bu fayl boshqa ilovada saqlangan boʻlsa, faylni “Boshqa nomidan saqlash” menu orqali {0} kodlash bilan qayta saqlang."
+"Agar bu fayl boshqa ilovada saqlangan boʻlsa, faylni “Boshqa nomidan "
+"saqlash” menu orqali {0} kodlash bilan qayta saqlang."
 
 #: mu/logic.py:1338
 #, python-brace-format
@@ -909,8 +1086,12 @@ msgid "Mu was not able to open this file"
 msgstr "Mu bu faylni ocha olmadi"
 
 #: mu/logic.py:1378
-msgid "Currently Mu only works with Python source files or hex files created with embedded MicroPython code."
-msgstr "Hozirda Mu faqat Python manba fayllari yoki o'rnatilgan MicroPython kodi bilan yaratilgan hex fayllari bilan ishlaydi."
+msgid ""
+"Currently Mu only works with Python source files or hex files created "
+"with embedded MicroPython code."
+msgstr ""
+"Hozirda Mu faqat Python manba fayllari yoki o'rnatilgan MicroPython kodi "
+"bilan yaratilgan hex fayllari bilan ishlaydi."
 
 #: mu/logic.py:1385
 #, python-brace-format
@@ -950,16 +1131,24 @@ msgid "Could not save file (disk problem)"
 msgstr "Faylni saqlab bo'lmadi (disk muammosi)"
 
 #: mu/logic.py:1525
-msgid "Error saving file to disk. Ensure you have permission to write the file and sufficient disk space."
-msgstr "Faylni diskka saqlashda xatolik yuz berdi. Faylni yozish uchun ruxsatingiz va diskda etarli joy mavjudligiga ishonch hosil qiling."
+msgid ""
+"Error saving file to disk. Ensure you have permission to write the file "
+"and sufficient disk space."
+msgstr ""
+"Faylni diskka saqlashda xatolik yuz berdi. Faylni yozish uchun "
+"ruxsatingiz va diskda etarli joy mavjudligiga ishonch hosil qiling."
 
 #: mu/logic.py:1530
 msgid "Could not save file (encoding problem)"
 msgstr "Faylni saqlab boʻlmadi (kodlash muammosi)"
 
 #: mu/logic.py:1533
-msgid "Unable to convert all the characters. If you have an encoding line at the top of the file, remove it and try again."
-msgstr "Barcha belgilarni o‘zgartirib bo‘lmadi. Agar faylning yuqorida kodlash haqidagi qator bo'lsa, uni olib tashlang va qaytadan urinib ko'ring."
+msgid ""
+"Unable to convert all the characters. If you have an encoding line at the"
+" top of the file, remove it and try again."
+msgstr ""
+"Barcha belgilarni o‘zgartirib bo‘lmadi. Agar faylning yuqorida kodlash "
+"haqidagi qator bo'lsa, uni olib tashlang va qaytadan urinib ko'ring."
 
 #: mu/logic.py:1543
 #, python-brace-format
@@ -972,8 +1161,14 @@ msgid "You cannot use the filename \"{}\""
 msgstr "Siz “{}” fayl nomidan foydalana olmaysiz"
 
 #: mu/logic.py:1579
-msgid "This name is already used by another part of Python. If you use this name, things are likely to break. Please try again with a different filename."
-msgstr "Bu nom allaqachon Pythonning boshqa qismi tomonidan ishlatilgan. Agar siz ushbu nomdan foydalansangiz, narsalar buzilishi mumkin. Boshqa fayl nomi bilan qayta urinib ko‘ring."
+msgid ""
+"This name is already used by another part of Python. If you use this "
+"name, things are likely to break. Please try again with a different "
+"filename."
+msgstr ""
+"Bu nom allaqachon Pythonning boshqa qismi tomonidan ishlatilgan. Agar siz"
+" ushbu nomdan foydalansangiz, narsalar buzilishi mumkin. Boshqa fayl nomi"
+" bilan qayta urinib ko‘ring."
 
 #: mu/logic.py:1655
 msgid "Good job! No problems found."
@@ -1005,8 +1200,12 @@ msgstr "MicroPython ijro muhiti topilmadi."
 
 #: mu/logic.py:1770
 #, python-brace-format
-msgid "The micro:bit runtime you specified ('{}') does not exist. Please try again."
-msgstr "Siz belgilagan micro:bit ijro muhiti('{}') mavjud emas. Iltimos, yana bir bor urinib ko'ring."
+msgid ""
+"The micro:bit runtime you specified ('{}') does not exist. Please try "
+"again."
+msgstr ""
+"Siz belgilagan micro:bit ijro muhiti('{}') mavjud emas. Iltimos, yana bir"
+" bor urinib ko'ring."
 
 #: mu/logic.py:1905
 #, python-brace-format
@@ -1028,12 +1227,22 @@ msgid "Cannot Set Breakpoint."
 msgstr "To'xtash nuqtasini o'rnatib bo'lmadi."
 
 #: mu/logic.py:1998
-msgid "Lines that are comments or some multi-line statements cannot have breakpoints."
-msgstr "Izohlar yoki ba'zi ko'p qatorli bayonotlar bo'lgan satrlarda to'xtash nuqtalari bo'lishi mumkin emas."
+msgid ""
+"Lines that are comments or some multi-line statements cannot have "
+"breakpoints."
+msgstr ""
+"Izohlar yoki ba'zi ko'p qatorli bayonotlar bo'lgan satrlarda to'xtash "
+"nuqtalari bo'lishi mumkin emas."
 
 #: mu/logic.py:2021
-msgid "This name is already used by another part of Python. If you use that name, things are likely to break. Please try again with a different filename."
-msgstr "Bu nom allaqachon Pythonning boshqa qismi tomonidan ishlatilgan. Agar siz ushbu nomdan foydalansangiz, narsalar buzilishi mumkin. Boshqa fayl nomi bilan qayta urinib ko‘ring."
+msgid ""
+"This name is already used by another part of Python. If you use that "
+"name, things are likely to break. Please try again with a different "
+"filename."
+msgstr ""
+"Bu nom allaqachon Pythonning boshqa qismi tomonidan ishlatilgan. Agar siz"
+" ushbu nomdan foydalansangiz, narsalar buzilishi mumkin. Boshqa fayl nomi"
+" bilan qayta urinib ko‘ring."
 
 #: mu/logic.py:2042
 msgid "Could not rename file."
@@ -1069,19 +1278,27 @@ msgstr "Siz topish uchun biror narsa taqdim etishingiz kerak."
 
 #: mu/logic.py:2097 mu/logic.py:2116
 msgid "Please try again, this time with something in the find box."
-msgstr "Iltimos, bu safar topish qutisidagi biror narsa bilan qaytadan urinib ko'ring. "
+msgstr ""
+"Iltimos, bu safar topish qutisidagi biror narsa bilan qaytadan urinib "
+"ko'ring. "
 
 #: mu/logic.py:2177
 msgid "Successfully cleaned the code. Use CTRL-Z to undo."
-msgstr "Kod muvaffaqiyatli tozalandi. Bekor qilish uchun CTRL-Z tugmalaridan foydalaning."
+msgstr ""
+"Kod muvaffaqiyatli tozalandi. Bekor qilish uchun CTRL-Z tugmalaridan "
+"foydalaning."
 
 #: mu/logic.py:2183
 msgid "Your code contains problems."
 msgstr "Sizning kodingizda muammolar mavjud."
 
 #: mu/logic.py:2185
-msgid "These must be fixed before tidying will work. Please use the 'Check' button to highlight these problems."
-msgstr "Yig'ishtirish ishlamasidan oldin ularni tuzatish kerak. Ushbu muammolarni ta'kidlash uchun \"Tekshirish\" tugmasidan foydalaning."
+msgid ""
+"These must be fixed before tidying will work. Please use the 'Check' "
+"button to highlight these problems."
+msgstr ""
+"Yig'ishtirish ishlamasidan oldin ularni tuzatish kerak. Ushbu muammolarni"
+" ta'kidlash uchun \"Tekshirish\" tugmasidan foydalaning."
 
 #: mu/modes/base.py:115
 #, python-brace-format
@@ -1094,17 +1311,23 @@ msgstr "Maʼlumotlar toshqini aniqlandi!"
 
 #: mu/modes/base.py:337
 msgid ""
-"The plotter is flooded with data which will make Mu unresponsive and freeze. As a safeguard, the plotter has been stopped.\n"
+"The plotter is flooded with data which will make Mu unresponsive and "
+"freeze. As a safeguard, the plotter has been stopped.\n"
 "\n"
-"Flooding is when chunks of data of more than 1024 bytes are repeatedly sent to the plotter.\n"
+"Flooding is when chunks of data of more than 1024 bytes are repeatedly "
+"sent to the plotter.\n"
 "\n"
-"To fix this, make sure your code prints small tuples of data between calls to 'sleep' for a very short period of time."
+"To fix this, make sure your code prints small tuples of data between "
+"calls to 'sleep' for a very short period of time."
 msgstr ""
-"Plotter ma'lumotlar bilan to'lib toshgan, bu esa Muni javobsiz va qotib qolishiga olib keladi. Himoya sifatida, fitnachi to'xtatildi.\n"
+"Plotter ma'lumotlar bilan to'lib toshgan, bu esa Muni javobsiz va qotib "
+"qolishiga olib keladi. Himoya sifatida, fitnachi to'xtatildi.\n"
 "\n"
-"Flooding - 1024 baytdan ortiq ma'lumotlar bo'laklari plotterga qayta-qayta yuborilganda.\n"
+"Flooding - 1024 baytdan ortiq ma'lumotlar bo'laklari plotterga qayta-"
+"qayta yuborilganda.\n"
 "\n"
-"Buni tuzatish uchun kodingiz orasida juda qisqa vaqt damni kiritib kichik ma'lumotlar to'plamini chop etishiga ishonch hosil qiling."
+"Buni tuzatish uchun kodingiz orasida juda qisqa vaqt damni kiritib kichik"
+" ma'lumotlar to'plamini chop etishiga ishonch hosil qiling."
 
 #: mu/modes/base.py:530 mu/modes/base.py:580 mu/modes/snek.py:519
 msgid "Click on the device's reset button, wait a few seconds and then try again."
@@ -1118,29 +1341,37 @@ msgstr "Ulangan qurilmani topolmadi."
 msgid ""
 "Please make sure the device is plugged into this computer.\n"
 "\n"
-"It must have a version of MicroPython (or CircuitPython) flashed onto it before the REPL will work.\n"
+"It must have a version of MicroPython (or CircuitPython) flashed onto it "
+"before the REPL will work.\n"
 "\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
 msgstr ""
 "Qurilma ushbu kompyuterga ulanganligiga ishonch hosil qiling.\n"
 "\n"
-"REPL ishlashidan oldin qurilmasi MicroPython (yoki CircuitPython) versiyasiga ega bo'lishi kerak.\n"
+"REPL ishlashidan oldin qurilmasi MicroPython (yoki CircuitPython) "
+"versiyasiga ega bo'lishi kerak.\n"
 "\n"
-"Nihoyat, qurilmadagi qayta o'rnatish tugmasini bosing va qayta urinishdan oldin bir necha soniya kuting."
+"Nihoyat, qurilmadagi qayta o'rnatish tugmasini bosing va qayta urinishdan"
+" oldin bir necha soniya kuting."
 
 #: mu/modes/base.py:589
 msgid ""
 "Please make sure the device is plugged into this computer.\n"
 "\n"
-"It must have a version of MicroPython (or CircuitPython) flashed onto it before the Plotter will work.\n"
+"It must have a version of MicroPython (or CircuitPython) flashed onto it "
+"before the Plotter will work.\n"
 "\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
 msgstr ""
 "Qurilma ushbu kompyuterga ulanganligiga ishonch hosil qiling.\n"
 "\n"
-"Plotter ishlashidan oldin qurilmasi MicroPython (yoki CircuitPython) ga ega bo'lishi kerak.\n"
+"Plotter ishlashidan oldin qurilmasi MicroPython (yoki CircuitPython) ga "
+"ega bo'lishi kerak.\n"
 "\n"
-"Nihoyat, qurilmadagi qayta o'rnatish tugmasini bosing va qayta urinishdan oldin bir necha soniya kuting."
+"Nihoyat, qurilmadagi qayta o'rnatish tugmasini bosing va qayta urinishdan"
+" oldin bir necha soniya kuting."
 
 #: mu/modes/circuitpython.py:37
 msgid "CircuitPython"
@@ -1171,11 +1402,15 @@ msgstr ""
 
 #: mu/modes/circuitpython.py:191
 #, python-brace-format
-msgid "The mount command (\"{}\") returned an error: {}. Mu will continue as if a device isn't plugged in."
+msgid ""
+"The mount command (\"{}\") returned an error: {}. Mu will continue as if "
+"a device isn't plugged in."
 msgstr ""
 
 #: mu/modes/circuitpython.py:209
-msgid "If your Circuit Python device is plugged in, you need to \"Share with Linux\" on the CIRCUITPY drive in the \"Files\" app then restart Mu."
+msgid ""
+"If your Circuit Python device is plugged in, you need to \"Share with "
+"Linux\" on the CIRCUITPY drive in the \"Files\" app then restart Mu."
 msgstr ""
 
 #: mu/modes/circuitpython.py:269
@@ -1185,7 +1420,9 @@ msgstr ""
 #: mu/modes/circuitpython.py:271
 #, python-brace-format
 msgid ""
-"Python files for CircuitPython devices are stored on the device. Therefore, to edit these files you need to have the device plugged in. Until you plug in a device, Mu will use the directory found here:\n"
+"Python files for CircuitPython devices are stored on the device. "
+"Therefore, to edit these files you need to have the device plugged in. "
+"Until you plug in a device, Mu will use the directory found here:\n"
 "\n"
 " {}\n"
 "\n"
@@ -1302,32 +1539,50 @@ msgid "REPL and file system cannot work at the same time."
 msgstr "REPL va fayl tizimi bir vaqtning o'zida ishlay olmaydi."
 
 #: mu/modes/esp.py:138 mu/modes/microbit.py:521
-msgid "The REPL and file system both use the same USB serial connection. Only one can be active at any time. Toggle the file system off and try again."
-msgstr "REPL ham, fayl tizimi ham bir xil USB serial ulanishidan foydalanadi. Istalgan vaqtda faqat bitta faol boʻlishi mumkin. Fayl tizimini oʻchirib, qaytadan urinib koʻring."
+msgid ""
+"The REPL and file system both use the same USB serial connection. Only "
+"one can be active at any time. Toggle the file system off and try again."
+msgstr ""
+"REPL ham, fayl tizimi ham bir xil USB serial ulanishidan foydalanadi. "
+"Istalgan vaqtda faqat bitta faol boʻlishi mumkin. Fayl tizimini oʻchirib,"
+" qaytadan urinib koʻring."
 
 #: mu/modes/esp.py:157 mu/modes/microbit.py:540
 msgid "The plotter and file system cannot work at the same time."
 msgstr "Plotter va fayl tizimi bir vaqtda ishlay olmaydi."
 
 #: mu/modes/esp.py:160 mu/modes/microbit.py:543
-msgid "The plotter and file system both use the same USB serial connection. Only one can be active at any time. Toggle the file system off and try again."
-msgstr "Plotter ham, fayl tizimi ham bir xil USB serial ulanishidan foydalanadi. Istalgan vaqtda faqat bitta faol boʻlishi mumkin. Fayl tizimini oʻchirib, qaytadan urinib koʻring."
+msgid ""
+"The plotter and file system both use the same USB serial connection. Only"
+" one can be active at any time. Toggle the file system off and try again."
+msgstr ""
+"Plotter ham, fayl tizimi ham bir xil USB serial ulanishidan foydalanadi. "
+"Istalgan vaqtda faqat bitta faol boʻlishi mumkin. Fayl tizimini oʻchirib,"
+" qaytadan urinib koʻring."
 
 #: mu/modes/esp.py:189 mu/modes/snek.py:417
 msgid "Cannot run anything without any active editor tabs."
 msgstr "Agar faol tab bo'lmasa, hech narsa qilib bo'lmaydi."
 
 #: mu/modes/esp.py:191 mu/modes/snek.py:419
-msgid "Running transfers the content of the current tab onto the device. It seems like you don't have  any tabs open."
-msgstr "Ishga tushirishda tabdagi kodlarni qurilmaga o'tkazadi. Sizda hech qanday ochiq tab yo'qga o'xshaydi."
+msgid ""
+"Running transfers the content of the current tab onto the device. It "
+"seems like you don't have  any tabs open."
+msgstr ""
+"Ishga tushirishda tabdagi kodlarni qurilmaga o'tkazadi. Sizda hech qanday"
+" ochiq tab yo'qga o'xshaydi."
 
 #: mu/modes/esp.py:223 mu/modes/microbit.py:557
 msgid "File system cannot work at the same time as the REPL or plotter."
 msgstr "Fayl tizimi REPL yoki plotter bilan bir vaqtda ishlay olmaydi."
 
 #: mu/modes/esp.py:227 mu/modes/microbit.py:561
-msgid "The file system and the REPL and plotter use the same USB serial connection. Toggle the REPL and plotter off and try again."
-msgstr "Fayl tizimi va REPL va plotter bir xil USB serial ulanishidan foydalanadi. REPL va plotterni o'chiring va qayta urinib ko'ring."
+msgid ""
+"The file system and the REPL and plotter use the same USB serial "
+"connection. Toggle the REPL and plotter off and try again."
+msgstr ""
+"Fayl tizimi va REPL va plotter bir xil USB serial ulanishidan "
+"foydalanadi. REPL va plotterni o'chiring va qayta urinib ko'ring."
 
 #: mu/modes/esp.py:255
 #, python-brace-format
@@ -1338,15 +1593,18 @@ msgstr "Ulangan {board_name} ni topolmadi."
 msgid ""
 "Please make sure the device is plugged into this computer.\n"
 "\n"
-"The device must have MicroPython flashed onto it before the file system will work.\n"
+"The device must have MicroPython flashed onto it before the file system "
+"will work.\n"
 "\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
 msgstr ""
 "Qurilma ushbu kompyuterga ulanganligiga ishonch hosil qiling.\n"
 "\n"
 "Qurilma ishlashidan oldin qurilmasi MicroPython ga ega bo'lishi kerak.\n"
 "\n"
-"Nihoyat, qurilmadagi qayta o'rnatish tugmasini bosing va qayta urinishdan oldin bir necha soniya kuting."
+"Nihoyat, qurilmadagi qayta o'rnatish tugmasini bosing va qayta urinishdan"
+" oldin bir necha soniya kuting."
 
 #: mu/modes/esp.py:283
 #, python-brace-format
@@ -1403,7 +1661,11 @@ msgid "Could not find an attached BBC micro:bit."
 msgstr ""
 
 #: mu/modes/microbit.py:309
-msgid "Please ensure you leave enough time for the BBC micro:bit to be attached and configured correctly by your computer. This may take several seconds. Alternatively, try removing and re-attaching the device or saving your work and restarting Mu if the device remains unfound."
+msgid ""
+"Please ensure you leave enough time for the BBC micro:bit to be attached "
+"and configured correctly by your computer. This may take several seconds."
+" Alternatively, try removing and re-attaching the device or saving your "
+"work and restarting Mu if the device remains unfound."
 msgstr ""
 
 #: mu/modes/microbit.py:326
@@ -1411,7 +1673,9 @@ msgid "Cannot save a custom hex file to a local directory."
 msgstr ""
 
 #: mu/modes/microbit.py:328
-msgid "When a custom hex file is configured in the settings a local directory cannot be used to save the final hex file."
+msgid ""
+"When a custom hex file is configured in the settings a local directory "
+"cannot be used to save the final hex file."
 msgstr ""
 
 #: mu/modes/microbit.py:336
@@ -1419,7 +1683,10 @@ msgid "Cannot use a custom hex file without micro:bit port."
 msgstr ""
 
 #: mu/modes/microbit.py:338
-msgid "Mu was unable to detect the micro:bit serial port. Normally this is okay, as Mu can inject the Python code into the hex to flash. However, this cannot be done with a custom hex file."
+msgid ""
+"Mu was unable to detect the micro:bit serial port. Normally this is okay,"
+" as Mu can inject the Python code into the hex to flash. However, this "
+"cannot be done with a custom hex file."
 msgstr ""
 
 #: mu/modes/microbit.py:390
@@ -1428,7 +1695,8 @@ msgstr ""
 
 #: mu/modes/microbit.py:392
 msgid ""
-"Your device is newer than this version of Mu. Please update Mu to the latest version to support this device.\n"
+"Your device is newer than this version of Mu. Please update Mu to the "
+"latest version to support this device.\n"
 "\n"
 "https://codewith.mu/"
 msgstr ""
@@ -1454,8 +1722,12 @@ msgid "There was a problem flashing the micro:bit."
 msgstr ""
 
 #: mu/modes/microbit.py:500
-msgid "Please do not disconnect the device until flashing has completed. Please check the logs for more information."
-msgstr "Iltimos, yuklab qo'yish tugamaguncha qurilmani ajratmang. Qo'shimcha ma'lumot olish uchun jurnallarni tekshiring."
+msgid ""
+"Please do not disconnect the device until flashing has completed. Please "
+"check the logs for more information."
+msgstr ""
+"Iltimos, yuklab qo'yish tugamaguncha qurilmani ajratmang. Qo'shimcha "
+"ma'lumot olish uchun jurnallarni tekshiring."
 
 #: mu/modes/microbit.py:601
 msgid "micro:bit"
@@ -1521,7 +1793,9 @@ msgstr ""
 #: mu/modes/pyboard.py:179
 #, python-brace-format
 msgid ""
-"Python files for PyBoard MicroPython devices are stored on the device. Therefore, to edit these files you need to have the device plugged in. Until you plug in a device, Mu will use the directory found here:\n"
+"Python files for PyBoard MicroPython devices are stored on the device. "
+"Therefore, to edit these files you need to have the device plugged in. "
+"Until you plug in a device, Mu will use the directory found here:\n"
 "\n"
 " {}\n"
 "\n"
@@ -1572,7 +1846,7 @@ msgstr "Ovozlar"
 msgid "Show the music used by Pygame Zero."
 msgstr "Pygame Zero da ishlatadigan fon ovozlarini ko'rsatadi."
 
-#: mu/modes/pygamezero.py:101
+#: mu/modes/pygamezero.py:101 mu/modes/pygamezero.py:234
 msgid "Package"
 msgstr "EXE fayliga"
 
@@ -1583,10 +1857,6 @@ msgstr ""
 #: mu/modes/pygamezero.py:145
 msgid "Stop your Pygame Zero game."
 msgstr "Ishlayotgan kodlarni to'xtaydi."
-
-#: mu/modes/pygamezero.py:234
-msgid "Package"
-msgstr "EXE fayliga"
 
 #: mu/modes/pygamezero.py:243
 msgid "Stop packaging your Pygame Zero game."
@@ -1624,9 +1894,11 @@ msgstr ""
 msgid ""
 "Please make sure the device is plugged into this computer.\n"
 "\n"
-"It must have a version of Snek flashed onto it before the REPL will work.\n"
+"It must have a version of Snek flashed onto it before the REPL will work."
 "\n"
-"Finally, press the device's reset button and wait a few seconds before trying again."
+"\n"
+"Finally, press the device's reset button and wait a few seconds before "
+"trying again."
 msgstr ""
 
 #: mu/modes/web.py:65
@@ -1678,15 +1950,23 @@ msgid "This is not a Python file!"
 msgstr "Bu Python fayli emas!"
 
 #: mu/modes/web.py:212
-msgid "Mu is only able to serve a Python file. Please make sure the current tab in Mu is the one for your web application and then try again."
-msgstr "Mu faqat Python faylida ishlaydi. Iltimos, Mu-dagi joriy tasmali panelida veb-ilova ekanligini tekshiring va keyin qayta urinib ko'ring."
+msgid ""
+"Mu is only able to serve a Python file. Please make sure the current tab "
+"in Mu is the one for your web application and then try again."
+msgstr ""
+"Mu faqat Python faylida ishlaydi. Iltimos, Mu-dagi joriy tasmali panelida"
+" veb-ilova ekanligini tekshiring va keyin qayta urinib ko'ring."
 
 #: mu/modes/web.py:228 mu/modes/web.py:388
 msgid "Cannot find template directory!"
 msgstr ""
 
 #: mu/modes/web.py:230
-msgid "To serve your web application, there needs to be a 'templates' directory in the same place as your web application's Python code. Please fix this and try again. (Hint: Mu was expecting the `templates` directory to be here: )"
+msgid ""
+"To serve your web application, there needs to be a 'templates' directory "
+"in the same place as your web application's Python code. Please fix this "
+"and try again. (Hint: Mu was expecting the `templates` directory to be "
+"here: )"
 msgstr ""
 
 #: mu/modes/web.py:285
@@ -1702,45 +1982,69 @@ msgid "Cannot Open Website - Server not Running."
 msgstr ""
 
 #: mu/modes/web.py:349
-msgid "You must have the local web server running in order to view your website in a browser. Click on the 'Run' button to start the server and then try again."
+msgid ""
+"You must have the local web server running in order to view your website "
+"in a browser. Click on the 'Run' button to start the server and then try "
+"again."
 msgstr ""
 
 #: mu/modes/web.py:373
-msgid "Mu is only able to deploy a Python file. Please make sure the current tab in Mu is the one for your web application and then try again."
-msgstr "Mu faqat Python faylida ishlaydi. Iltimos, Mu-dagi joriy tasmali panelida veb-ilova ekanligini tekshiring va keyin qayta urinib ko'ring."
+msgid ""
+"Mu is only able to deploy a Python file. Please make sure the current tab"
+" in Mu is the one for your web application and then try again."
+msgstr ""
+"Mu faqat Python faylida ishlaydi. Iltimos, Mu-dagi joriy tasmali panelida"
+" veb-ilova ekanligini tekshiring va keyin qayta urinib ko'ring."
 
 #: mu/modes/web.py:390
-msgid "To deploy your web application, there needs to be a 'templates' directory in the same place as your web application's Python code. Please fix this and try again. (Hint: Mu was expecting the `templates` directory to be here: )"
-msgstr "Veb-ilovangizni joylashtirish uchun veb-ilovangizning Python kodi bilan bir joyda \"shablonlar\" folderda bo'lishi kerak. Buni tuzatib, qayta urinib ko‘ring. (Maslahat: Mu \"shablonlar\" folderda bo'lishini kutgan edi:)"
-
+msgid ""
+"To deploy your web application, there needs to be a 'templates' directory"
+" in the same place as your web application's Python code. Please fix this"
+" and try again. (Hint: Mu was expecting the `templates` directory to be "
+"here: )"
+msgstr ""
+"Veb-ilovangizni joylashtirish uchun veb-ilovangizning Python kodi bilan "
+"bir joyda \"shablonlar\" folderda bo'lishi kerak. Buni tuzatib, qayta "
+"urinib ko‘ring. (Maslahat: Mu \"shablonlar\" folderda bo'lishini kutgan "
+"edi:)"
 
 #: mu/modes/pygamezero.py:110
 msgid "Debug your Pygame Zero game."
 msgstr "Pygame Zero o'yiningizni debug qiling."
 
 #: mu/debugger/runner.py:214
+#, python-brace-format
 msgid "Unhandled error with command \"{}\": {}"
 msgstr "\"{}\" buyrug'i bilan ishlov berilmagan xatolik: {}"
 
 #: mu/debugger/runner.py:220
+#, python-brace-format
 msgid "Unknown command: {}"
 msgstr "Noma'lum buyruq: {}"
 
 #: mu/debugger/runner.py:338
+#, python-brace-format
 msgid "{}:{} is not executable"
 msgstr "{}:{} bajariladigan fayl emas"
 
-#: mu/debugger/runner.py:348 mu/debugger/runner.py:362 mu/debugger/runner.py:380
+#: mu/debugger/runner.py:348 mu/debugger/runner.py:362
+#: mu/debugger/runner.py:380
+#, python-brace-format
 msgid "No breakpoint numbered {}"
 msgstr "{} raqamli to'xtash nuqtasi yo'q"
 
 #: mu/debugger/runner.py:396
+#, python-format
 msgid "No breakpoint numbered %s"
 msgstr "%s raqamli to'xtash nuqtasi yo'q"
 
 #: mu/debugger/runner.py:537
-msgid "Running in debug mode. Use the Stop, Continue, and Step toolbar buttons to debug the script"
-msgstr "Debug rejimida ishlanmoqda. Kodlarni debug qilish uchun To'xtatish, Davom etish va Qadam tugmalaridan foydalaning."
+msgid ""
+"Running in debug mode. Use the Stop, Continue, and Step toolbar buttons "
+"to debug the script"
+msgstr ""
+"Debug rejimida ishlanmoqda. Kodlarni debug qilish uchun To'xtatish, Davom"
+" etish va Qadam tugmalaridan foydalaning."
 
 #: mu/mu_debug.py:33
 msgid "Debugger requires a Python script filename to run."
@@ -1756,24 +2060,24 @@ msgstr "MicroPythonni Picoga qanday yozish mumkin"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid ""
-"1. Hold the <b>BOOTSEL</b> button on your Pico and plug it "
-"into USB — it will appear as a drive called "
-"<b>RPI-RP2</b> (or RP2350 for Pico 2).<br>"
-"2. Click <b>Refresh Drive</b> until the drive is detected.<br>"
-"3. Click <b>Fetch Versions</b> to load available firmware.<br>"
-"4. Select a version and click <b>Download &amp; Flash</b>."
+"1. Hold the <b>BOOTSEL</b> button on your Pico and plug it into USB — it "
+"will appear as a drive called <b>RPI-RP2</b> (or RP2350 for Pico "
+"2).<br>2. Click <b>Refresh Drive</b> until the drive is detected.<br>3. "
+"Click <b>Fetch Versions</b> to load available firmware.<br>4. Select a "
+"version and click <b>Download &amp; Flash</b>."
 msgstr ""
-"1. Picodagi <b>BOOTSEL</b> tugmasini bosib tuting va USBga ulang "
-"— u <b>RPI-RP2</b> (yoki Pico 2 uchun RP2350) nomli disk sifatida paydo bo'ladi.<br>"
-"2. Disk aniqlanguncha <b>Diskni yangilash</b> tugmasini bosing.<br>"
-"3. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>"
-"4. Versiyani tanlang va <b>Yuklab yozish</b> tugmasini bosing."
+"1. Picodagi <b>BOOTSEL</b> tugmasini bosib tuting va USBga ulang — u <b"
+">RPI-RP2</b> (yoki Pico 2 uchun RP2350) nomli disk sifatida paydo "
+"bo'ladi.<br>2. Disk aniqlanguncha <b>Diskni yangilash</b> tugmasini "
+"bosing.<br>3. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni "
+"olish</b> tugmasini bosing.<br>4. Versiyani tanlang va <b>Yuklab "
+"yozish</b> tugmasini bosing."
 
 #: mu/interface/pico_flasher/dialog.py
 msgid "Firmware version:"
 msgstr "Mikrodastur versiyasi:"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 msgid "Fetch Versions"
 msgstr "Versiyalarni olish"
 
@@ -1797,7 +2101,7 @@ msgstr "Yuklab yozish"
 msgid "Fetching firmware list from Thonny…"
 msgstr "Internetdan mikrodastur ro'yxati olinmoqda…"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 msgid "No compatible firmware found."
 msgstr "Mos mikrodastur topilmadi."
 
@@ -1806,7 +2110,7 @@ msgstr "Mos mikrodastur topilmadi."
 msgid "Loaded {} firmware versions."
 msgstr "{} ta mikrodastur versiyasi yuklandi."
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 #, python-brace-format
 msgid "Error fetching versions: {}"
 msgstr "Versiyalarni olishda xato: {}"
@@ -1821,7 +2125,7 @@ msgstr "BOOTSEL diski aniqlandi: {}"
 msgid "Starting download: {} {}"
 msgstr "Yuklab olish boshlanmoqda: {} {}"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 msgid "Downloading firmware…"
 msgstr "Mikrodastur yuklab olinmoqda…"
 
@@ -1833,12 +2137,12 @@ msgstr "Yuklab olish tugadi. Yozilmoqda…"
 msgid "Flash complete! Pico is rebooting with the new firmware."
 msgstr "Yozish tugadi! Pico yangi mikrodastur bilan qayta ishga tushmoqda."
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 #, python-brace-format
 msgid "Flash failed: {}"
 msgstr "Yozib bo'lmadi: {}"
 
-#: mu/interface/pico_flasher/dialog.py
+#: mu/interface/esp_flasher/dialog.py mu/interface/pico_flasher/dialog.py
 #, python-brace-format
 msgid "Download error: {}"
 msgstr "Yuklab olishda xato: {}"
@@ -1850,43 +2154,12 @@ msgstr "'{}' '{}' papkasiga ko'chirildi."
 
 #: mu/interface/panes.py
 #, python-brace-format
-msgid "There was a problem moving '{}'. Please check Mu's logs for more information."
-msgstr "'{}' faylini ko'chirishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu jurnallarini tekshiring."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "Opening '{}'"
-msgstr "'{}' ochilmoqda"
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "Copying '{}' to device."
-msgstr "'{}' qurilmaga nusxalanmoqda."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "'{}' successfully copied to device."
-msgstr "'{}' qurilmaga muvaffaqiyatli nusxalandi."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "Deleting '{}' from device."
-msgstr "'{}' qurilmadan o'chirilmoqda."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "'{}' successfully deleted from device."
-msgstr "'{}' qurilmadan muvaffaqiyatli o'chirildi."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "Getting '{}' from device. Copying to '{}'."
-msgstr "Qurilmadan '{}' olinmoqda. '{}' ga nusxalanmoqda."
-
-#: mu/interface/panes.py
-#, python-brace-format
-msgid "Successfully copied '{}' from the device to your computer."
-msgstr "'{}' qurilmadan kompyuteringizga muvaffaqiyatli nusxalandi."
+msgid ""
+"There was a problem moving '{}'. Please check Mu's logs for more "
+"information."
+msgstr ""
+"'{}' faylini ko'chirishda muammo yuz berdi. Qo'shimcha ma'lumot uchun Mu "
+"jurnallarini tekshiring."
 
 #: mu/logic.py:1836
 msgid "Language changed."
@@ -1905,16 +2178,25 @@ msgid "How to flash MicroPython to your ESP board"
 msgstr "MicroPythonni ESP platangizga qanday yozish mumkin"
 
 #: mu/interface/esp_flasher/dialog.py
-msgid "1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to load available firmware.<br>3. Select your <b>Board</b> and <b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be erased and the new firmware written automatically.<br><i>Note: hold the BOOT button on your board if the device does not enter programming mode automatically.</i>"
-msgstr "1. ESP platangizni USB orqali ulang.<br>2. Mavjud mikrodasturlarni yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>3. <b>Plata</b> va <b>Versiya</b>ni tanlang.<br>4. <b>O'chirish va yozish</b> tugmasini bosing — qurilma o'chiriladi va yangi mikrodastur avtomatik ravishda yoziladi.<br><i>Eslatma: agar qurilma avtomatik ravishda dastur yozish rejimiga kirmasa, platangizdagi BOOT tugmasini bosib turib va rejimga kirgandan so'ng qo'yib yuboring.</i>"
+msgid ""
+"1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to "
+"load available firmware.<br>3. Select your <b>Board</b> and "
+"<b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be"
+" erased and the new firmware written automatically.<br><i>Note: hold the "
+"BOOT button on your board if the device does not enter programming mode "
+"automatically.</i>"
+msgstr ""
+"1. ESP platangizni USB orqali ulang.<br>2. Mavjud mikrodasturlarni "
+"yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>3. "
+"<b>Plata</b> va <b>Versiya</b>ni tanlang.<br>4. <b>O'chirish va "
+"yozish</b> tugmasini bosing — qurilma o'chiriladi va yangi mikrodastur "
+"avtomatik ravishda yoziladi.<br><i>Eslatma: agar qurilma avtomatik "
+"ravishda dastur yozish rejimiga kirmasa, platangizdagi BOOT tugmasini "
+"bosib turib va rejimga kirgandan so'ng qo'yib yuboring.</i>"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "Board:"
 msgstr "Plata:"
-
-#: mu/interface/esp_flasher/dialog.py
-msgid "Fetch Versions"
-msgstr "Versiyalarni olish"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "Version:"
@@ -1929,10 +2211,6 @@ msgid "Erase && Flash"
 msgstr "O'chirish va yozish"
 
 #: mu/interface/esp_flasher/dialog.py
-msgid "Downloading firmware…"
-msgstr "Mikrodastur yuklab olinmoqda…"
-
-#: mu/interface/esp_flasher/dialog.py
 msgid "Download complete. Erasing flash…"
 msgstr "Yuklab olish tugadi. Xotira o'chirilmoqda…"
 
@@ -1945,32 +2223,13 @@ msgid "Flash complete! Device is rebooting with the new firmware."
 msgstr "Yozish tugadi! Qurilma yangi mikrodastur bilan qayta ishga tushmoqda."
 
 #: mu/interface/esp_flasher/dialog.py
-#, python-brace-format
-msgid "Flash failed: {}"
-msgstr "Yozishda xato: {}"
-
-#: mu/interface/esp_flasher/dialog.py
-#, python-brace-format
-msgid "Download error: {}"
-msgstr "Yuklab olishda xato: {}"
-
-#: mu/interface/esp_flasher/dialog.py
 msgid "Fetching firmware list…"
 msgstr "Mikrodastur ro'yxati olinmoqda…"
-
-#: mu/interface/esp_flasher/dialog.py
-msgid "No compatible firmware found."
-msgstr "Mos mikrodastur topilmadi."
 
 #: mu/interface/esp_flasher/dialog.py
 #, python-brace-format
 msgid "Loaded firmware for {} boards."
 msgstr "{} ta plata uchun mikrodasturlar yuklandi."
-
-#: mu/interface/esp_flasher/dialog.py
-#, python-brace-format
-msgid "Error fetching versions: {}"
-msgstr "Versiyalarni olishda xato: {}"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "No port selected."
@@ -2041,7 +2300,8 @@ msgstr "Qurilma ulanmagan. Iltimos, avval qurilmani ulang."
 msgid "Installing..."
 msgstr "O'rnatilmoqda..."
 
-#: mu/interface/mip_packages/widget.py:317 mu/interface/mip_packages/widget.py:330
+#: mu/interface/mip_packages/widget.py:317
+#: mu/interface/mip_packages/widget.py:330
 msgid "Install"
 msgstr "O'rnatish"
 
@@ -2054,8 +2314,15 @@ msgid "Please wait until the package installation is complete before closing."
 msgstr "Iltimos, paket o'rnatilishi tugaguncha kutib turing."
 
 #: mu/interface/dialogs.py:228
-msgid "The packages shown below will be available to import in Python 3 mode. Check 'Upgrade' to update to the latest version, or 'Remove' to uninstall. Add new packages in the box below."
-msgstr "Quyida ko'rsatilgan paketlarni Python 3 rejimida import qilish mumkin bo'ladi. Eng so'nggi versiyaga yangilash uchun 'Yangilash'ni, o'chirish uchun esa 'O'chirish'ni tanlang. Yangi paketlarni pastdagi maydonga kiriting."
+msgid ""
+"The packages shown below will be available to import in Python 3 mode. "
+"Check 'Upgrade' to update to the latest version, or 'Remove' to "
+"uninstall. Add new packages in the box below."
+msgstr ""
+"Quyida ko'rsatilgan paketlarni Python 3 rejimida import qilish mumkin "
+"bo'ladi. Eng so'nggi versiyaga yangilash uchun 'Yangilash'ni, o'chirish "
+"uchun esa 'O'chirish'ni tanlang. Yangi paketlarni pastdagi maydonga "
+"kiriting."
 
 #: mu/interface/dialogs.py:243
 msgid "Installed Packages"
@@ -2084,3 +2351,64 @@ msgstr "Yangi paketlarni o'rnatish"
 #: mu/interface/dialogs.py:284
 msgid "One package per line (e.g. requests, pygame)..."
 msgstr "Har bir qatorda bitta paket nomi (masalan: requests, pygame)..."
+
+msgid "Camera / AI Vision"
+msgstr "Kamera / AI Vizualizatsiya"
+
+msgid "Camera / AI Vision (Wi-Fi)"
+msgstr "Kamera / AI Vizualizatsiya (Wi-Fi)"
+
+msgid "● LIVE (USB) | AI ACTIVE"
+msgstr "● JONLI (USB) | AI FAOLLASHTIRILGAN"
+
+msgid "● LIVE (USB) | VIEWER"
+msgstr "● JONLI (USB) | TOMOSHA REJIMI"
+
+msgid "● LIVE (Wi-Fi) | AI ACTIVE"
+msgstr "● JONLI (Wi-Fi) | AI FAOLLASHTIRILGAN"
+
+msgid "● CONNECTING (Wi-Fi)…"
+msgstr "● ULANMOQDA (Wi-Fi)…"
+
+msgid "● Wi-Fi: Disconnected"
+msgstr "● Wi-Fi: Ulanmagan"
+
+msgid "Flip 180°"
+msgstr "180° burish"
+
+msgid "Install AI Engine"
+msgstr "AI dvigatelini o'rnatish"
+
+msgid "Installing AI..."
+msgstr "AI o'rnatilmoqda..."
+
+msgid "Install Failed"
+msgstr "O'rnatish muvaffaqiyatsiz tugadi"
+
+msgid "Waiting for camera stream…"
+msgstr "Kamera oqimi kutilmoqda…"
+
+msgid "Wi-Fi:"
+msgstr "Wi-Fi:"
+
+msgid "Connect"
+msgstr "Ulanish"
+
+msgid "Disconnect"
+msgstr "Uzish"
+
+msgid ""
+"Connection timed out: Check if start_wifi_stream() is running on the "
+"board and IP/port (8080) is correct."
+msgstr ""
+"Ulanish vaqti tugadi: Platada start_wifi_stream() ishlayotganini va "
+"IP/port (8080) to'g'riligini tekshiring."
+
+msgid ""
+"Connection refused: The camera streaming server has not started on the "
+"board yet."
+msgstr "Ulanish rad etildi: Platada kamera oqimi serveri hali ishga tushmadi."
+
+msgid "Wi-Fi connection error"
+msgstr "Wi-Fi ulanish xatosi"
+

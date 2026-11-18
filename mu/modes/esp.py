@@ -76,6 +76,23 @@ class ESPMode(MicroPythonMode):
             except Exception:
                 pass
             self.view.repl_pane.camera_frame_received.connect(self.on_camera_frame)
+            try:
+                self.view.repl_pane.wifi_stream_detected.disconnect(self.on_wifi_stream_detected)
+            except Exception:
+                pass
+            self.view.repl_pane.wifi_stream_detected.connect(self.on_wifi_stream_detected)
+
+    def on_wifi_stream_detected(self, url):
+        """
+        Called when [Vision] Starting WiFi stream at http://... is detected in REPL.
+        Automatically opens the CameraPane in Wi-Fi mode and connects to the URL.
+        """
+        if self.camera_pane is None:
+            from mu.interface.panes import CameraPane
+            self.camera_pane = CameraPane(theme=self.view.theme)
+            self.camera_pane.ai_feedback_ready.connect(self.on_ai_feedback)
+            self.view.add_camera(self.camera_pane, _("Camera / AI Vision (Wi-Fi)"))
+        self.camera_pane.connect_wifi(url)
 
     def on_camera_frame(self, jpg_frame):
         """
@@ -85,8 +102,24 @@ class ESPMode(MicroPythonMode):
         if self.camera_pane is None:
             from mu.interface.panes import CameraPane
             self.camera_pane = CameraPane(theme=self.view.theme)
+            self.camera_pane.ai_feedback_ready.connect(self.on_ai_feedback)
             self.view.add_camera(self.camera_pane, _("Camera / AI Vision"))
         self.camera_pane.display_frame(jpg_frame)
+
+    def on_ai_feedback(self, ai_data):
+        """
+        Injects real-time AI coordinates into the running ESP32 MicroPython session
+        via serial ([AI]:x,y,det\n).
+        """
+        if self.running and self.connection and getattr(self.connection, "serial", None):
+            try:
+                hx = ai_data.get("hand_x", 0)
+                hy = ai_data.get("hand_y", 0)
+                det = 1 if ai_data.get("hand_detected", False) else 0
+                cmd = f"[AI]:{hx},{hy},{det}\n".encode("utf-8")
+                self.connection.write(cmd)
+            except Exception as e:
+                logger.debug("Failed to inject AI feedback to ESP32: %s", e)
 
     def remove_camera(self):
         """
