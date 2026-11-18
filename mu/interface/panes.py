@@ -27,6 +27,7 @@ import bisect
 import shutil
 import os.path
 import codecs
+import time
 
 from mu.qt.QtCore import (
     Qt,
@@ -39,6 +40,10 @@ from mu.qt.QtCore import (
 )
 from collections import deque
 from mu.qt.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QSizePolicy,
     QMessageBox,
     QTextEdit,
     QFrame,
@@ -53,6 +58,8 @@ from mu.qt.QtWidgets import (
     QAbstractItemView,
 )
 from mu.qt.QtGui import (
+    QImage,
+    QPixmap,
     QKeySequence,
     QTextCursor,
     QCursor,
@@ -216,6 +223,9 @@ class URLHighlighter(QSyntaxHighlighter):
 class MicroPythonREPLPane(QTextEdit):
     """
     REPL = Read, Evaluate, Print, Loop.
+"""
+    camera_frame_received = pyqtSignal(bytes)
+    """
 
     This widget represents a REPL client connected to a device running
     MicroPython.
@@ -243,6 +253,8 @@ class MicroPythonREPLPane(QTextEdit):
         self.set_theme(theme)
         self.unprocessed_input = b""  # used by process_bytes
         self.decoder = codecs.getincrementaldecoder("utf8")("replace")
+        self.camera_streaming = False
+        self._cam_buffer = b""
         self.vt100_regex = re.compile(
             r"\x1B\[(?P<count>[\d]*)(;?[\d]*)*(?P<action>[A-Za-z])"
         )
@@ -481,6 +493,40 @@ class MicroPythonREPLPane(QTextEdit):
         Updates the self.device_cursor_position to match that of the device
         for every input received.
         """
+        # Intercept camera video stream before feeding binary bytes to text decoder
+        if not self.camera_streaming:
+            if b"[Vision] Starting PC stream" in data or b"\xff\xd8\xff" in data:
+                self.camera_streaming = True
+
+        if self.camera_streaming:
+            self._cam_buffer += data
+            data = b""
+            # Check for stream end / exception conditions
+            if b"Traceback (most recent call last)" in self._cam_buffer or b"[Vision] Stream stopped" in self._cam_buffer:
+                self.camera_streaming = False
+                data = self._cam_buffer
+                self._cam_buffer = b""
+            else:
+                while True:
+                    soi = self._cam_buffer.find(b"\xff\xd8")
+                    if soi == -1:
+                        if len(self._cam_buffer) > 4:
+                            data += self._cam_buffer[:-2]
+                            self._cam_buffer = self._cam_buffer[-2:]
+                        break
+                    if soi > 0:
+                        data += self._cam_buffer[:soi]
+                        self._cam_buffer = self._cam_buffer[soi:]
+                    eoi = self._cam_buffer.find(b"\xff\xd9", 2)
+                    if eoi == -1:
+                        break
+                    jpg_frame = self._cam_buffer[: eoi + 2]
+                    self._cam_buffer = self._cam_buffer[eoi + 2 :]
+                    self.camera_frame_received.emit(jpg_frame)
+
+        if not data:
+            return
+
         i = 0
         data = self.decoder.decode(data)
         if len(self.unprocessed_input) > 0:
@@ -779,6 +825,87 @@ class SnekREPLPane(MicroPythonREPLPane):
                         self.insertPlainText(chr(data[i]))
             i += 1
         self.ensureCursorVisible()
+
+
+class CameraPane(QWidget):
+    """
+    Live Camera / AI Vision Docking Pane.
+    Displays live video feed streamed from an ESP32 camera board (e.g. OV2640 via espzero.vision).
+    Renders JPEG frames using native Qt QImage/QPixmap with FPS and resolution info.
+    """
+
+    def __init__(self, parent=None, theme="day"):
+        super().__init__(parent)
+        self.setObjectName("camerapane")
+        self.frame_count = 0
+        self.last_fps_time = time.time()
+        self.current_fps = 0.0
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(6, 6, 6, 6)
+        layout.setSpacing(4)
+
+        # Header status bar
+        header = QHBoxLayout()
+        header.setContentsMargins(0, 0, 0, 0)
+        self.lbl_status = QLabel(_("● LIVE"))
+        self.lbl_status.setStyleSheet("font-weight: bold; color: #2e7d32; font-size: 11px;")
+        self.lbl_resolution = QLabel("320x240")
+        self.lbl_resolution.setStyleSheet("color: #777; font-size: 11px;")
+        self.lbl_fps = QLabel("0.0 FPS")
+        self.lbl_fps.setStyleSheet("font-weight: bold; color: #1976d2; font-size: 11px;")
+
+        header.addWidget(self.lbl_status)
+        header.addStretch()
+        header.addWidget(self.lbl_resolution)
+        header.addSpacing(8)
+        header.addWidget(self.lbl_fps)
+        layout.addLayout(header)
+
+        # Video viewport
+        self.video_label = QLabel()
+        self.video_label.setAlignment(Qt.AlignCenter)
+        self.video_label.setMinimumSize(320, 240)
+        self.video_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.video_label.setStyleSheet("background-color: #1a1a1a; border-radius: 4px;")
+        self.video_label.setText(_("Waiting for camera stream…"))
+        layout.addWidget(self.video_label)
+
+        self.set_theme(theme)
+
+    def display_frame(self, jpg_bytes):
+        """
+        Decode and render a JPEG frame onto the video label.
+        """
+        image = QImage.fromData(jpg_bytes, "JPG")
+        if not image.isNull():
+            self.frame_count += 1
+            now = time.time()
+            dt = now - self.last_fps_time
+            if dt >= 1.0:
+                self.current_fps = self.frame_count / dt
+                self.lbl_fps.setText(f"{self.current_fps:.1f} FPS")
+                self.frame_count = 0
+                self.last_fps_time = now
+
+            w, h = image.width(), image.height()
+            self.lbl_resolution.setText(f"{w}x{h}")
+
+            pixmap = QPixmap.fromImage(image)
+            lbl_size = self.video_label.size()
+            if lbl_size.width() > 10 and lbl_size.height() > 10:
+                scaled = pixmap.scaled(lbl_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                self.video_label.setPixmap(scaled)
+            else:
+                self.video_label.setPixmap(pixmap)
+
+    def set_theme(self, theme):
+        if theme == "night":
+            self.setStyleSheet("background-color: #2b2b2b; color: #ffffff;")
+            self.video_label.setStyleSheet("background-color: #141414; border-radius: 4px; color: #888;")
+        else:
+            self.setStyleSheet("background-color: #f7f7f7; color: #222222;")
+            self.video_label.setStyleSheet("background-color: #000000; border-radius: 4px; color: #aaa;")
 
 
 class MuFileList(QListWidget):

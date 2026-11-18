@@ -800,6 +800,35 @@ def test_MicroPythonREPLPane_process_tty_data_raw_repl_eot():
     assert rp.toPlainText() == ">"
 
 
+def test_MicroPythonREPLPane_camera_stream_interception():
+    """
+    Ensure camera stream packets (JPEG frames) are intercepted, emitted via
+    camera_frame_received signal, and not sent to the text decoder.
+    """
+    mock_repl_connection = mock.MagicMock()
+    rp = mu.interface.panes.MicroPythonREPLPane(mock_repl_connection)
+    received = []
+    rp.camera_frame_received.connect(lambda f: received.append(f))
+
+    fake_jpg = b"\xff\xd8\xff\xe0\x00\x10JFIF" + b"\x00" * 20 + b"\xff\xd9"
+    data = b"[Vision] Starting PC stream (10 fps)...\r\n" + fake_jpg + b"Done!\r\n"
+    rp.process_tty_data(data)
+
+    assert len(received) == 1
+    assert received[0] == fake_jpg
+
+
+def test_CameraPane_display_frame():
+    """
+    Ensure CameraPane handles frame display and updates FPS and resolution.
+    """
+    cp = mu.interface.panes.CameraPane()
+    fake_jpg = b"\xff\xd8\xff\xe0\x00\x10JFIF" + b"\x00" * 20 + b"\xff\xd9"
+    cp.display_frame(fake_jpg)
+    assert cp.frame_count == 1
+
+
+
 
 def test_MicroPythonREPLPane_process_tty_data_vt100_cursor_left():
     """

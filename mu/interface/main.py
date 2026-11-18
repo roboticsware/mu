@@ -69,6 +69,7 @@ from mu.interface.panes import (
     FileSystemPane,
     PlotterPane,
     SnekREPLPane,
+    CameraPane,
 )
 from mu.interface.editor import EditorPane
 from mu.interface.widgets import DeviceSelector
@@ -339,6 +340,8 @@ class Window(QMainWindow):
     usb_checker = None
     repl = None
     plotter = None
+    camera = None
+    camera_pane = None
     zooms = ("xs", "s", "m", "l", "xl", "xxl", "xxxl")  # levels of zoom.
     zoom_position = 2  # current level of zoom (as position in zooms tuple).
 
@@ -359,6 +362,7 @@ class Window(QMainWindow):
         self._inspector_area = 0
         self._plotter_area = 0
         self._repl_area = 0
+        self._camera_area = 0
         self._runner_area = 0
         self.progress = None
 
@@ -821,6 +825,25 @@ class Window(QMainWindow):
         self.plotter_pane.set_theme(self.theme)
         self.plotter_pane.setFocus()
 
+    def add_camera(self, camera_pane, name):
+        """
+        Adds the referenced camera pane to the application.
+        """
+        self.camera_pane = camera_pane
+        self.camera = QDockWidget(_("{}").format(name))
+        self.camera.setWidget(camera_pane)
+        self.camera.setFeatures(
+            QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetClosable
+        )
+        self.camera.setAllowedAreas(
+            Qt.BottomDockWidgetArea
+            | Qt.LeftDockWidgetArea
+            | Qt.RightDockWidgetArea
+        )
+        area = self._camera_area or Qt.RightDockWidgetArea
+        self.addDockWidget(area, self.camera)
+        self.camera_pane.set_theme(self.theme)
+
     def add_python3_runner(
         self,
         interpreter,
@@ -1028,6 +1051,17 @@ class Window(QMainWindow):
             self.plotter.setParent(None)
             self.plotter.deleteLater()
             self.plotter = None
+
+    def remove_camera(self):
+        """
+        Removes the camera pane from the application.
+        """
+        if getattr(self, "camera", None):
+            self._camera_area = self.dockWidgetArea(self.camera)
+            self.camera_pane = None
+            self.camera.setParent(None)
+            self.camera.deleteLater()
+            self.camera = None
 
     def remove_python_runner(self):
         """

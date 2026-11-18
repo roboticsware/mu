@@ -40,6 +40,12 @@ SUPPORTED_BOARDS = {
 # Sources: micropython-camera-API (v0.6.2 based on MicroPython v1.27.0)
 CAMERA_BOARDS = [
     {
+        "label": "ESP32-S3 Camera (OV2640 / Octal SPIRAM)",
+        "family": "esp32s3",
+        "version": "1.27.0 (cam)",
+        "url": "https://github.com/cnadler86/micropython-camera-API/releases/download/v0.6.2/mpy_cam-v1.27.0-ESP32_GENERIC_S3-SPIRAM_OCT.zip",
+    },
+    {
         "label": "Freenove ESP32-S3 CAM (Camera)",
         "family": "esp32s3",
         "version": "1.27.0 (cam)",

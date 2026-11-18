@@ -39,6 +39,7 @@ class ESPMode(MicroPythonMode):
     description = _("Write MicroPython on ESP8266/ESP32 boards.")
     icon = "esp"
     fs = None
+    camera_pane = None
     running = False
     dtr = False
     rts = False
@@ -69,6 +70,34 @@ class ESPMode(MicroPythonMode):
         if device and not self.connection:
             self.reset_board_to_normal(device.port)
         super().add_repl()
+        if hasattr(self.view, "repl_pane") and self.view.repl_pane:
+            try:
+                self.view.repl_pane.camera_frame_received.disconnect(self.on_camera_frame)
+            except Exception:
+                pass
+            self.view.repl_pane.camera_frame_received.connect(self.on_camera_frame)
+
+    def on_camera_frame(self, jpg_frame):
+        """
+        Called when a complete JPEG frame is extracted from the serial stream.
+        Automatically opens the CameraPane on the first frame received.
+        """
+        if self.camera_pane is None:
+            from mu.interface.panes import CameraPane
+            self.camera_pane = CameraPane(theme=self.view.theme)
+            self.view.add_camera(self.camera_pane, _("Camera / AI Vision"))
+        self.camera_pane.display_frame(jpg_frame)
+
+    def remove_camera(self):
+        """
+        Closes and cleans up the camera pane if open.
+        """
+        if self.camera_pane is not None:
+            self.view.remove_camera()
+            self.camera_pane = None
+        if hasattr(self.view, "repl_pane") and self.view.repl_pane:
+            self.view.repl_pane.camera_streaming = False
+            self.view.repl_pane._cam_buffer = b""
 
     # The below list defines the supported devices, however, many
     # devices are using the exact same FTDI USB-interface, with vendor
@@ -226,6 +255,7 @@ class ESPMode(MicroPythonMode):
                 return
             run_slot.setIcon(load_icon("stop"))
             run_slot.setText(_("Stop"))
+            self.remove_camera()
             self.set_buttons(files=False)
             self.set_buttons(repl=False)
             python_script = tab.text().split("\n")
@@ -247,6 +277,7 @@ class ESPMode(MicroPythonMode):
             run_slot.setText(_("Run"))
             self.set_buttons(files=True)
             self.set_buttons(repl=True)
+            self.remove_camera()
             if self.repl:
                 self.toggle_repl(None) # Off
             if self.editor.current_device:
@@ -389,6 +420,7 @@ class ESPMode(MicroPythonMode):
         Invoked whenever the mode is deactivated.
         """
         super().deactivate()
+        self.remove_camera()
         if self.fs:
             self.remove_fs()
 
@@ -397,6 +429,7 @@ class ESPMode(MicroPythonMode):
         Invoked whenever the application quits.
         """
         super().stop()
+        self.remove_camera()
         if getattr(self, "fs", None):
             self.remove_fs()
 
