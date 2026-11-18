@@ -10,6 +10,7 @@ Additional boards can be added to SUPPORTED_BOARDS as needed.
 import logging
 import os
 import tempfile
+import zipfile
 
 import requests
 
@@ -34,6 +35,35 @@ SUPPORTED_BOARDS = {
     ("Wemos",     "C3 mini"):       "Wemos C3 Mini",
     ("Wemos",     "S2 mini"):       "Wemos S2 Mini",
 }
+
+# Curated camera-enabled MicroPython firmware list
+# Sources: micropython-camera-API (v0.6.2 based on MicroPython v1.27.0)
+CAMERA_BOARDS = [
+    {
+        "label": "Freenove ESP32-S3 CAM (Camera)",
+        "family": "esp32s3",
+        "version": "1.27.0 (cam)",
+        "url": "https://github.com/cnadler86/micropython-camera-API/releases/download/v0.6.2/mpy_cam-v1.27.0-FREENOVE_ESP32S3_CAM.zip",
+    },
+    {
+        "label": "AI-Thinker ESP32-CAM (Camera)",
+        "family": "esp32",
+        "version": "1.27.0 (cam)",
+        "url": "https://github.com/cnadler86/micropython-camera-API/releases/download/v0.6.2/mpy_cam-v1.27.0-AI_THINKER.zip",
+    },
+    {
+        "label": "Seeed XIAO ESP32-S3 Sense (Camera)",
+        "family": "esp32s3",
+        "version": "1.27.0 (cam)",
+        "url": "https://github.com/cnadler86/micropython-camera-API/releases/download/v0.6.2/mpy_cam-v1.27.0-XIAO_ESP32S3.zip",
+    },
+    {
+        "label": "M5Stack Unit CAM (Camera)",
+        "family": "esp32",
+        "version": "1.27.0 (cam)",
+        "url": "https://github.com/cnadler86/micropython-camera-API/releases/download/v0.6.2/mpy_cam-v1.27.0-M5STACK_UNITCAM.zip",
+    },
+]
 
 
 class EspFirmwareRelease:
@@ -90,16 +120,28 @@ class EspFirmwareFetcher:
                             )
                         )
 
+        # Add camera-enabled MicroPython firmware releases
+        for cam in CAMERA_BOARDS:
+            releases.append(
+                EspFirmwareRelease(
+                    label=cam["label"],
+                    family=cam["family"],
+                    version=cam["version"],
+                    url=cam["url"],
+                )
+            )
+
         logger.info("Found %d supported ESP firmware assets.", len(releases))
         return releases
 
     def download(self, url: str, progress_callback=None) -> str:
         """
-        Download a .bin firmware file to a temporary path and return that path.
+        Download a .bin or .zip firmware file to a temporary path and return that path.
+        If the downloaded file is a .zip archive, extracts and returns the contained .bin.
 
-        :param url: Direct download URL of the .bin file.
+        :param url: Direct download URL of the .bin or .zip file.
         :param progress_callback: Optional callable(downloaded_bytes, total_bytes).
-        :returns: Absolute path to the downloaded temporary file.
+        :returns: Absolute path to the downloaded temporary .bin file.
         :raises: requests.RequestException on network error.
         """
         logger.info("Downloading ESP firmware: %s", url)
@@ -108,7 +150,10 @@ class EspFirmwareFetcher:
         total = int(response.headers.get("content-length", 0))
         downloaded = 0
 
-        fd, dest_path = tempfile.mkstemp(suffix=".bin", prefix="mu_esp_fw_")
+        is_zip = url.lower().endswith(".zip")
+        suffix = ".zip" if is_zip else ".bin"
+
+        fd, dest_path = tempfile.mkstemp(suffix=suffix, prefix="mu_esp_fw_")
         try:
             with os.fdopen(fd, "wb") as f:
                 for chunk in response.iter_content(chunk_size=65536):
@@ -117,6 +162,23 @@ class EspFirmwareFetcher:
                         downloaded += len(chunk)
                         if progress_callback:
                             progress_callback(downloaded, total)
+
+            # If it's a zip archive, extract the .bin inside
+            if is_zip:
+                bin_fd, bin_dest_path = tempfile.mkstemp(suffix=".bin", prefix="mu_esp_fw_")
+                os.close(bin_fd)
+                with zipfile.ZipFile(dest_path, "r") as zf:
+                    bin_names = [name for name in zf.namelist() if name.lower().endswith(".bin")]
+                    if not bin_names:
+                        raise RuntimeError("No .bin file found in firmware zip archive.")
+                    # Extract the first .bin file found
+                    with zf.open(bin_names[0]) as source_file, open(bin_dest_path, "wb") as target_file:
+                        target_file.write(source_file.read())
+                try:
+                    os.unlink(dest_path)
+                except OSError:
+                    pass
+                dest_path = bin_dest_path
         except Exception:
             try:
                 os.unlink(dest_path)

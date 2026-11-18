@@ -551,8 +551,12 @@ class ESPFirmwareFlasherWidget(QWidget):
         self.device_selector.set_device_list(device_list)
         device_type_label = QLabel(_("Choose device type:"))
         self.device_type = QComboBox(self)
-        self.device_type.addItem("ESP8266")
-        self.device_type.addItem("ESP32")
+        self.device_type.addItem("Auto", "")
+        self.device_type.addItem("ESP8266", "esp8266")
+        self.device_type.addItem("ESP32", "esp32")
+        self.device_type.addItem("ESP32-S2", "esp32s2")
+        self.device_type.addItem("ESP32-S3", "esp32s3")
+        self.device_type.addItem("ESP32-C3", "esp32c3")
         firmware_label = QLabel(_("Firmware (.bin):"))
         self.txtFolder = QLineEdit()
         self.btnFolder = QPushButton(_("Browse"))
@@ -610,31 +614,49 @@ class ESPFirmwareFlasherWidget(QWidget):
         if device is None:
             return
 
-        esptool = "-mmu.contrib.esptool"
-        erase_command = '"{}" "{}" --port {} erase_flash'.format(
-            sys.executable, esptool, device.port
+        try:
+            import esptool as _esptool_pkg
+            esptool = "-mesptool"
+        except ImportError:
+            esptool = "-mmu.contrib.esptool"
+
+        chip_arg = self.device_type.currentData()
+        chip_opt = "--chip {} ".format(chip_arg) if chip_arg else ""
+
+        erase_command = '"{}" {} {}--port {} erase_flash'.format(
+            sys.executable, esptool, chip_opt, device.port
         )
 
-        if self.device_type.currentText() == "ESP32":
+        # Flash address: esp32 and esp32s2 write at 0x1000; esp8266, esp32s3, esp32c3 write at 0x0
+        if chip_arg in ("esp32", "esp32s2"):
+            flash_address = "0x1000"
+        else:
+            flash_address = "0x0"
+
+        if chip_arg == "esp8266":
             write_command = (
-                '"{}" "{}" --chip esp32 --port {} --baud {} '
-                'write_flash -z 0x1000 "{}"'
+                '"{}" {} {}--port {} --baud {} '
+                'write_flash --flash_size=detect {} "{}"'
             ).format(
                 sys.executable,
                 esptool,
+                chip_opt,
                 device.port,
                 baudrate,
+                flash_address,
                 self.txtFolder.text(),
             )
         else:
             write_command = (
-                '"{}" "{}" --chip esp8266 --port {} --baud {} '
-                'write_flash --flash_size=detect 0 "{}"'
+                '"{}" {} {}--port {} --baud {} '
+                'write_flash -z {} "{}"'
             ).format(
                 sys.executable,
                 esptool,
+                chip_opt,
                 device.port,
                 baudrate,
+                flash_address,
                 self.txtFolder.text(),
             )
 

@@ -236,8 +236,9 @@ class ESPMode(MicroPythonMode):
             if self.repl and self.connection:
                 if just_opened:
                     # Allow ESP32 hardware to settle and finish rebooting after port open before sending code
+                    # (ESP32-S3 with Octal SPIRAM requires ~1.2s to initialize PSRAM before REPL is ready)
                     from mu.qt.QtCore import QTimer
-                    QTimer.singleShot(500, lambda: self.connection.send_commands(python_script) if self.connection else None)
+                    QTimer.singleShot(1500, lambda: self.connection.send_commands(python_script) if self.connection else None)
                 else:
                     self.connection.send_commands(python_script)
             self.running =  True
