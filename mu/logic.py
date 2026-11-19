@@ -245,6 +245,14 @@ EXAMPLE_PICO_BASIC = [
     "wifi_car.py",
 ]
 
+EXAMPLE_ESP32 = [
+    "i2c_lcd.py",
+    "joystick.py",
+    "lcd.py",
+    "stepper_analog_clock.py",
+    "stepper_automatic_blinds.py",
+]
+
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
     _("Hello, World!"),
     _(
@@ -1062,12 +1070,14 @@ class Editor(QObject):
         # ESP32_lib (espzero)
         espzero_path = os.path.join(esp32_lib_path, "espzero")
         espzero_profiles_path = os.path.join(espzero_path, "profiles")
+        espzero_examples_path = os.path.join(esp32_lib_path, "examples")
         _sync_files("esp32/", DEFAULT_ESP32_LIB, espzero_path)
         _sync_files(
             "esp32/profiles/",
             ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"],
             espzero_profiles_path,
         )
+        _sync_files("esp32/docs/examples/", EXAMPLE_ESP32, espzero_examples_path)
 
         # Examples
         os.makedirs(examples_path, exist_ok=True)
