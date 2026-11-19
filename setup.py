@@ -53,7 +53,7 @@ else:
 if not is_32bit:
     install_requires.extend([
         "numpy",
-        "opencv-python",
+        "opencv-python<=4.10.0.84",
         "mediapipe<=0.10.11",
     ])
 else:
@@ -132,7 +132,7 @@ extras_require = {
     ],
     "i18n": ["babel"],
     "utils": ["scrapy", "beautifulsoup4", "requests"],
-    "vision": ["numpy", "opencv-python", "mediapipe<=0.10.11"],
+    "vision": ["numpy", "opencv-python<=4.10.0.84", "mediapipe<=0.10.11"],
 }
 
 extras_require["dev"] = (
