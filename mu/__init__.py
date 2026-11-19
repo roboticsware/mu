@@ -11,5 +11,5 @@ __version__ = "1.3.4"
 __license__ = "GPL3"
 __url__ = "https://github.com/mu-editor/mu"
 
-__author__ = "Nicholas H.Tollervey & RoboticsWare"
+__author__ = "Nicholas H.Tollervey &amp; RoboticsWare"
 __email__ = "ntoll@ntoll.org"
