@@ -50,16 +50,6 @@ else:
         + ';"arm" not in platform_machine and "aarch" not in platform_machine',
     ])
 
-if not is_32bit:
-    install_requires.extend([
-        "numpy",
-        "opencv-python<=4.10.0.84",
-        "mediapipe<=0.10.11",
-    ])
-else:
-    install_requires.extend([
-        "numpy",
-    ])
 
 install_requires.extend([
     # FIXME: jupyter-client added for Py3.5 compatibility, to be dropped after
@@ -132,7 +122,12 @@ extras_require = {
     ],
     "i18n": ["babel"],
     "utils": ["scrapy", "beautifulsoup4", "requests"],
-    "vision": ["numpy", "opencv-python<=4.10.0.84", "mediapipe<=0.10.11"],
+    "vision": [
+        "numpy",
+        "opencv-python<=4.10.0.84",
+        "opencv-contrib-python<=4.10.0.84",
+        "mediapipe<=0.10.11",
+    ],
 }
 
 extras_require["dev"] = (
