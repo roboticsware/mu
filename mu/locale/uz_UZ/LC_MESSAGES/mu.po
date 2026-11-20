@@ -163,7 +163,7 @@ msgstr ""
 
 #: mu/interface/dialogs.py:366
 msgid "How to flash MicroPython to your device"
-msgstr "MicroPython-ni qurilmangizga qanday yoqish mumkin"
+msgstr "MicroPython-ni qurilmangizga qanday yozish mumkin"
 
 #: mu/interface/dialogs.py:374
 msgid ""
@@ -175,9 +175,9 @@ msgid ""
 msgstr ""
 "&nbsp;1. Qurilma turini aniqlang (ESP8266 yoki ESP32)<br />&nbsp;2. "
 "Mikrodasturni <a href=\"https://micropython.org/download\" "
-"style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3"
-" dan yuklab oling. Qurilmangizni ulang<br/>&nbsp;4. Quyidagi .bin faylini"
-" “Yuklash” tugmasi yordamida yuklang<br/>&nbsp;5. \"Mikrodasturni "
+"style=\"color:#039be5;\">https://micropython.org/download</a> saytidan "
+"yuklab oling<br/>&nbsp;3. Qurilmangizni ulang<br/>&nbsp;4. Quyidagi .bin "
+"faylini \"Izlash\" tugmasi yordamida tanlang<br/>&nbsp;5. \"Mikrodasturni "
 "o'chirish va yozish\" tugmasini bosing"
 
 #: mu/interface/dialogs.py:396
@@ -2052,7 +2052,7 @@ msgstr "Debuger ishlashi uchun Python kodlari fayl nomi kerak."
 
 #: mu/interface/dialogs.py
 msgid "Pico Firmware Flasher"
-msgstr "Pico mikrodasturini yuklab qo'yish"
+msgstr "Pico mikrodasturini yozish"
 
 #: mu/interface/pico_flasher/dialog.py
 msgid "How to flash MicroPython to your Pico"
@@ -2171,7 +2171,7 @@ msgstr "Tanlangan til Mu qayta ishga tushirilgandan so'ng amal qiladi."
 
 #: mu/interface/dialogs.py
 msgid "ESP Online Flasher"
-msgstr "ESP mikrodastur onlayn yozish"
+msgstr "ESP mikrodasturi onlayn yozish"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "How to flash MicroPython to your ESP board"

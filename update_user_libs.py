@@ -22,7 +22,16 @@ from urllib.parse import urljoin
 from urllib.request import Request, build_opener
 
 opener = build_opener()
-opener.addheaders = [("User-Agent", "Mu-User-Libs-Updater/1.0")]
+headers = [("User-Agent", "Mu-User-Libs-Updater/1.0")]
+token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+if not token and shutil.which("gh"):
+    try:
+        token = subprocess.check_output(["gh", "auth", "token"], text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        pass
+if token:
+    headers.append(("Authorization", f"Bearer {token}"))
+opener.addheaders = headers
 
 LIBS = {
     "pgzhelper": {
