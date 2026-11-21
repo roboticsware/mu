@@ -525,3 +525,46 @@ def test_running_twice_after_generic_exception():
     test_only_running_once()
     # clear browser launch suppression env flag
     os.environ.pop("MU_SUPPRESS_CRASH_REPORT_FORM", "")
+
+
+def test_acquire_create_failure_does_not_crash():
+    """
+    When QSharedMemory.create() fails (for example when a stale or
+    concurrently created segment cannot be attached), data() returns None
+    and acquire() used to raise "TypeError: 'NoneType' object does not
+    support item assignment" on startup. It should not raise.
+    """
+    import struct
+
+    from mu.app import SharedMemoryMutex
+
+    fake = mock.MagicMock()
+    fake.attach.return_value = False
+    fake.create.return_value = False
+    fake.data.return_value = None
+    with mock.patch("mu.app.QSharedMemory", return_value=fake):
+        mutex = SharedMemoryMutex()
+        mutex.acquire()
+    fake.data.assert_not_called()
+
+
+def test_acquire_detects_running_instance_when_create_fails():
+    """
+    If create() fails because another instance has already created the
+    segment, acquire() should raise MutexError with the running pid.
+    """
+    import struct
+
+    from mu.app import MutexError, SharedMemoryMutex
+
+    fake = mock.MagicMock()
+    # attach attempts: the attach-detach dance, then the second check,
+    # then the retry after create() failed
+    fake.attach.side_effect = [False, False, True]
+    fake.create.return_value = False
+    fake.data.return_value = struct.pack("q", 4242)
+    with mock.patch("mu.app.QSharedMemory", return_value=fake):
+        mutex = SharedMemoryMutex()
+        with pytest.raises(MutexError) as exc:
+            mutex.acquire()
+    assert "4242" in str(exc.value)

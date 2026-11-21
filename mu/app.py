@@ -440,8 +440,24 @@ class SharedMemoryMutex(object):
             pid = struct.unpack("q", self._shared_memory.data()[:8])
             raise MutexError("MUTEX: Mu is already running with pid %d" % pid)
         else:
-            self._shared_memory.create(8)
-            self._shared_memory.data()[:8] = struct.pack("q", os.getpid())
+            if self._shared_memory.create(8):
+                self._shared_memory.data()[:8] = struct.pack("q", os.getpid())
+            else:
+                # Creating the segment can fail, e.g. when another instance
+                # created it between the attach attempts above, or when a
+                # stale segment left by a crashed instance cannot be
+                # released. In that case data() returns None and writing to
+                # it used to crash Mu with a TypeError (issue #13).
+                if self._shared_memory.attach():
+                    pid = struct.unpack("q", self._shared_memory.data()[:8])
+                    raise MutexError(
+                        "MUTEX: Mu is already running with pid %d" % pid
+                    )
+                logging.warning(
+                    "Could not create or attach the shared memory segment "
+                    "%r; continuing without the single-instance check",
+                    self._shared_memory.key(),
+                )
 
     def release(self):
         self._shared_memory.detach()
