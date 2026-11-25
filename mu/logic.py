@@ -224,11 +224,23 @@ DEFAULT_PICO_LIB = [
     "nec.py",
     "neopixel.py",
     "piconethelper.py",
-    "picozero.py",
     "stepper_motor.py",
     "tcs3472.py",
     "telegram.py",
     "wifi_car.py",
+]
+
+DEFAULT_PICOZERO_LIB = [
+    "__init__.py",
+    "analog.py",
+    "core.py",
+    "input.py",
+    "lcd.py",
+    "led.py",
+    "motor.py",
+    "oled.py",
+    "sound.py",
+    "stepper.py",
 ]
 
 DEFAULT_ESP32_LIB = [
@@ -237,6 +249,7 @@ DEFAULT_ESP32_LIB = [
     "_hal.py",
     "_wifi.py",
     "_touch.py",
+    "audio.py",
     "vision.py",
 ]
 
@@ -245,12 +258,71 @@ EXAMPLE_PICO_BASIC = [
     "wifi_car.py",
 ]
 
-EXAMPLE_ESP32 = [
+EXAMPLE_PICOZERO = [
+    "button_function.py",
+    "button_is_pressed.py",
+    "button_led.py",
+    "buzzer.py",
     "i2c_lcd.py",
     "joystick.py",
     "lcd.py",
+    "led_blink.py",
+    "led_brightness.py",
+    "led_on_off.py",
+    "led_pulse.py",
+    "led_pulse_method.py",
+    "led_toggle.py",
+    "motion_sensor.py",
+    "motion_sensor_callbacks.py",
+    "motor_move.py",
+    "oled.py",
+    "pico_led.py",
+    "pico_temperature.py",
+    "pot_led.py",
+    "potentiometer.py",
+    "print_pinout.py",
+    "rgb_blink.py",
+    "rgb_cycle.py",
+    "rgb_led.py",
+    "rgb_pulse.py",
+    "rgb_toggle_invert.py",
+    "robot_rover_forward.py",
+    "robot_rover_square.py",
+    "servo_move.py",
+    "servo_pulse.py",
+    "servo_sweep.py",
+    "speaker.py",
+    "speaker_midi_notes.py",
+    "speaker_notes.py",
+    "speaker_tune.py",
     "stepper_analog_clock.py",
     "stepper_automatic_blinds.py",
+    "stepper_basic.py",
+    "touch_sensor.py",
+    "touch_sensor_callbacks.py",
+    "ultrasonic_distance_sensor.py",
+]
+
+EXAMPLE_ESP32 = [
+    "audio_spectrum_oled.py",
+    "audio_wifi_ai_robot_esp32.py",
+    "audio_wifi_ai_robot_pc.py",
+    "clap_smart_door.py",
+    "i2c_lcd.py",
+    "joystick.py",
+    "lcd.py",
+    "multimodal_companion_robot_esp32.py",
+    "multimodal_companion_robot_pc.py",
+    "obstacle_avoiding_rover.py",
+    "oled_pot_gaze.py",
+    "smart_doorlock.py",
+    "smart_parking_assist.py",
+    "stepper_analog_clock.py",
+    "stepper_automatic_blinds.py",
+    "vision_yolo_car_esp32.py",
+    "vision_yolo_car_pc.py",
+    "voice_control_car_esp32.py",
+    "voice_control_car_pc.py",
 ]
 
 MOTD = [  # Candidate phrases for the message of the day (MOTD).
@@ -1065,7 +1137,11 @@ class Editor(QObject):
         os.makedirs(music_path, exist_ok=True)
 
         # Pico_lib
+        picozero_path = os.path.join(pico_lib_path, "picozero")
+        picozero_examples_path = os.path.join(pico_lib_path, "examples")
         _sync_files("pico/", DEFAULT_PICO_LIB, pico_lib_path)
+        _sync_files("pico/picozero/", DEFAULT_PICOZERO_LIB, picozero_path)
+        _sync_files("pico/docs/examples/", EXAMPLE_PICOZERO, picozero_examples_path)
 
         # ESP32_lib (espzero)
         espzero_path = os.path.join(esp32_lib_path, "espzero")
