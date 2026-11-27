@@ -2412,3 +2412,15 @@ msgstr "Ulanish rad etildi: Platada kamera oqimi serveri hali ishga tushmadi."
 msgid "Wi-Fi connection error"
 msgstr "Wi-Fi ulanish xatosi"
 
+#: mu/interface/panes.py
+msgid "Copy to device"
+msgstr "Qurilmaga nusxalash"
+
+#: mu/interface/panes.py
+msgid "Copy to computer"
+msgstr "Kompyuterga nusxalash"
+
+#: mu/logic.py
+msgid "Opening file manager to save file to device..."
+msgstr "Faylni qurilmaga saqlash uchun fayl menejeri ochilmoqda..."
+

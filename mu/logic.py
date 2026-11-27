@@ -1612,10 +1612,63 @@ class Editor(QObject):
             QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
             try:
                 if hasattr(active_mode, "file_manager") and active_mode.file_manager:
-                    active_mode.file_manager.put(tab.path, target=tab.device_path)
+                    if getattr(active_mode, "fs", None):
+                        active_mode.fs.disable()
+                        active_mode.fs.on_transfers_added(1)
+                        active_mode.fs.microbit_fs.put.emit(tab.path, tab.device_path)
+                    else:
+                        active_mode.file_manager.put(tab.path, target=tab.device_path)
                     tab.setModified(False)
                     self.show_status_message(_("Saving file to device..."))
-                else:
+                elif (
+                    show_error_messages
+                    and self.current_device is not None
+                    and hasattr(active_mode, "toggle_files")
+                    and not getattr(active_mode, "plotter", None)
+                ):
+                    # File manager was closed while device is still connected:
+                    # auto-open file manager and save once its serial session is ready.
+                    active_mode.toggle_files(None)
+                    fm = getattr(active_mode, "file_manager", None)
+                    if fm:
+                        tab_path = tab.path
+                        device_path = tab.device_path
+
+                        def _disconnect_deferred():
+                            try:
+                                fm.on_list_files.disconnect(_do_deferred_put)
+                            except (TypeError, RuntimeError):
+                                pass
+                            try:
+                                fm.on_list_fail.disconnect(_on_deferred_fail)
+                            except (TypeError, RuntimeError):
+                                pass
+
+                        def _do_deferred_put(*_args):
+                            _disconnect_deferred()
+                            if (
+                                getattr(active_mode, "fs", None)
+                                and active_mode.file_manager is fm
+                            ):
+                                active_mode.fs.disable()
+                                active_mode.fs.on_transfers_added(1)
+                                active_mode.fs.microbit_fs.put.emit(
+                                    tab_path, device_path
+                                )
+                                tab.setModified(False)
+                                self.show_status_message(
+                                    _("Saving file to device...")
+                                )
+
+                        def _on_deferred_fail(*_args):
+                            _disconnect_deferred()
+
+                        fm.on_list_files.connect(_do_deferred_put)
+                        fm.on_list_fail.connect(_on_deferred_fail)
+                        self.show_status_message(
+                            _("Opening file manager to save file to device...")
+                        )
+                elif show_error_messages:
                     message = _("Device disconnected")
                     info = _("Would you like to save this file to your computer instead?")
                     if self._view.show_confirmation(message, info, icon="Question") == QMessageBox.StandardButton.Ok:

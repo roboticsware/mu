@@ -400,9 +400,15 @@ class ESPMode(MicroPythonMode):
         self.file_manager_thread.started.connect(self.file_manager.on_start)
 
         # Show directory of the current file in the left pane, if any,
-        # otherwise show the default workspace_dir
-        if self.view.current_tab and self.view.current_tab.path:
-            path = os.path.dirname(os.path.abspath(self.view.current_tab.path))
+        # otherwise show the default workspace_dir. Never use the internal
+        # .device_files temp cache directory of a device-backed tab.
+        if (
+            self.view.current_tab
+            and self.view.current_tab.path
+            and not getattr(self.view.current_tab, "device_path", None)
+        ):
+            candidate = os.path.dirname(os.path.abspath(self.view.current_tab.path))
+            path = candidate if os.path.isdir(candidate) else self.workspace_dir()
         else:
             path = self.workspace_dir()
         self.fs = self.view.add_filesystem(
