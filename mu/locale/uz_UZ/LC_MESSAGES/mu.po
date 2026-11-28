@@ -167,17 +167,20 @@ msgstr "MicroPython-ni qurilmangizga qanday yozish mumkin"
 
 #: mu/interface/dialogs.py:374
 msgid ""
-"&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />&nbsp;2. "
-"Download firmware from the <a href=\"https://micropython.org/download\" "
-"style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3."
-" Connect your device<br/>&nbsp;4. Load the .bin file below using the "
-"'Browse' button<br/>&nbsp;5. Press 'Erase & write firmware'"
+"&nbsp;1. Determine the type of device (ESP8266 or ESP32 / ESP32-S3)<br />"
+"&nbsp;2. Download firmware from "
+"<a href=\"https://micropython.org/download\" "
+"style=\"color:#039be5;\">https://micropython.org/download</a> or use a custom "
+"TFLite-Micro / Edge Impulse .bin or .zip package<br/>&nbsp;3. Connect your "
+"device<br/>&nbsp;4. Load the .bin or .zip file below using the 'Browse' "
+"button<br/>&nbsp;5. Press 'Erase & write firmware'"
 msgstr ""
-"&nbsp;1. Qurilma turini aniqlang (ESP8266 yoki ESP32)<br />&nbsp;2. "
+"&nbsp;1. Qurilma turini aniqlang (ESP8266 yoki ESP32 / ESP32-S3)<br />&nbsp;2. "
 "Mikrodasturni <a href=\"https://micropython.org/download\" "
 "style=\"color:#039be5;\">https://micropython.org/download</a> saytidan "
-"yuklab oling<br/>&nbsp;3. Qurilmangizni ulang<br/>&nbsp;4. Quyidagi .bin "
-"faylini \"Izlash\" tugmasi yordamida tanlang<br/>&nbsp;5. \"Mikrodasturni "
+"yuklab oling yoki maxsus TFLite-Micro / Edge Impulse .bin yoxud .zip paketidan "
+"foydalaning<br/>&nbsp;3. Qurilmangizni ulang<br/>&nbsp;4. Quyidagi .bin yoki "
+".zip faylni \"Izlash\" tugmasi yordamida tanlang<br/>&nbsp;5. \"Mikrodasturni "
 "o'chirish va yozish\" tugmasini bosing"
 
 #: mu/interface/dialogs.py:396
@@ -189,8 +192,8 @@ msgid "Choose device type:"
 msgstr "Qurilma turini tanlang:"
 
 #: mu/interface/dialogs.py:403
-msgid "Firmware (.bin):"
-msgstr "Mikrodastur (.bin):"
+msgid "Firmware (.bin / .zip):"
+msgstr "Mikrodastur (.bin / .zip):"
 
 #: mu/interface/dialogs.py:405 mu/modes/web.py:107
 msgid "Browse"
@@ -201,12 +204,12 @@ msgid "Erase && write firmware"
 msgstr "Mikrodasturni o'chirish va yozish"
 
 #: mu/interface/dialogs.py:438
-msgid "Select MicroPython firmware (.bin)"
-msgstr "MicroPython proshivkasini tanlang (.bin)"
+msgid "Select MicroPython firmware (.bin or .zip)"
+msgstr "MicroPython mikrodasturini tanlang (.bin yoki .zip)"
 
 #: mu/interface/dialogs.py:440
-msgid "Firmware (*.bin)"
-msgstr "Mikrodastur (*.bin)"
+msgid "Firmware (*.bin *.zip)"
+msgstr "Mikrodastur (*.bin *.zip)"
 
 #: mu/interface/dialogs.py:574 mu/interface/main.py:1534
 msgid "Mu Administration"
@@ -2179,20 +2182,22 @@ msgstr "MicroPythonni ESP platangizga qanday yozish mumkin"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid ""
-"1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to "
-"load available firmware.<br>3. Select your <b>Board</b> and "
-"<b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be"
-" erased and the new firmware written automatically.<br><i>Note: hold the "
-"BOOT button on your board if the device does not enter programming mode "
-"automatically.</i>"
+"1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> for "
+"standard/camera firmware, or paste a custom GitHub repo, manifest .json, or "
+"direct .bin/.zip URL (e.g. TFLite-Micro / Edge Impulse) and click "
+"<b>Load</b>.<br>3. Select your <b>Board</b>, <b>Version</b>, and "
+"<b>Chip</b>.<br>4. Click <b>Erase &amp; Flash</b> — single or multi-part "
+"firmware will be written automatically.<br><i>Note: hold the BOOT button on "
+"your board if the device does not enter programming mode automatically.</i>"
 msgstr ""
-"1. ESP platangizni USB orqali ulang.<br>2. Mavjud mikrodasturlarni "
-"yuklash uchun <b>Versiyalarni olish</b> tugmasini bosing.<br>3. "
-"<b>Plata</b> va <b>Versiya</b>ni tanlang.<br>4. <b>O'chirish va "
-"yozish</b> tugmasini bosing — qurilma o'chiriladi va yangi mikrodastur "
-"avtomatik ravishda yoziladi.<br><i>Eslatma: agar qurilma avtomatik "
-"ravishda dastur yozish rejimiga kirmasa, platangizdagi BOOT tugmasini "
-"bosib turib va rejimga kirgandan so'ng qo'yib yuboring.</i>"
+"1. ESP platangizni USB orqali ulang.<br>2. Oddiy/kamera mikrodasturlari uchun "
+"<b>Versiyalarni olish</b> tugmasini bosing yoki maxsus GitHub repo, manifest "
+".json yoxud to'g'ridan-to'g'ri .bin/.zip URL (masalan, TFLite-Micro / Edge Impulse) "
+"manzilini kiritib <b>Yuklash</b> tugmasini bosing.<br>3. <b>Plata</b>, "
+"<b>Versiya</b> va <b>Chip</b>ni tanlang.<br>4. <b>O'chirish va yozish</b> "
+"tugmasini bosing — bir yoki ko'p qismli mikrodastur avtomatik ravishda "
+"yoziladi.<br><i>Eslatma: agar qurilma avtomatik ravishda dastur yozish rejimiga "
+"kirmasa, platangizdagi BOOT tugmasini bosib turing.</i>"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "Board:"
@@ -2447,4 +2452,60 @@ msgstr "Qurilmaga saqlash"
 #: mu/interface/main.py
 msgid "Filename on device (e.g. main.py):"
 msgstr "Qurilmadagi fayl nomi (masalan, main.py):"
+
+#: mu/interface/dialogs.py
+msgid "Offset:"
+msgstr "Ofset (Manzil):"
+
+#: mu/interface/dialogs.py
+msgid "Auto"
+msgstr "Avto"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Custom URL:"
+msgstr "Maxsus URL:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "GitHub repo, manifest .json, or direct .bin/.zip URL"
+msgstr "GitHub repo, manifest .json yoki .bin/.zip URL manzili"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Chip:"
+msgstr "Chip:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Custom URL"
+msgstr "Maxsus URL"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Please enter a custom firmware or manifest URL."
+msgstr "Maxsus mikrodastur yoki manifest URL manzilini kiriting."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded custom firmware URL: {}"
+msgstr "Maxsus mikrodastur URL yuklandi: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Loading custom firmware source…"
+msgstr "Maxsus mikrodastur manbasi yuklanmoqda…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "No .bin or .zip firmware found at custom URL."
+msgstr "Maxsus URL manzilida .bin yoki .zip mikrodastur topilmadi."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded {} custom firmware assets."
+msgstr "{} ta maxsus mikrodastur fayli yuklandi."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Error loading custom source: {}"
+msgstr "Maxsus manbani yuklashda xatolik: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Starting: {} ({}) on {}"
+msgstr "Boshlanmoqda: {} ({}) — port: {}"
 

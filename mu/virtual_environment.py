@@ -132,6 +132,8 @@ class Process(QObject):
         self.environment = QProcessEnvironment.systemEnvironment()
         self.environment.insert("PYTHONUNBUFFERED", "1")
         self.environment.insert("PYTHONIOENCODING", "utf-8")
+        if sys.platform == "darwin":
+            self.environment.insert("SYSTEM_VERSION_COMPAT", "0")
 
     def _set_up_run(self, **envvars):
         """Set up common elements of a QProcess run"""
@@ -911,6 +913,8 @@ class VirtualEnvironment(object):
         logger.info("Virtualenv name: {}".format(self.name))
 
         env = dict(os.environ)
+        if sys.platform == "darwin":
+            env["SYSTEM_VERSION_COMPAT"] = "0"
         created_with_uv = False
         try:
             uv_path = self.get_internal_uv_path()
@@ -1042,13 +1046,16 @@ class VirtualEnvironment(object):
             try:
                 uv_path = self.get_internal_uv_path()
                 args = [
-                    uv_path, 
+                    uv_path,
                     "pip", "install",
                     "--python", self.interpreter,
                     "--no-index",
                     "--find-links", unpacked_wheels_dirpath,
                     "--link-mode", "copy",
-                ] + all_wheels 
+                ]
+                if sys.platform == "darwin":
+                    args.append("--no-cache")
+                args.extend(all_wheels)
                 env["VIRTUAL_ENV"] = os.path.dirname(os.path.dirname(self.interpreter))
                 ok, output = self.run_subprocess(*args, env=env)
                 if ok:

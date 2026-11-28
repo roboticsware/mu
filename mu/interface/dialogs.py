@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
 import logging
+import shutil
+import sys
 from mu.qt.QtCore import QSize, QProcess, QTimer, Qt
 
 from mu.qt.QtWidgets import (
@@ -511,6 +513,7 @@ class ESPFirmwareFlasherWidget(QWidget):
     """
 
     def setup(self, mode, device_list):
+        self._temp_dirs = []
         widget_layout = QVBoxLayout()
         self.setLayout(widget_layout)
 
@@ -524,18 +527,15 @@ class ESPFirmwareFlasherWidget(QWidget):
         # that's suitable for both day/night/contrast themes, as the
         # link color is not configurable in the Qt Stylesheets
         instructions = _(
-            "&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />"
-            "&nbsp;2. Download firmware from the "
+            "&nbsp;1. Determine the type of device (ESP8266 or ESP32 / ESP32-S3)<br />"
+            "&nbsp;2. Download firmware from "
             '<a href="https://micropython.org/download" '
             'style="color:#039be5;">'
-            "https://micropython.org/download</a><br/>"
+            "https://micropython.org/download</a> or use a custom TFLite-Micro / "
+            "Edge Impulse .bin or .zip package<br/>"
             "&nbsp;3. Connect your device<br/>"
-            "&nbsp;4. Load the .bin file below using the 'Browse' button<br/>"
+            "&nbsp;4. Load the .bin or .zip file below using the 'Browse' button<br/>"
             "&nbsp;5. Press 'Erase & write firmware'"
-            # "<br /><br />Check the current MicroPython version using the "
-            # "following commands:<br />"
-            # ">>> import sys<br />"
-            # ">>> sys.implementation"
         )
         label = QLabel(instructions)
         label.setTextFormat(Qt.RichText)
@@ -545,7 +545,7 @@ class ESPFirmwareFlasherWidget(QWidget):
         grp_instructions_vbox.addWidget(label)
         widget_layout.addWidget(grp_instructions)
 
-        # Device type, firmware path, flash button
+        # Device type, flash offset, firmware path, flash button
         device_selector_label = QLabel(_("Device:"))
         self.device_selector = DeviceSelector(show_label=True, icon_first=True)
         self.device_selector.set_device_list(device_list)
@@ -557,7 +557,15 @@ class ESPFirmwareFlasherWidget(QWidget):
         self.device_type.addItem("ESP32-S2", "esp32s2")
         self.device_type.addItem("ESP32-S3", "esp32s3")
         self.device_type.addItem("ESP32-C3", "esp32c3")
-        firmware_label = QLabel(_("Firmware (.bin):"))
+        self.device_type.addItem("ESP32-C6", "esp32c6")
+        offset_label = QLabel(_("Offset:"))
+        self.offset_combo = QComboBox(self)
+        self.offset_combo.setEditable(True)
+        self.offset_combo.addItem(_("Auto"), "")
+        self.offset_combo.addItem("0x0 (ESP32-S3 / C3 / merged)", "0x0")
+        self.offset_combo.addItem("0x1000 (ESP32 / S2)", "0x1000")
+        self.offset_combo.addItem("0x10000 (App only)", "0x10000")
+        firmware_label = QLabel(_("Firmware (.bin / .zip):"))
         self.txtFolder = QLineEdit()
         self.btnFolder = QPushButton(_("Browse"))
         self.btnExec = QPushButton(_("Erase && write firmware"))
@@ -567,6 +575,8 @@ class ESPFirmwareFlasherWidget(QWidget):
         form_set.addWidget(self.device_selector, 0, 1, 1, 3)
         form_set.addWidget(device_type_label, 1, 0)
         form_set.addWidget(self.device_type, 1, 1)
+        form_set.addWidget(offset_label, 1, 2)
+        form_set.addWidget(self.offset_combo, 1, 3)
         form_set.addWidget(firmware_label, 2, 0)
         form_set.addWidget(self.txtFolder, 2, 1)
         form_set.addWidget(self.btnFolder, 2, 2)
@@ -588,13 +598,26 @@ class ESPFirmwareFlasherWidget(QWidget):
 
         self.mode = mode
 
+    def _selected_flash_offset(self) -> str:
+        """Return explicit hex offset or empty string for Auto."""
+        idx = self.offset_combo.currentIndex()
+        if idx >= 0 and self.offset_combo.currentText() == self.offset_combo.itemText(idx):
+            return str(self.offset_combo.currentData() or "")
+        return self.offset_combo.currentText().strip()
+
+    def _cleanup_temp_dirs(self):
+        """Remove any temporary zip-extraction directories."""
+        for temp_dir in self._temp_dirs:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        self._temp_dirs = []
+
     def show_folder_dialog(self):
         # open dialog and set to foldername
         filename = QFileDialog.getOpenFileName(
             self,
-            _("Select MicroPython firmware (.bin)"),
+            _("Select MicroPython firmware (.bin or .zip)"),
             os.path.expanduser("."),
-            _("Firmware (*.bin)"),
+            _("Firmware (*.bin *.zip)"),
         )
         if filename:
             filename = filename[0].replace("/", os.sep)
@@ -614,6 +637,8 @@ class ESPFirmwareFlasherWidget(QWidget):
         if device is None:
             return
 
+        self._cleanup_temp_dirs()
+
         try:
             import esptool as _esptool_pkg
             esptool = "-mesptool"
@@ -627,37 +652,61 @@ class ESPFirmwareFlasherWidget(QWidget):
             sys.executable, esptool, chip_opt, device.port
         )
 
-        # Flash address: esp32 and esp32s2 write at 0x1000; esp8266, esp32s3, esp32c3 write at 0x0
-        if chip_arg in ("esp32", "esp32s2"):
-            flash_address = "0x1000"
+        from mu.interface.esp_flasher.flasher import (
+            default_flash_offset,
+            resolve_firmware_segments,
+        )
+
+        firmware_path = self.txtFolder.text().strip()
+        custom_offset = self._selected_flash_offset()
+
+        if firmware_path.lower().endswith(".zip") and os.path.isfile(firmware_path):
+            try:
+                segments, temp_dirs = resolve_firmware_segments(
+                    firmware_path, chip_arg, custom_offset
+                )
+            except Exception as exc:
+                self.log_text_area.appendPlainText(
+                    "Error resolving firmware archive: {}\n".format(exc)
+                )
+                return
+            self._temp_dirs = temp_dirs
+            summary = ", ".join(
+                "{} -> {}".format(addr, os.path.basename(path))
+                for addr, path in segments
+            )
+            self.log_text_area.appendPlainText(
+                "Flash segments: {}\n".format(summary)
+            )
         else:
-            flash_address = "0x0"
+            flash_address = custom_offset or default_flash_offset(chip_arg)
+            segments = [(flash_address, firmware_path)]
+
+        segment_args = " ".join('{} "{}"'.format(addr, path) for addr, path in segments)
 
         if chip_arg == "esp8266":
             write_command = (
                 '"{}" {} {}--port {} --baud {} '
-                'write_flash --flash_size=detect {} "{}"'
+                'write_flash --flash_size=detect {}'
             ).format(
                 sys.executable,
                 esptool,
                 chip_opt,
                 device.port,
                 baudrate,
-                flash_address,
-                self.txtFolder.text(),
+                segment_args,
             )
         else:
             write_command = (
                 '"{}" {} {}--port {} --baud {} '
-                'write_flash -z {} "{}"'
+                'write_flash -z {}'
             ).format(
                 sys.executable,
                 esptool,
                 chip_opt,
                 device.port,
                 baudrate,
-                flash_address,
-                self.txtFolder.text(),
+                segment_args,
             )
 
         self.commands = [erase_command, write_command]
@@ -680,6 +729,7 @@ class ESPFirmwareFlasherWidget(QWidget):
             "Error occurred: Error {}\n".format(error_num)
         )
         self.process = None
+        self._cleanup_temp_dirs()
 
     def esptool_finished(self, exitCode, exitStatus):
         """
@@ -688,10 +738,13 @@ class ESPFirmwareFlasherWidget(QWidget):
         # Exit if a command fails
         if exitCode != 0 or exitStatus == QProcess.CrashExit:
             self.log_text_area.appendPlainText("Error on flashing. Aborting.")
+            self._cleanup_temp_dirs()
             return
         if self.commands:
             self.process = None
             self.run_esptool()
+        else:
+            self._cleanup_temp_dirs()
 
     def read_process(self):
         """

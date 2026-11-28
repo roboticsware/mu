@@ -29,6 +29,10 @@ ESP32 / ESP8266
 ```````````````
 - Online Firmware Flasher to install MicroPython firmware easily
     .. image:: screenshots/esp32online-flashing.jpg
+- Custom TFLite-Micro / Edge Impulse / ulab firmware flashing support (online & offline)
+    - Supports single ``.bin`` images and multi-part ``.zip`` packages (auto-resolving ``flasher_args.json``, ``flash_args``, or bootloader/partition/app segments)
+    - Online flasher supports custom GitHub Releases repositories, remote JSON manifests, and direct ``.bin``/``.zip`` URLs (plus configurable defaults via ``CUSTOM_MANIFEST_URLS`` or ``MU_ESP_CUSTOM_MANIFEST_URL``; see `docs/ESP_CUSTOM_FIRMWARE.md <docs/ESP_CUSTOM_FIRMWARE.md>`_)
+    - Offline flasher supports custom flash offsets and ``.zip`` packages
 - Integrated `the espzero Lib <https://espzero.readthedocs.io>`_ to Mu
 
 Editor

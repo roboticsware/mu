@@ -100,7 +100,9 @@ msgstr ""
 msgid ""
 "\n"
 "Copy your username on PythonAnywhere into here:"
-msgstr "PythonAnywhere 상의 사용자 이름을 여기로 복사하세요:"
+msgstr ""
+"\n"
+"PythonAnywhere 상의 사용자 이름을 여기로 복사하세요:"
 
 #: mu/interface/dialogs.py:267
 msgid "username"
@@ -141,16 +143,19 @@ msgstr "장치에 MicroPython을 설치하는 방법"
 
 #: mu/interface/dialogs.py:372
 msgid ""
-"&nbsp;1. Determine the type of device (ESP8266 or ESP32)<br />&nbsp;2. "
-"Download firmware from the <a href=\"https://micropython.org/download\" "
-"style=\"color:#039be5;\">https://micropython.org/download</a><br/>&nbsp;3."
-" Connect your device<br/>&nbsp;4. Load the .bin file below using the "
-"'Browse' button<br/>&nbsp;5. Press 'Erase & write firmware'"
+"&nbsp;1. Determine the type of device (ESP8266 or ESP32 / ESP32-S3)<br />"
+"&nbsp;2. Download firmware from "
+"<a href=\"https://micropython.org/download\" "
+"style=\"color:#039be5;\">https://micropython.org/download</a> or use a custom "
+"TFLite-Micro / Edge Impulse .bin or .zip package<br/>&nbsp;3. Connect your "
+"device<br/>&nbsp;4. Load the .bin or .zip file below using the 'Browse' "
+"button<br/>&nbsp;5. Press 'Erase & write firmware'"
 msgstr ""
-"&nbsp;1. 장치 유형 결정 (ESP8266 또는 ESP32)<br />&nbsp;2. <a "
+"&nbsp;1. 장치 유형 결정 (ESP8266 또는 ESP32 / ESP32-S3)<br />&nbsp;2. <a "
 "href=\"https://micropython.org/download\" "
-"style=\"color:#039be5;\">https://micropython.org/download</a>에서 펌웨어 "
-"다운로드<br/>&nbsp;3. 장치 연결<br/>&nbsp;4. '찾아보기' 버튼을 사용하여 아래의 .bin 파일 "
+"style=\"color:#039be5;\">https://micropython.org/download</a>에서 펌웨어를 "
+"다운로드하거나 커스텀 TFLite-Micro / Edge Impulse .bin 또는 .zip 패키지를 준비합니다<br/>"
+"&nbsp;3. 장치 연결<br/>&nbsp;4. '찾아보기' 버튼을 사용하여 아래의 .bin 또는 .zip 파일 "
 "로드<br/>&nbsp;5. '지우기 및 펌웨어 쓰기' 누르기"
 
 #: mu/interface/dialogs.py:395
@@ -162,8 +167,8 @@ msgid "Choose device type:"
 msgstr "장치 유형 선택:"
 
 #: mu/interface/dialogs.py:402
-msgid "Firmware (.bin):"
-msgstr "펌웨어 (.bin):"
+msgid "Firmware (.bin / .zip):"
+msgstr "펌웨어 (.bin / .zip):"
 
 #: mu/interface/dialogs.py:404 mu/modes/web.py:107
 msgid "Browse"
@@ -174,12 +179,12 @@ msgid "Erase && write firmware"
 msgstr "지우기 && 펌웨어 쓰기"
 
 #: mu/interface/dialogs.py:437
-msgid "Select MicroPython firmware (.bin)"
-msgstr "MicroPython 펌웨어 (.bin) 선택"
+msgid "Select MicroPython firmware (.bin or .zip)"
+msgstr "MicroPython 펌웨어 (.bin 또는 .zip) 선택"
 
 #: mu/interface/dialogs.py:439
-msgid "Firmware (*.bin)"
-msgstr "펌웨어 (*.bin)"
+msgid "Firmware (*.bin *.zip)"
+msgstr "펌웨어 (*.bin *.zip)"
 
 #: mu/interface/dialogs.py:573 mu/interface/main.py:1467
 msgid "Mu Administration"
@@ -2082,17 +2087,19 @@ msgstr "ESP 보드에 MicroPython을 설치하는 방법"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid ""
-"1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> to "
-"load available firmware.<br>3. Select your <b>Board</b> and "
-"<b>Version</b>.<br>4. Click <b>Erase &amp; Flash</b> — the device will be"
-" erased and the new firmware written automatically.<br><i>Note: hold the "
-"BOOT button on your board if the device does not enter programming mode "
-"automatically.</i>"
+"1. Connect your ESP board via USB.<br>2. Click <b>Fetch Versions</b> for "
+"standard/camera firmware, or paste a custom GitHub repo, manifest .json, or "
+"direct .bin/.zip URL (e.g. TFLite-Micro / Edge Impulse) and click "
+"<b>Load</b>.<br>3. Select your <b>Board</b>, <b>Version</b>, and "
+"<b>Chip</b>.<br>4. Click <b>Erase &amp; Flash</b> — single or multi-part "
+"firmware will be written automatically.<br><i>Note: hold the BOOT button on "
+"your board if the device does not enter programming mode automatically.</i>"
 msgstr ""
-"1. ESP 보드를 USB로 연결합니다.<br>2. <b>버전 가져오기</b>를 클릭하여 사용 가능한 펌웨어를 "
-"로드합니다.<br>3. <b>보드</b>와 <b>버전</b>을 선택합니다.<br>4. <b>지우기 및 플래시</b>를 클릭합니다 —"
-" 장치가 지워지고 새 펌웨어가 자동으로 기록됩니다.<br><i>참고: 장치가 자동으로 프로그래밍 모드에 진입하지 않으면 보드의 "
-"BOOT 버튼을 누르십시오.</i>"
+"1. ESP 보드를 USB로 연결합니다.<br>2. 기본/카메라 펌웨어는 <b>버전 가져오기</b>를 클릭하거나, "
+"커스텀 GitHub 저장소, 매니페스트 .json 또는 직접 .bin/.zip URL(예: TFLite-Micro / Edge Impulse)을 "
+"입력하고 <b>불러오기</b>를 클릭하세요.<br>3. <b>보드</b>, <b>버전</b> 및 <b>칩</b>을 "
+"선택하세요.<br>4. <b>지우기 &amp; 플래시</b>를 클릭하면 단일 또는 멀티파트 펌웨어가 자동으로 "
+"기록됩니다.<br><i>참고: 장치가 자동으로 프로그래밍 모드에 진입하지 않으면 보드의 BOOT 버튼을 누르십시오.</i>"
 
 #: mu/interface/esp_flasher/dialog.py
 msgid "Board:"
@@ -2343,5 +2350,61 @@ msgstr "장치에 저장"
 #: mu/interface/main.py
 msgid "Filename on device (e.g. main.py):"
 msgstr "장치에 저장할 파일 이름 (예: main.py):"
+
+#: mu/interface/dialogs.py
+msgid "Offset:"
+msgstr "오프셋:"
+
+#: mu/interface/dialogs.py
+msgid "Auto"
+msgstr "자동"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Custom URL:"
+msgstr "커스텀 URL:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "GitHub repo, manifest .json, or direct .bin/.zip URL"
+msgstr "GitHub 저장소, 매니페스트 .json 또는 직접 .bin/.zip URL"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Chip:"
+msgstr "칩:"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Custom URL"
+msgstr "커스텀 URL"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Please enter a custom firmware or manifest URL."
+msgstr "커스텀 펌웨어 또는 매니페스트 URL을 입력하세요."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded custom firmware URL: {}"
+msgstr "커스텀 펌웨어 URL을 불러왔습니다: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "Loading custom firmware source…"
+msgstr "커스텀 펌웨어 소스를 불러오는 중…"
+
+#: mu/interface/esp_flasher/dialog.py
+msgid "No .bin or .zip firmware found at custom URL."
+msgstr "커스텀 URL에서 .bin 또는 .zip 펌웨어를 찾을 수 없습니다."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Loaded {} custom firmware assets."
+msgstr "{}개의 커스텀 펌웨어 파일을 불러왔습니다."
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Error loading custom source: {}"
+msgstr "커스텀 소스 불러오기 오류: {}"
+
+#: mu/interface/esp_flasher/dialog.py
+#, python-brace-format
+msgid "Starting: {} ({}) on {}"
+msgstr "시작 중: {} ({}) — 포트: {}"
 
 
