@@ -26,6 +26,7 @@ from mu.qt.QtWidgets import (
     QVBoxLayout,
     QTabWidget,
     QFileDialog,
+    QInputDialog,
     QMessageBox,
     QLabel,
     QMainWindow,
@@ -468,6 +469,47 @@ class Window(QMainWindow):
             path += ".py"
         logger.debug("Getting save path: {}".format(path))
         return path
+
+    def choose_save_destination(self):
+        """
+        Ask the user whether to save a new file on this computer or on the
+        connected MicroPython device. Returns 'computer', 'device', or None.
+        """
+        msg = QMessageBox(self)
+        msg.setWindowTitle(_("Where to save to?"))
+        msg.setText(_("Where would you like to save this file?"))
+        msg.setIcon(QMessageBox.Icon.Question)
+        computer_btn = msg.addButton(
+            _("This computer"), QMessageBox.ButtonRole.AcceptRole
+        )
+        device_btn = msg.addButton(
+            _("MicroPython device"), QMessageBox.ButtonRole.ActionRole
+        )
+        msg.addButton(QMessageBox.StandardButton.Cancel)
+        msg.setDefaultButton(device_btn)
+        msg.exec()
+        clicked = msg.clickedButton()
+        if clicked == computer_btn:
+            return "computer"
+        if clicked == device_btn:
+            return "device"
+        return None
+
+    def get_device_save_path(self, default_name="main.py"):
+        """
+        Prompt the user for a target filename on the connected MicroPython
+        device. Returns the cleaned filename string or None if cancelled.
+        """
+        filename, ok = QInputDialog.getText(
+            self,
+            _("Save to device"),
+            _("Filename on device (e.g. main.py):"),
+            text=default_name,
+        )
+        if not ok:
+            return None
+        filename = filename.strip().lstrip("/")
+        return filename or None
 
     def set_tab_text(self, tab):
         """

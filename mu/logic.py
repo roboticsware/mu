@@ -1635,6 +1635,10 @@ class Editor(QObject):
                 ):
                     # File manager was closed while device is still connected:
                     # auto-open file manager and save once its serial session is ready.
+                    if getattr(active_mode, "running", False) and hasattr(
+                        active_mode, "run"
+                    ):
+                        active_mode.run()
                     active_mode.toggle_files(None)
                     fm = getattr(active_mode, "file_manager", None)
                     if fm:
@@ -1739,6 +1743,39 @@ class Editor(QObject):
             return
         if not tab.path:
             # Unsaved file.
+            active_mode = self.modes[self.mode]
+            can_save_to_device = (
+                self.current_device is not None
+                and hasattr(active_mode, "toggle_files")
+                and not getattr(active_mode, "plotter", None)
+            )
+            if can_save_to_device:
+                dest = self._view.choose_save_destination()
+                if dest is None:
+                    return
+                if dest == "device":
+                    device_filename = self._view.get_device_save_path("main.py")
+                    if not device_filename:
+                        return
+                    import uuid
+
+                    unique_dir = os.path.join(
+                        DATA_DIR, ".device_files", uuid.uuid4().hex
+                    )
+                    os.makedirs(unique_dir, exist_ok=True)
+                    local_path = os.path.join(
+                        unique_dir, os.path.basename(device_filename)
+                    )
+                    tab.device_path = device_filename
+                    tab.path = local_path
+                    self.device_files[local_path] = device_filename
+                    if hasattr(self._view, "tabs"):
+                        idx = self._view.tabs.indexOf(tab)
+                        if idx >= 0:
+                            self._view.tabs.setTabText(idx, tab.title)
+                    self.save_tab_to_file(tab)
+                    return
+
             folder = self.get_dialog_directory(default)
             path = self._view.get_save_path(folder)
             if path and self.check_for_shadow_module(path):

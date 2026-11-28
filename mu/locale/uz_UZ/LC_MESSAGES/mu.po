@@ -2424,3 +2424,27 @@ msgstr "Kompyuterga nusxalash"
 msgid "Opening file manager to save file to device..."
 msgstr "Faylni qurilmaga saqlash uchun fayl menejeri ochilmoqda..."
 
+#: mu/interface/main.py
+msgid "Where to save to?"
+msgstr "Qayerga saqlansin?"
+
+#: mu/interface/main.py
+msgid "Where would you like to save this file?"
+msgstr "Ushbu faylni qayerga saqlamoqchisiz?"
+
+#: mu/interface/main.py
+msgid "This computer"
+msgstr "Ushbu kompyuter"
+
+#: mu/interface/main.py
+msgid "MicroPython device"
+msgstr "MicroPython qurilmasi"
+
+#: mu/interface/main.py
+msgid "Save to device"
+msgstr "Qurilmaga saqlash"
+
+#: mu/interface/main.py
+msgid "Filename on device (e.g. main.py):"
+msgstr "Qurilmadagi fayl nomi (masalan, main.py):"
+
