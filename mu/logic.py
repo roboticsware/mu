@@ -244,6 +244,12 @@ DEFAULT_PICOZERO_LIB = [
 ]
 
 DEFAULT_ESP32_LIB = [
+    "keypad.py",
+    "mfrc522.py",
+    "telegram.py",
+]
+
+DEFAULT_ESPZERO_LIB = [
     "__init__.py",
     "_core.py",
     "_hal.py",
@@ -1143,13 +1149,14 @@ class Editor(QObject):
         _sync_files("pico/picozero/", DEFAULT_PICOZERO_LIB, picozero_path)
         _sync_files("pico/docs/examples/", EXAMPLE_PICOZERO, picozero_examples_path)
 
-        # ESP32_lib (espzero)
+        # ESP32_lib
         espzero_path = os.path.join(esp32_lib_path, "espzero")
         espzero_profiles_path = os.path.join(espzero_path, "profiles")
         espzero_examples_path = os.path.join(esp32_lib_path, "examples")
-        _sync_files("esp32/", DEFAULT_ESP32_LIB, espzero_path)
+        _sync_files("esp32/", DEFAULT_ESP32_LIB, esp32_lib_path)
+        _sync_files("esp32/espzero/", DEFAULT_ESPZERO_LIB, espzero_path)
         _sync_files(
-            "esp32/profiles/",
+            "esp32/espzero/profiles/",
             ["__init__.py", "_base.py", "esp32_boards.py", "auto.py"],
             espzero_profiles_path,
         )
